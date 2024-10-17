@@ -7,7 +7,7 @@ import SecondHeader from './SecondHeader'; // Adjust the path as needed
 import automationImg from 'C:/Users/AdityaPP/software-testing-edu/src/Automation.jpg';
 import manualTestingImg from 'C:/Users/AdityaPP/software-testing-edu/src/manual-testing.webp';
 import agileProcessImg from 'C:/Users/AdityaPP/software-testing-edu/src/agile-process.png';
-import HeroImg from 'C:/Users/AdityaPP/software-testing-edu/src/HeroImg.png'
+
 
 
 const Home = () => {
