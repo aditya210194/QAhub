@@ -1,0 +1,40 @@
+.contact-us {
+    background-color: #f8f9fa; /* Light background color */
+}
+
+.contact-us h2 {
+    color: #343a40; /* Dark text for the main heading */
+}
+
+.contact-us h4 {
+    color: #495057; /* Slightly lighter dark text for subheadings */
+}
+
+.contact-us p {
+    color: #6c757d; /* Gray color for paragraph text */
+    line-height: 1.6; /* Improved line height for readability */
+}
+
+.contact-us .form-group {
+    margin-bottom: 1.5rem; /* Space between form groups */
+}
+
+.contact-us .btn {
+    width: 100%; /* Full-width button */
+}
+
+/* Responsive Google Map */
+.map-responsive {
+    overflow: hidden;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    position: relative;
+}
+
+.map-responsive iframe {
+    border: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}

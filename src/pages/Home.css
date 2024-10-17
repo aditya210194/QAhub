@@ -1,0 +1,114 @@
+/* General Styles */
+.home {
+    font-family: 'Arial', sans-serif;
+}
+
+/* Hero Section Styles */
+.hero-section {
+    position: relative;
+    background-image: url('C:/Users/AdityaPP/software-testing-edu/src/HeroImg.png'); /* Make sure to update the path */
+    background-size: cover; /* Ensure the image covers the entire hero section */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* No repeating of the background image */
+    /* Full screen height for hero section */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white; /* Ensure the text is visible */
+
+    border-bottom-style: solid;
+    border-top-width: 0px;
+    border-top-style: solid;
+
+    padding-left: 120px;
+    margin-left: 0px;
+    height: inherit;
+    top: -81px;
+    bottom: 0px;
+    border-bottom-width: 0px;
+}
+.hero-section .container {
+    position: relative;
+    z-index: 2; /* Keep the text above the background image */
+}
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Optional: Adds a dark overlay for better text visibility */
+    z-index: 1; /* Ensure the overlay is between the image and the text */
+}
+
+.hero-image {
+    max-width: 100%; /* Ensure the hero image is responsive */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Courses Section Styles */
+.courses-section {
+    background-color: #ffffff;
+
+}
+
+.card {
+    transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effect */
+    border: 1px solid #dee2e6; /* Light border around cards */
+    background-color: #fff; /* White background for testimonial cards */
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Elevate card on hover */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+}
+
+/* Testimonials Section Styles */
+.testimonials-section {
+    background-color: #e9ecef; /* Light gray background for testimonials */
+}
+
+.testimonial-card {
+    transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effect */
+    border: 1px solid #dee2e6; /* Light border around cards */
+    background-color: #fff; /* White background for testimonial cards */
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px); /* Elevate testimonial card on hover */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Add shadow on hover */
+}
+
+.testimonial-feedback {
+    font-style: italic; /* Italicize feedback text */
+    color: #6c757d; /* Gray color for feedback text */
+    margin-bottom: 1rem; /* Space between feedback and name */
+}
+
+.testimonial-name {
+    font-weight: bold; /* Bold for user name */
+}
+
+.testimonial-position {
+    color: #6c757d; /* Gray color for position */
+}
+h1{
+    z-index: 2; /* Ensure the text appears on top */
+    color: #000000; /* White text for contrast */
+}
+
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+    .testimonial-card {
+        padding: 20px; /* Adjust padding for smaller screens */
+    }
+    .card {
+        margin-bottom: 10px; /* More margin for smaller screens */
+    }
+}
+h2{
+    margin-top: -110px;
+}
+

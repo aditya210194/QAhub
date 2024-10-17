@@ -1,0 +1,27 @@
+.about-us {
+    background-color: #f8f9fa; /* Light background color for better readability */
+}
+
+.about-us h2 {
+    color: #343a40; /* Dark text for the main heading */
+}
+
+.about-us h4 {
+    color: #495057; /* Slightly lighter dark text for subheadings */
+}
+
+.about-us p {
+    color: #6c757d; /* Gray color for paragraph text */
+    line-height: 1.6; /* Improved line height for readability */
+}
+
+.about-us ul {
+    list-style-type: none; /* Remove bullet points */
+    padding-left: 0; /* Remove default padding */
+}
+
+.about-us ul li {
+    background: url('C:/Users/AdityaPP/software-testing-edu/src/Logo.webp') no-repeat left center; /* Add a checkmark icon (replace with your icon path) */
+    padding-left: 20px; /* Space for the icon */
+    margin-bottom: 10px; /* Space between items */
+}

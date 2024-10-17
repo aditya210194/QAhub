@@ -1,0 +1,40 @@
+/* SecondHeader.css */
+.fixed-second-header {
+    position: fixed;
+    top: 60px; /* Adjust this value based on the height of your first header */
+    width: 100%;
+    z-index: 999; /* Ensure it appears on top of the content */
+    background-color: #f8f9fa; /* Light background color */
+    border-bottom: 1px solid #ddd; /* Optional border to separate from content */
+    padding: 10px 0; /* Adds some vertical padding for the links */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+    left: 0;
+}
+
+.nav-list {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-list li {
+    margin: 0 15px; /* Spacing between the list items */
+}
+
+.nav-list a {
+    text-decoration: none;
+    color: #333; /* Adjust color to match your theme */
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.nav-list a:hover {
+    color: #007bff; /* Link hover color */
+}
+
+/* Ensure the body content is pushed down to make space for both headers */
+body {
+    padding-top: 120px; /* Adjust this value based on the total height of both headers */
+}

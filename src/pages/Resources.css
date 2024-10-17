@@ -1,0 +1,32 @@
+
+
+
+
+.card {
+    border: 1px solid #dee2e6; /* Card border color */
+    border-radius: 0.5rem; /* Rounded corners */
+    transition: transform 0.3s; /* Smooth hover effect */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Elevation on hover */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+}
+
+.card-title {
+    font-weight: bold; /* Bold title */
+    font-size: 1.5rem; /* Font size for title */
+}
+
+.card-text {
+    color: #6c757d; /* Text color */
+    font-size: 1rem; /* Font size for description */
+    margin-bottom: 15px; /* Space below description */
+}
+
+.btn {
+    padding: 10px 20px; /* Padding for buttons */
+    font-size: 1rem; /* Button text size */
+    border-radius: 0.3rem; /* Rounded button corners */
+}

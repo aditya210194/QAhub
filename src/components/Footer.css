@@ -1,0 +1,9 @@
+.footer {
+    padding: 10px 20px; /* Reduce padding */
+    font-size: 0.875rem; /* Make the font slightly smaller *
+    text-align: center;
+    position: relative; /* Ensure footer is still at the bottom */
+    width: 100%;
+
+}
+

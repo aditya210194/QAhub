@@ -1,0 +1,66 @@
+/* src/pages/AutomationTesting.css */
+
+h1 {
+    font-size: 2.5rem; /* Increase the font size for main headings */
+    margin-bottom: 20px; /* Add spacing below the heading */
+    text-align: center; /* Center align the main heading */
+}
+
+h3 {
+    font-size: 1.75rem; /* Size for subheadings */
+    margin-top: 30px; /* Space above subheadings */
+    margin-bottom: 15px; /* Space below subheadings */
+
+}
+
+ul {
+    list-style-type: disc; /* Use disc bullets for unordered lists */
+    padding-left: 20px; /* Indent the list */
+}
+
+.table {
+    margin-top: 20px; /* Space above tables */
+    margin-bottom: 30px; /* Space below tables */
+    width: 100%; /* Full width for the table */
+}
+
+.table th, .table td {
+    text-align: center; /* Center align text in table cells */
+    vertical-align: middle; /* Align text vertically in the middle */
+}
+
+.img-fluid {
+    max-width: 50%; /* Ensure images are responsive */
+    height: auto; /* Maintain aspect ratio */
+}
+
+.my-4 {
+    margin: 1.5rem 0; /* Vertical margin for spacing around images */
+}
+
+/* Additional styling for the paragraphs */
+p {
+    line-height: 1.6; /* Increase line height for better readability */
+    margin-bottom: 15px; /* Space below paragraphs */
+
+}
+
+ol {
+    margin-left: 0px; /* Indent ordered lists */
+}
+
+ol li {
+    margin-bottom: 10px; /* Space below list items */
+}
+
+/* Styling for the whole page */
+body {
+    background-color: #f8f9fa; /* Light background color */
+    color: #343a40; /* Dark text color for contrast */
+    font-family: 'Arial', sans-serif; /* Font family for text */
+}
+.content {
+    margin: 0; /* Remove any margin */
+    padding: 0; /* Remove any padding */
+    /* You can also add padding as needed for the content, but make sure it does not add space to the top */
+}

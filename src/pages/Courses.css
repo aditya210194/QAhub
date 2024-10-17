@@ -1,0 +1,33 @@
+/* src/pages/Courses.css */
+
+
+
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+    height: 200px; /* Set a fixed height for images */
+    object-fit: cover; /* Cover the area without distorting the image */
+}
+
+.card-title {
+    font-weight: bold;
+    padding: 10px;
+}
+
+.btn {
+    margin-top: 10px; /* Spacing for the button */
+}
+
+/* Responsive adjustments */
+@media (max-width: 500px) {
+    .card {
+        margin-bottom: 10px; /* More margin for smaller screens */
+    }
+}

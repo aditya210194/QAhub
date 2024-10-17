@@ -1,0 +1,29 @@
+/* Header.css */
+.fixed-header {
+
+    top: -120px;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Higher than the second header to ensure it stays on top */
+    background-color: #343a40; /* Dark background for the main header */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+    padding: 10px 0;
+}
+
+.navbar-brand img {
+    width: 40px;
+    height: 40px;
+}
+
+.navbar-nav .nav-item .nav-link {
+    color: #fff; /* White text color for the main header links */
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+    color: #007bff; /* Optional: Add hover effect */
+}
+
+/* Make sure to offset body content based on the total height of both headers */
+body {
+    padding-top: 120px; /* Adjust this value based on the combined height of both headers */
+}
