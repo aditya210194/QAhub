@@ -1,13 +1,14 @@
 /* Header.css */
-.fixed-header {
+.fixed-navbar {
 
-    top: -120px;
+    top: 0;
     left: 0;
     width: 100%;
     z-index: 1000; /* Higher than the second header to ensure it stays on top */
     background-color: #343a40; /* Dark background for the main header */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
     padding: 10px 0;
+    position: fixed !important;
 }
 
 .navbar-brand img {
@@ -25,5 +26,5 @@
 
 /* Make sure to offset body content based on the total height of both headers */
 body {
-    padding-top: 120px; /* Adjust this value based on the combined height of both headers */
+    padding-top: 70px; /* Adjust based on the height of your fixed navbar */
 }

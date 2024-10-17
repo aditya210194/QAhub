@@ -46,11 +46,14 @@ footer {
   left: 0;
   bottom: 0;
   width: 100%;
+  position: inherit;
 }
 
 h1, h2 {
   color: #343a40;
+
 }
+
 
 form {
   max-width: 400px;

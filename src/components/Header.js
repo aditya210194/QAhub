@@ -5,7 +5,7 @@ import './Header.css'; // Import the CSS file
 
 const Header = () => {
     return (
-        <nav  className="navbar navbar-expand-lg navbar-dark bg-dark fixed-header">
+        <nav  className="navbar navbar-expand-lg navbar-dark bg-dark fixed-navbar">
             <div className="container">
                 <Link className="navbar-brand" to="/">
                     <img src={logo} alt="EduAdda Logo" style={{ width: '40px', height: '40px', marginRight: '10px' }} />

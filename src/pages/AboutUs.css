@@ -25,3 +25,7 @@
     padding-left: 20px; /* Space for the icon */
     margin-bottom: 10px; /* Space between items */
 }
+.fixed-second-header ul li {
+    background: none; /* Remove any background image */
+    padding-left: 0; /* Reset padding if necessary */
+}
