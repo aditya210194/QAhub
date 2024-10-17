@@ -46,7 +46,7 @@ p {
 }
 
 ol {
-    margin-left: 0px; /* Indent ordered lists */
+    margin-left: 0; /* Indent ordered lists */
 }
 
 ol li {

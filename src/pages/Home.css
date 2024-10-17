@@ -17,15 +17,15 @@
     color: white; /* Ensure the text is visible */
 
     border-bottom-style: solid;
-    border-top-width: 0px;
+    border-top-width: 0;
     border-top-style: solid;
 
     padding-left: 120px;
-    margin-left: 0px;
+    margin-left: 0;
     height: inherit;
     top: -81px;
-    bottom: 0px;
-    border-bottom-width: 0px;
+    bottom: 0;
+    border-bottom-width: 0;
 }
 .hero-section .container {
     position: relative;
@@ -34,7 +34,7 @@
 .hero-section::before {
     content: '';
     position: absolute;
-    top: 0px;
+    top: 0;
     left: 0;
     width: 100%;
     height: 100%;
