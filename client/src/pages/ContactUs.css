@@ -30,8 +30,7 @@
     position: relative;
 }
 
-.map-responsive iframe {
-    border: 0;
+.map-responsive iframe {    border: 0;
     height: 100%;
     width: 100%;
     position: absolute;

@@ -6,6 +6,7 @@ const SecondHeader = () => {
     return (
         <nav className="fixed-second-header">
             <ul className="nav-list">
+                <li><Link to="/software-testing">Software Testing</Link></li>
                 <li><Link to="/automation-testing">Automation Testing</Link></li>
                 <li><Link to="/manual-testing">Manual Testing</Link></li>
                 <li><Link to="/agile">Agile</Link></li>

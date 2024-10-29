@@ -4,9 +4,9 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './Home.css'; // Make sure to import your CSS file
 import SecondHeader from './SecondHeader'; // Adjust the path as needed
-import automationImg from 'C:/Users/AdityaPP/software-testing-edu/src/Automation.jpg';
-import manualTestingImg from 'C:/Users/AdityaPP/software-testing-edu/src/manual-testing.webp';
-import agileProcessImg from 'C:/Users/AdityaPP/software-testing-edu/src/agile-process.png';
+import automationImg from 'C:/Users/AdityaPP/software-testing-edu/client/src/Automation.jpg';
+import manualTestingImg from 'C:/Users/AdityaPP/software-testing-edu/client/src/manual-testing.webp';
+import agileProcessImg from 'C:/Users/AdityaPP/software-testing-edu/client/src/agile-process.png';
 
 
 

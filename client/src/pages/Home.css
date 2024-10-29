@@ -6,7 +6,7 @@
 /* Hero Section Styles */
 .hero-section {
     position: relative;
-    background-image: url('C:/Users/AdityaPP/software-testing-edu/src/HeroImg.png'); /* Make sure to update the path */
+    background-image: url('C:/Users/AdityaPP/software-testing-edu/client/src/HeroImg.png'); /* Make sure to update the path */
     background-size: cover; /* Ensure the image covers the entire hero section */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* No repeating of the background image */

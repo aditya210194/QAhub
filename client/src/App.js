@@ -14,7 +14,9 @@ import Agile from './pages/Agile';
 import InterviewQA from './pages/InterviewQA';
 import Resumes from './pages/Resumes';
 import AboutUs from "./pages/AboutUs";
+import SoftwareTesting from './pages/SoftwareTesting';
 // Import your CSS file
+
 
 const App = () => {
     return (
@@ -29,6 +31,7 @@ const App = () => {
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/about" element={<AboutUs />} />
                     {/* Topic Pages */}
+                    <Route path="/software-testing" element={<SoftwareTesting />} />
                     <Route path="/automation-testing" element={<AutomationTesting />} />
                     <Route path="/manual-testing" element={<ManualTesting />} />
                     <Route path="/agile" element={<Agile />} />

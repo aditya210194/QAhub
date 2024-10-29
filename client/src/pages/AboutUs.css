@@ -21,7 +21,7 @@
 }
 
 .about-us ul li {
-    background: url('C:/Users/AdityaPP/software-testing-edu/src/Logo.webp') no-repeat left center; /* Add a checkmark icon (replace with your icon path) */
+    background: url('C:/Users/AdityaPP/software-testing-edu/client/src/Logo.webp') no-repeat left center; /* Add a checkmark icon (replace with your icon path) */
     padding-left: 20px; /* Space for the icon */
     margin-bottom: 10px; /* Space between items */
 }

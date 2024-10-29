@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Courses.css';
-import automationImg from 'C:/Users/AdityaPP/software-testing-edu/src/Automation.jpg';
-import manualTestingImg from 'C:/Users/AdityaPP/software-testing-edu/src/manual-testing.webp';
-import agileProcessImg from 'C:/Users/AdityaPP/software-testing-edu/src/agile-process.png';
+import automationImg from 'C:/Users/AdityaPP/software-testing-edu/client/src/Automation.jpg';
+import manualTestingImg from 'C:/Users/AdityaPP/software-testing-edu/client/src/manual-testing.webp';
+import agileProcessImg from 'C:/Users/AdityaPP/software-testing-edu/client/src/agile-process.png';
 import SecondHeader from "./SecondHeader";
 
 const Courses = () => {
