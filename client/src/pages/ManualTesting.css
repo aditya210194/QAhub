@@ -1,22 +1,109 @@
-.manual-testing-page {
+/* Sidebar Styling */
+.sidebar {
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+    background-color: #f4f4f4;
     padding-top: 20px;
 }
 
-.manual-testing-page .section {
-    margin-bottom: 30px;
+/* Accordion header style */
+.accordion-button {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 5px;
 }
 
-.manual-testing-page h4 {
-    margin-bottom: 15px;
+/* Hover effect for accordion buttons */
+.accordion-button:hover {
+    background-color: #0056b3;
+}
+
+/* Active state of accordion items */
+.accordion-button:not(.collapsed) {
+    background-color: #0056b3;
+}
+
+/* Accordion body styles */
+.accordion-body {
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+}
+
+/* Sidebar list of tutorials */
+.accordion-body .btn-link {
+    font-size: 16px;
+    color: #007bff;
+    padding-left: 20px;
+    border: none;
+    background: none;
+    text-align: left;
+    width: 100%;
+}
+
+.accordion-body .btn-link:hover {
+    color: #0056b3;
     font-weight: bold;
 }
 
-.manual-testing-page ul {
-    list-style-type: disc;
-    padding-left: 20px;
+.accordion-body .btn-link.fw-bold {
+    font-weight: bold;
 }
-h1 {
-    font-size: 2.5rem; /* Increase the font size for main headings */
-    margin-bottom: 20px; /* Add spacing below the heading */
-    text-align: center; /* Center align the main heading */
+
+/* Main Content Styling */
+main {
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* Content headings */
+.main-content h4 {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Content paragraphs */
+.main-content p {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Add custom styling for buttons and accordion */
+.btn-link {
+    text-align: left;
+    font-size: 16px;
+    padding-left: 20px;
+    color: #007bff;
+}
+
+.btn-link:hover {
+    color: #0056b3;
+    font-weight: bold;
+}
+/* Content styling */
+.content {
+    margin-left: 150px; /* To avoid content overlap with sidebar */
+    padding: 20px;
+    overflow-y: auto; /* Content can scroll independently */
+    height: 100vh; /* Ensure content takes up the full viewport height */
+}
+/* Responsive Layout for Smaller Screens */
+@media (max-width: 768px) {
+    .sidebar {
+        position: relative;
+        max-height: none; /* Sidebar scrolls with page */
+    }
+
+    main {
+        margin-left: 0;
+    }
 }

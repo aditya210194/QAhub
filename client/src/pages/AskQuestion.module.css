@@ -1,0 +1,113 @@
+.askContainer {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.titleInput, .tagsInput {
+    font-size: 16px;
+}
+
+.editorWrapper {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+    min-height: 200px;
+}
+
+.toolbar {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.toolbar button {
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+    border-radius: 3px;
+}
+
+.toolbar button:hover {
+    background: #0056b3;
+}
+
+.textEditor {
+    min-height: 150px;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.backButton, .submitButton {
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.backButton {
+    background: #6c757d;
+    color: white;
+}
+
+.backButton:hover {
+    background: #5a6268;
+}
+
+.submitButton {
+    background: #28a745;
+    color: white;
+}
+
+.submitButton:hover {
+    background: #218838;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .askContainer {
+        padding: 15px;
+    }
+
+    .toolbar {
+        justify-content: center;
+    }
+
+    .toolbar button {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+
+    .textEditor {
+        font-size: 14px;
+    }
+}

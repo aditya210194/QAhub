@@ -1,40 +1,196 @@
-/* SecondHeader.css */
-.fixed-second-header {
+/* Add a unique class or ID to scope the styles specifically for the second header */
+.page-with-second-header .second-header {
     position: fixed;
-    top: 60px; /* Adjust this value based on the height of your first header */
-    width: 100%;
-    z-index: 999; /* Ensure it appears on top of the content */
-    background-color: #f8f9fa; /* Light background color */
-    border-bottom: 1px solid #ddd; /* Optional border to separate from content */
-    padding: 10px 0; /* Adds some vertical padding for the links */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+    top: 50px;
     left: 0;
+    width: 100%;
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+    z-index: 1000;
+    transition: top 0.3s ease-in-out;
+    overflow: visible; /* Ensure overflow is visible for dropdowns */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow */
+    font-size: 11pt;
+    white-space: nowrap;
 }
 
-.nav-list {
+.page-with-second-header .second-header.sticky {
+    top: 50px;
+}
+
+.page-with-second-header .scroll-container {
     display: flex;
-    justify-content: center;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    align-items: center;
+    overflow-x: auto;
+    padding: 0 75px;
+    white-space: nowrap;
+    gap: 22px;
+    scroll-behavior: smooth;
 }
 
-.nav-list li {
-    margin: 0 15px; /* Spacing between the list items */
+.page-with-second-header .nav-item {
+    position: relative; /* To position dropdown menu */
+    margin-right: 20px;
 }
 
-.nav-list a {
+.page-with-second-header .local-nav-link {
+    color: var(--text-color) !important; /* Black text for links */
     text-decoration: none;
-    color: #333; /* Adjust color to match your theme */
-    font-weight: 500;
-    font-size: 16px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 140px;
+    display: block;
+    transition: max-width 0.3s ease;
 }
 
-.nav-list a:hover {
-    color: #007bff; /* Link hover color */
+.page-with-second-header .local-nav-link.active-link {
+    font-weight: bold;
+    color: #000;
 }
 
-/* Ensure the body content is pushed down to make space for both headers */
+.page-with-second-header .local-nav-link:hover {
+    color: #007bff !important; /* Blue on hover */
+}
+
+/* Dropdown Menu Styles */
+.page-with-second-header .dropdown-menu {
+    position: absolute;
+    top: 100%; /* Place below the nav-item */
+    left: 0;
+    background-color: #ffffff; /* White background for dropdown */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow */
+    border: 1px solid #ddd;
+    z-index: 1050;
+    padding: 10px 0;
+    min-width: 200px;
+    display: block; /* Always visible */
+    overflow: visible; /* Ensure no content is clipped */
+}
+
+.page-with-second-header .dropdown-menu.open {
+    visibility: visible; /* Make dropdown visible */
+    opacity: 1; /* Ensure full opacity */
+}
+
+.page-with-second-header .dropdown-item {
+    padding: 8px 20px;
+    color: #000; /* Black text for dropdown items */
+    text-decoration: none;
+    display: block;
+}
+
+.page-with-second-header .dropdown-item:hover {
+    background-color: #0056b3; /* Light hover effect */
+}
+
+/* Important: Prevent clipping by parent containers */
 body {
-    padding-top: 120px; /* Adjust this value based on the total height of both headers */
+    overflow: visible;
+}
+
+.page-with-second-header .second-header,
+.page-with-second-header .scroll-container {
+    overflow: hidden;
+}
+
+.page-with-second-header .scroll-arrow {
+    border-radius: 0;
+    background-color: #007bff !important;
+}
+
+/* Mobile-Specific Styling for Second Header */
+@media (max-width: 767px) {
+    .page-with-second-header .second-header {
+        position: fixed;
+        top: 130px !important;
+        left: 0;
+        width: 100%;
+        background-color: var(--bg-color);
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        overflow: hidden;
+    }
+
+    /* Scrollable Navigation */
+    .page-with-second-header .scroll-container {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 10px;
+        padding: 0 10px;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+    }
+
+    /* Hide scrollbars */
+    .page-with-second-header .scroll-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide Scroll Arrows on Mobile */
+    .page-with-second-header .scroll-arrow {
+        display: none;
+    }
+
+    /* Navigation Links */
+    .page-with-second-header .local-nav-link {
+        font-size: 12px;
+        color: var(--text-color);
+        text-decoration: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block;
+        max-width: 100px; /* Limit link width */
+        padding: 5px 8px;
+    }
+
+    .page-with-second-header .local-nav-link.active-link {
+        font-weight: bold;
+        color: #000;
+    }
+
+    /* Dropdown Menu */
+    .page-with-second-header .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 150px;
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        padding: 5px 0;
+        z-index: 999;
+    }
+
+    /* Dropdown Items */
+    .page-with-second-header .dropdown-item {
+        font-size: 12px;
+        padding: 8px 12px;
+        text-decoration: none;
+        color: #333;
+        display: block;
+    }
+
+    .page-with-second-header .dropdown-item:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+}
+
+/* For tablets and medium screens (portrait orientation) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .page-with-second-header .scroll-container {
+        padding: 0 50px; /* Adjust padding for tablet screens */
+    }
+
+    .page-with-second-header .local-nav-link {
+        max-width: 160px; /* Increase max-width for medium screens */
+    }
+
+    .page-with-second-header .dropdown-menu {
+        min-width: 180px; /* Adjust dropdown width for medium screens */
+    }
 }

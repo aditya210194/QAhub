@@ -1,59 +1,193 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Button, Form, Badge } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { FaSearch, FaStar, FaClock, FaUserGraduate, FaFilter } from 'react-icons/fa';
+import CoursesData from './CoursesData';
 import './Courses.css';
-import automationImg from 'C:/Users/AdityaPP/software-testing-edu/client/src/Automation.jpg';
-import manualTestingImg from 'C:/Users/AdityaPP/software-testing-edu/client/src/manual-testing.webp';
-import agileProcessImg from 'C:/Users/AdityaPP/software-testing-edu/client/src/agile-process.png';
-import SecondHeader from "./SecondHeader";
 
-const Courses = () => {
-    const courses = [
-        {
-            id: 1,
-            title: "Automation Testing",
-            description: "Learn the fundamentals of Automation Testing.",
-            image: automationImg, // Replace with actual image path
-            detailsLink: "/courses/automation-testing",
-        },
-        {
-            id: 2,
-            title: "Manual Testing",
-            description: "Understand the concepts of Manual Testing.",
-            image: manualTestingImg , // Replace with actual image path
-            detailsLink: "/courses/manual-testing",
-        },
-        {
-            id: 3,
-            title: "Agile Methodologies",
-            description: "Dive into Agile practices and methodologies.",
-            image: agileProcessImg, // Replace with actual image path
-            detailsLink: "/courses/agile-methodologies",
-        },
-        // Add more courses as needed
-    ];
+const CoursesPage = () => {
+    const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterLevel, setFilterLevel] = useState('all');
+    const [filterCategory, setFilterCategory] = useState('all');
+    const [filteredCourses, setFilteredCourses] = useState(CoursesData);
+    const [sortOption, setSortOption] = useState('popularity');
 
+    useEffect(() => {
+        // Filter courses based on search term, level and category
+        let result = CoursesData;
+
+        if (searchTerm) {
+            result = result.filter(course =>
+                course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                course.description.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        if (filterLevel !== 'all') {
+            result = result.filter(course => course.level === filterLevel);
+        }
+
+        if (filterCategory !== 'all') {
+            result = result.filter(course => course.category === filterCategory);
+        }
+
+        // Sort courses
+        if (sortOption === 'popularity') {
+            result.sort((a, b) => b.rating - a.rating);
+        } else if (sortOption === 'newest') {
+            result.sort((a, b) => new Date(b.date) - new Date(a.date));
+        } else if (sortOption === 'duration') {
+            result.sort((a, b) => a.durationValue - b.durationValue);
+        }
+
+        setFilteredCourses(result);
+    }, [searchTerm, filterLevel, filterCategory, sortOption]);
+
+    const handleLearnMore = (courseId) => {
+        navigate(`/course/${courseId}`);
+    };
+
+    // Get unique categories
+    const categories = [...new Set(CoursesData.map(course => course.category))];
 
     return (
-        <div className="container">
-            {/* Include the second header here */}
-            <SecondHeader/>
-            <h2 className="text-center mb-4">Available Courses</h2>
-            <div className="row">
-                {courses.map((course) => (
-                    <div className="col-md-4" key={course.id}>
-                        <div className="card">
-                            <img src={course.image} className="card-img-top" alt={course.title} />
-                            <div className="card-body">
-                                <h5 className="card-title">{course.title}</h5>
-                                <p className="card-text">{course.description}</p>
-                                <Link to={course.detailsLink} className="btn btn-primary">Learn More</Link>
+        <div className="courses-page">
+            {/* Hero Section */}
+            <div className="courses-hero">
+                <div className="container">
+                    <h1 className="hero-title">Master Software Testing</h1>
+                    <p className="hero-subtitle">Learn from industry experts with our comprehensive courses</p>
+                </div>
+            </div>
+
+            <Container className="py-5">
+                {/* Search and Filters */}
+                <div className="courses-controls mb-5">
+                    <div className="search-container">
+                        <div className="search-bar">
+                            <FaSearch className="search-icon" />
+                            <input
+                                type="text"
+                                placeholder="Search courses..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="filters-container">
+                            <div className="filter-group">
+                                <FaFilter className="filter-icon" />
+                                <Form.Select
+                                    value={filterLevel}
+                                    onChange={(e) => setFilterLevel(e.target.value)}
+                                >
+                                    <option value="all">All Levels</option>
+                                    <option value="Beginner">Beginner</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Advanced">Advanced</option>
+                                </Form.Select>
+                            </div>
+
+                            <div className="filter-group">
+                                <Form.Select
+                                    value={filterCategory}
+                                    onChange={(e) => setFilterCategory(e.target.value)}
+                                >
+                                    <option value="all">All Categories</option>
+                                    {categories.map((category, index) => (
+                                        <option key={index} value={category}>{category}</option>
+                                    ))}
+                                </Form.Select>
+                            </div>
+
+                            <div className="filter-group">
+                                <Form.Select
+                                    value={sortOption}
+                                    onChange={(e) => setSortOption(e.target.value)}
+                                >
+                                    <option value="popularity">Sort by: Popularity</option>
+                                    <option value="newest">Sort by: Newest</option>
+                                    <option value="duration">Sort by: Duration</option>
+                                </Form.Select>
                             </div>
                         </div>
                     </div>
-                ))}
-            </div>
+
+                    <div className="category-tags">
+                        {categories.map((category, index) => (
+                            <button
+                                key={index}
+                                className={`category-tag ${filterCategory === category ? 'active' : ''}`}
+                                onClick={() => setFilterCategory(category)}
+                            >
+                                {category}
+                            </button>
+                        ))}
+                        <button
+                            className={`category-tag ${filterCategory === 'all' ? 'active' : ''}`}
+                            onClick={() => setFilterCategory('all')}
+                        >
+                            All Categories
+                        </button>
+                    </div>
+                </div>
+
+                {/* Courses Grid */}
+                {filteredCourses.length > 0 ? (
+                    <Row>
+                        {filteredCourses.map((course) => (
+                            <Col key={course.id} md={4} sm={6} className="mb-4">
+                                <Card className="course-card h-100">
+                                    <div className="card-img-container">
+                                        <Card.Img variant="top" src={course.image} alt={course.title} />
+                                        <div className="card-badge">{course.category}</div>
+                                        <div className="rating-badge">
+                                            <FaStar /> {course.rating}
+                                        </div>
+                                    </div>
+                                    <Card.Body>
+                                        <Card.Title>{course.title}</Card.Title>
+                                        <div className="course-meta">
+                                            <span className="meta-item">
+                                                <FaUserGraduate /> {course.instructor}
+                                            </span>
+                                            <span className="meta-item">
+                                                <FaClock /> {course.duration}
+                                            </span>
+                                        </div>
+                                        <Card.Text>{course.description}</Card.Text>
+                                        <div className="course-footer">
+                                            <Badge pill bg="info">{course.level}</Badge>
+                                            <Button
+                                                variant="primary"
+                                                onClick={() => handleLearnMore(course.id)}
+                                                className="course-btn"
+                                            >
+                                                View Course
+                                            </Button>
+                                        </div>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ))}
+                    </Row>
+                ) : (
+                    <div className="no-results text-center py-5">
+                        <h3>No courses found</h3>
+                        <p>Try adjusting your filters or search term</p>
+                        <Button variant="outline-primary" onClick={() => {
+                            setSearchTerm('');
+                            setFilterLevel('all');
+                            setFilterCategory('all');
+                        }}>
+                            Reset Filters
+                        </Button>
+                    </div>
+                )}
+            </Container>
         </div>
     );
 };
 
-export default Courses;
+export default CoursesPage;

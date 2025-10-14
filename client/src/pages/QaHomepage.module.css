@@ -1,0 +1,206 @@
+/* QaHomepage.module.css */
+.qaHomepage {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.askButton {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.askButton:hover {
+    background-color: #218838;
+}
+
+.askButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.controls select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.paginationInfo {
+    color: #666;
+    font-size: 14px;
+}
+
+.errorAlert {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.retryButton {
+    background: none;
+    border: 1px solid #721c24;
+    color: #721c24;
+    padding: 5px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.retryButton:hover {
+    background-color: #721c24;
+    color: #fff;
+}
+
+.questionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.questionCard {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.questionCard:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.questionTitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.questionDescription {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.questionMeta {
+    display: flex;
+    gap: 15px;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.questionSkeleton {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.skeletonTitle {
+    height: 20px;
+    width: 60%;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.skeletonDescription {
+    height: 16px;
+    width: 80%;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.skeletonMeta {
+    height: 14px;
+    width: 40%;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.paginationButton {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.paginationButton:hover {
+    background-color: #0056b3;
+}
+
+.paginationButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.paginationButton.active {
+    background-color: #0056b3;
+}
+
+.noQuestions {
+    text-align: center;
+    color: #666;
+    font-size: 18px;
+    margin-top: 40px;
+}

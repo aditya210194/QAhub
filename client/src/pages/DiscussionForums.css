@@ -1,0 +1,224 @@
+/* Global styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Body */
+body {
+    background-color: #f4f7fc;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* Container for the entire DiscussionForum layout */
+.discussion-forum-container {
+    display: flex;
+    height: 100vh;
+    margin-bottom: 5px;
+    margin-top: 40px;
+}
+
+/* Left Sidebar - Discussions List */
+.discussion-sidebar {
+    width: 30%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-right: 2px solid #ddd;
+    box-shadow: 4px 0 6px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+/* Discussion item styles */
+.discussion-item {
+    cursor: pointer;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    border: 1px solid #e1e1e1;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.discussion-item:hover {
+    background-color: #007bff;
+    color: #fff;
+    transform: translateX(5px);
+}
+
+.discussion-item.selected {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Create New Discussion Form */
+.create-discussion-form {
+    margin-top: 30px;
+    border-top: 2px solid #f0f0f0;
+    padding-top: 20px;
+}
+
+.create-discussion-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: border 0.3s ease;
+}
+
+.create-discussion-form input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.create-discussion-form button {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-discussion-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Right Chat Window */
+.chat-window {
+    width: 70%;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: -4px 0 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-window h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.messages-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.message-item {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.message-item strong {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.message-item p {
+    margin-top: 5px;
+    color: #333;
+}
+
+.message-item.new {
+    animation: newMessageAnimation 0.5s ease-in-out;
+}
+
+/* Message Input */
+.message-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.message-input input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+    transition: border 0.3s ease;
+}
+
+.message-input input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.message-input button {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.message-input button:hover {
+    background-color: #0056b3;
+}
+
+/* New Discussion Animation */
+@keyframes newMessageAnimation {
+    0% {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1200px) {
+    .discussion-sidebar {
+        width: 40%;
+    }
+    .chat-window {
+        width: 60%;
+    }
+}
+
+@media (max-width: 768px) {
+    .discussion-sidebar {
+        width: 100%;
+        padding: 15px;
+        border-bottom: 2px solid #ddd;
+    }
+    .chat-window {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .discussion-sidebar {
+        width: 100%;
+        padding: 10px;
+    }
+    .chat-window {
+        width: 100%;
+    }
+
+    .message-input input {
+        font-size: 14px;
+    }
+
+    .create-discussion-form input {
+        font-size: 14px;
+    }
+}

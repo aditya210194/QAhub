@@ -1,30 +1,341 @@
-/* Header.css */
-.fixed-navbar {
+/* Default light mode styles */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --highlight-color: #007bff; /* Highlight color for hover effects */
+    --dark-bg-color: #1f1f1f; /* Dark background for navbar */
+    --dark-text-color: #ffffff; /* Dark text color for navbar */
+}
 
+/* Apply global styles */
+body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+    font-family: 'Arial', sans-serif;
+    padding-top: 80px; /* Ensure content doesn't overlap navbar */
+}
+
+/* Dark Mode Styles for the body */
+body.dark-mode {
+    background-color: var(--dark-bg-color);
+    color: var(--dark-text-color);
+}
+
+/* Navbar Styles */
+.fixed-navbar {
+    position: fixed !important;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000; /* Higher than the second header to ensure it stays on top */
-    background-color: #343a40; /* Dark background for the main header */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
-    padding: 10px 0;
-    position: fixed !important;
+    z-index: 1000;
+    background-color: var(--bg-color) !important; /* Light background for better readability */
+    color: var(--text-color) !important;
+    padding: 15px 20px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    height: 52px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: inherit;
+    font-weight: inherit;
 }
 
+.fixed-navbar.scrolled {
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo Styling */
 .navbar-brand img {
-    width: 40px;
-    height: 40px;
+    width: 120px;
+    height: auto;
+    transition: transform 0.3s ease;
 }
 
+.navbar-brand img:hover {
+    transform: scale(1.1);
+}
+
+/* Navigation Links */
 .navbar-nav .nav-item .nav-link {
-    color: #fff; /* White text color for the main header links */
+    color: var(--text-color) !important;
+    font-size: 16px;  /* Reduced font size */
+    font-weight: 600;
+    margin: 0 15px;
+    padding: 10px 15px;
+    text-transform: capitalize;
+    transition: color 0.3s ease;
+    border-radius: 8px;
+    text-decoration: none;
 }
 
-.navbar-nav .nav-item .nav-link:hover {
-    color: #007bff; /* Optional: Add hover effect */
+.navbar-nav .nav-item .nav-link:hover,
+.navbar-nav .nav-item .nav-link.active {
+    color: var(--highlight-color); /* Only text color changes */
 }
 
-/* Make sure to offset body content based on the total height of both headers */
-body {
-    padding-top: 70px; /* Adjust based on the height of your fixed navbar */
+/* Night Mode Toggle Button */
+.btn-toggle-mode {
+    font-size: 16px;
+    font-weight: 600;
+    background-color: var(--highlight-color);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-toggle-mode:hover {
+    background-color: #0056b3;
+}
+
+/* Navbar Dropdown and Mobile Menu Styles */
+.navbar-toggler {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    font-size: 24px;
+    color: #333333;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.navbar-toggler:hover {
+    color: var(--highlight-color);
+}
+
+.collapse.navbar-collapse {
+    padding: 5px;
+}
+
+.collapse.navbar-collapse.show {
+    border-radius: 10px;
+}
+
+/* Mobile Header Styles */
+@media (max-width: 768px) {
+    .navbar-toggler {
+        border: none;
+        background: white;
+        outline: none;
+        font-size: 24px;
+    }
+
+    .navbar-toggler-icon {
+        width: 30px;
+        height: 3px;
+        background-color: #fff;
+        display: block;
+        position: relative;
+    }
+
+    .navbar-toggler-icon::before,
+    .navbar-toggler-icon::after {
+        content: '';
+        width: 30px;
+        height: 3px;
+        background-color: #fff;
+        position: absolute;
+        left: 0;
+        transition: 0.3s ease-in-out;
+    }
+
+    .navbar-toggler-icon::before {
+        top: -8px;
+    }
+
+    .navbar-toggler-icon::after {
+        top: 8px;
+    }
+
+    .navbar-collapse {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: dodgerblue;
+        z-index: 1000;
+        padding: 10px 0;
+        display: none;
+    }
+
+    .navbar-collapse.show {
+        display: block;
+    }
+
+    .navbar-nav {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .navbar-nav .nav-item {
+        width: 100%;
+    }
+
+    .navbar-nav .nav-item .nav-link {
+        color: #fff !important;
+        padding: 12px;
+        display: block;
+        transition: background 0.3s ease-in-out;
+    }
+
+    .navbar-nav .nav-item .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-toggle-mode {
+        width: 100%;
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease-in-out;
+    }
+
+    .btn-toggle-mode:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+    /* Mobile Button Styles */
+    .btn-primary,
+    .btn-outline-primary {
+        width: 100%;
+        padding: 12px;
+        text-align: center;
+        display: block;
+    }
+    .btn{
+            width: 90%;
+    }
+}
+
+/* Night Mode Styles - Scoped to Navbar */
+.fixed-navbar.dark-mode {
+    background-color: var(--dark-bg-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.fixed-navbar.dark-mode .nav-link {
+    color: var(--dark-text-color);
+}
+
+.fixed-navbar.dark-mode .nav-link:hover {
+    color: #ffffff;
+}
+
+.fixed-navbar.dark-mode .btn-toggle-mode {
+    background-color: #333333;
+    color: #f1f1f1;
+}
+
+.fixed-navbar.dark-mode .btn-toggle-mode:hover {
+    background-color: #555555;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888888;
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555555;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Avatar Styles */
+.avatar {
+    width: 40px; /* Adjust the size */
+    height: 40px; /* Adjust the size */
+    border-radius: 50%; /* Circular avatar */
+    object-fit: cover; /* Ensures the image fits in the circle */
+    cursor: pointer; /* Show pointer cursor on hover */
+    transition: transform 0.3s ease-in-out; /* Smooth hover effect */
+}
+
+/* Avatar Dropdown Wrapper */
+.avatar-dropdown {
+    position: relative;
+
+}
+
+/* Dropdown menu styling */
+.dropdown-content {
+    display: none; /* Hide dropdown by default */
+    position: absolute;
+    top: 100%; /* Position the dropdown below the avatar */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    z-index: 100;
+}
+
+/* Show dropdown when avatar is hovered */
+.avatar-dropdown:hover .dropdown-content {
+    display: block;
+    top: 120%; /* Adjust dropdown position */
+}
+
+/* Dropdown button styling */
+.dropdown-content button {
+    width: 100%;
+    padding: 8px;
+    background-color: #fff;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect on dropdown items */
+.dropdown-content button:hover {
+    background-color: dodgerblue;
+}
+
+/* Prevent menu from closing while hovering over dropdown */
+.avatar-dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Hide the dropdown if mouse leaves the avatar or dropdown */
+.avatar-dropdown {
+    display: inline-block;
+}
+
+.avatar-dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.avatar-dropdown:hover .dropdown-content {
+    display: block;
+    top: 120%; /* Adjust dropdown position */
+}
+
+.avatar-dropdown:hover {
+    cursor: pointer;
+}
+.navbar,
+.container,
+.second-header {
+    overflow: visible;
+    position: static;
+}
+/* Larger Screens - Centered Navbar */
+@media (min-width: 1400px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+        max-width: 1480px !important ;
+    }
 }

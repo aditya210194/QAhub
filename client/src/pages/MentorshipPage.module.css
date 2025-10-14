@@ -1,0 +1,203 @@
+/* General Container */
+.mentorshipContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa, #dee2e6);
+    padding: 50px 20px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Role Selection */
+.roleSelection {
+    text-align: center;
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-in-out;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Headings */
+.heading {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #343a40;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.subheading {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-bottom: 25px;
+}
+
+/* Role Selection Buttons */
+.roleButton {
+    font-size: 1.2rem;
+    padding: 14px 24px;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+    border: none;
+    outline: none;
+}
+
+.roleButton:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.roleButton:focus {
+    outline: 2px solid rgba(0, 123, 255, 0.5);
+}
+
+/* Form Card */
+.formCard {
+    width: 100%;
+    max-width: 600px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-in-out;
+    overflow: hidden;
+    padding: 25px;
+}
+
+/* Progress Bar */
+.progressBar {
+    height: 12px;
+    border-radius: 8px;
+    background: #e9ecef;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745, #218838);
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+    transition: width 0.4s ease-in-out;
+}
+
+/* Form Labels */
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Input Fields */
+.form-control {
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.3);
+    outline: none;
+}
+
+/* Select Fields */
+select.form-control {
+    cursor: pointer;
+}
+
+/* Error Messages */
+.error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* Buttons */
+.backButton,
+.nextButton,
+.submitButton {
+    width: 100%;
+    font-size: 1rem;
+    padding: 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    font-weight: 600;
+    border: none;
+    outline: none;
+}
+
+/* Back Button */
+.backButton {
+    background: #6c757d;
+    color: white;
+}
+
+.backButton:hover {
+    background: #5a6268;
+}
+
+/* Next Button */
+.nextButton {
+    background: linear-gradient(90deg, #007bff, #0056b3);
+    color: white;
+}
+
+.nextButton:hover {
+    background: linear-gradient(90deg, #0056b3, #003f7f);
+}
+
+/* Submit Button */
+.submitButton {
+    background: linear-gradient(90deg, #28a745, #218838);
+    color: white;
+}
+
+.submitButton:hover {
+    background: linear-gradient(90deg, #218838, #1e7e34);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .formCard, .roleSelection {
+        max-width: 90%;
+        padding: 30px;
+    }
+
+    .heading {
+        font-size: 2rem;
+    }
+
+    .subheading {
+        font-size: 1rem;
+    }
+
+    .roleButton {
+        font-size: 1rem;
+        padding: 12px 20px;
+    }
+
+    .backButton, .nextButton, .submitButton {
+        font-size: 0.9rem;
+    }
+}

@@ -1,9 +1,26 @@
-.footer {
-    padding: 10px 20px; /* Reduce padding */
-    font-size: 0.875rem; /* Make the font slightly smaller *
-    text-align: center;
-    position: bottom; /* Ensure footer is still at the bottom */
-    width: 100%;
+/* Footer.css */
 
+/* Default footer styles */
+.footer {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding: 20px 0;
+    text-align: center;
+    font-size: 14px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: bold;
 }
 
+.footer p {
+    margin: 0;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .footer {
+        font-size: 12px;
+    }
+}
