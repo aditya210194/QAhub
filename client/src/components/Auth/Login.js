@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { loginUser } from '../services/authService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,  useSearchParams } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaGoogle, FaGithub, FaUser, FaLock } from 'react-icons/fa';
 import './Login.css';
+import SecondHeader from "../../pages/SecondHeader";
 
 const Login = () => {
     const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -10,47 +11,66 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
+    const redirectTo = searchParams.get('next') || '/profile';
+    console.log('Login page - redirectTo:', redirectTo);
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
+    const isValidRedirect = (url) => {
+             if (!url) return false;
+             // Allow only relative URLs starting with '/', no external domains or "//"
+             return url.startsWith('/') && !url.includes('//') && !url.includes('\\');
+         };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!credentials.email || !credentials.password) {
-            setError('Both fields are required');
-            return;
-        }
+   const handleSubmit = async (e) => {
+       e.preventDefault();
+       if (!credentials.email || !credentials.password) {
+           setError('Both fields are required');
+           return;
+       }
 
-        setError('');
-        setLoading(true);
+       setError('');
+       setLoading(true);
 
-        try {
-            const data = await loginUser(credentials);
-            if (!data.token) throw new Error("No token received from server");
+       try {
+           const data = await loginUser(credentials);
+           if (!data.token) throw new Error("No token received from server");
 
-            sessionStorage.setItem('token', data.token);
-            sessionStorage.setItem('user', JSON.stringify(data.user));
+           sessionStorage.setItem('token', data.token);
+           sessionStorage.setItem('user', JSON.stringify(data.user));
+           window.dispatchEvent(new Event("storage"));
 
-            // Notify other components about login status
-            window.dispatchEvent(new Event("storage"));
-
-            navigate('/profile'); // Redirect after login
-        } catch (err) {
-            setError(err.response?.data?.message || 'Invalid credentials');
-        } finally {
-            setLoading(false);
-        }
-    };
+           // Validate and navigate only once
+           const safeRedirect = isValidRedirect(redirectTo) ? redirectTo : '/profile';
+           navigate(safeRedirect);
+       } catch (err) {
+           setError(err.response?.data?.message || 'Invalid credentials');
+       } finally {
+           setLoading(false);
+       }
+   };
 
     // Demo social login handlers
     const handleGoogleLogin = () => {
         console.log("Google login clicked");
-        // Implement actual Google OAuth here
+        /* Implement actual Google OAuth here
+        import { GoogleLogin } from '@react-oauth/google';
+
+                                              <GoogleLogin
+                                                onSuccess={credentialResponse => {
+                                                  console.log(credentialResponse);
+                                                }}
+                                                onError={() => {
+                                                  console.log('Login Failed');
+                                                }}
+
+                                         />   */
     };
 
     const handleGithubLogin = () => {
@@ -59,7 +79,10 @@ const Login = () => {
     };
 
     return (
+     <>
+            <SecondHeader />
         <div className="login-container">
+
             <div className="login-card">
                 <div className="login-header">
                     <h2>Welcome Back</h2>
@@ -169,6 +192,7 @@ const Login = () => {
                 </div>
             </div>
         </div>
+     </>
     );
 };
 

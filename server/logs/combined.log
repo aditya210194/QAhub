@@ -352,3 +352,127 @@
 2025-08-13 15:00:00 [[32minfo[39m]: Successfully updated trending scores
 2025-08-13 16:00:00 [[32minfo[39m]: Successfully updated trending scores
 2025-08-13 17:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-13 19:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-13 20:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-13 21:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-13 22:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-13 23:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-16 11:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-16 12:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-16 13:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-16 14:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-16 15:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-16 16:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-16 17:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-16 18:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-16 19:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-16 23:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-17 00:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-17 11:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-17 12:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-17 13:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-17 14:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-17 15:00:30 [[31merror[39m]: MongoServerSelectionError: getaddrinfo ENOTFOUND ac-zxhxg84-shard-00-01.pmcpbkw.mongodb.net
+    at Topology.selectServer (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\sdam\topology.js:320:38)
+    at async tryOperation (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\operations\execute_operation.js:143:18)
+    at async executeOperation (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\operations\execute_operation.js:73:16)
+    at async FindCursor._initialize (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\find_cursor.js:60:26)
+    at async FindCursor.cursorInit (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:607:27)
+    at async FindCursor.fetchBatch (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:641:13)
+    at async FindCursor.next (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:323:17)
+    at async [Symbol.asyncIterator] (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:240:34)
+    at async FindCursor.toArray (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:400:26)
+    at async model.Query._find (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongoose\lib\query.js:2363:14)
+2026-03-17 16:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-17 23:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-18 11:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-18 12:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-18 13:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-18 14:00:02 [[32minfo[39m]: Successfully updated trending scores
+2026-03-18 15:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-18 16:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-18 17:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-18 18:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-19 12:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-19 13:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-19 14:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-19 15:00:02 [[32minfo[39m]: Successfully updated trending scores
+2026-03-19 16:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-19 17:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-19 18:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-19 19:00:03 [[32minfo[39m]: Successfully updated trending scores
+2026-03-19 20:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-19 21:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-19 22:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-20 12:00:06 [[32minfo[39m]: Successfully updated trending scores
+2026-03-20 13:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-20 14:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-20 15:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-20 16:00:16 [[32minfo[39m]: Successfully updated trending scores
+2026-03-20 17:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-20 18:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-20 19:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-20 20:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-20 21:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-20 22:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 11:00:03 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 12:00:02 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 13:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 14:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 15:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 16:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 17:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 18:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 19:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 20:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 21:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 22:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-21 23:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-22 12:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-22 13:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-22 14:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-22 15:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-22 16:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-22 17:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-22 18:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-22 19:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-22 20:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-22 21:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-22 22:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-23 11:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-23 12:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-23 13:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-23 15:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-23 16:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-23 17:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-23 18:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-23 19:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-23 20:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-23 21:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-23 22:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-24 10:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-24 11:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-24 12:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-24 13:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-24 14:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-24 15:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-30 12:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-30 13:00:03 [[32minfo[39m]: Successfully updated trending scores
+2026-03-30 14:00:30 [[31merror[39m]: MongoServerSelectionError: getaddrinfo ENOTFOUND ac-zxhxg84-shard-00-00.pmcpbkw.mongodb.net
+    at Topology.selectServer (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\sdam\topology.js:320:38)
+    at async tryOperation (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\operations\execute_operation.js:143:18)
+    at async executeOperation (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\operations\execute_operation.js:73:16)
+    at async FindCursor._initialize (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\find_cursor.js:60:26)
+    at async FindCursor.cursorInit (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:607:27)
+    at async FindCursor.fetchBatch (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:641:13)
+    at async FindCursor.next (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:323:17)
+    at async [Symbol.asyncIterator] (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:240:34)
+    at async FindCursor.toArray (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:400:26)
+    at async model.Query._find (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongoose\lib\query.js:2363:14)
+2026-03-30 15:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-30 16:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-30 17:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-03-30 18:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-30 19:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-30 20:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-03-31 10:00:02 [[32minfo[39m]: Successfully updated trending scores

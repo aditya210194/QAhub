@@ -3,6 +3,7 @@ import { registerUser } from '../services/authService';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaUser, FaEnvelope, FaLock, FaSignature } from 'react-icons/fa';
 import './Register.css';
+import SecondHeader from "../../pages/SecondHeader";
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -89,6 +90,8 @@ const Register = () => {
     };
 
     return (
+    <>
+                <SecondHeader />
         <div className="register-container">
             <div className="register-card">
                 <div className="register-header">
@@ -223,7 +226,7 @@ const Register = () => {
                 </form>
 
                 <div className="terms-agreement">
-                    By registering, you agree to our <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy Policy</Link>
+                    By registering, you agree to our <Link to="/terms-and-conditions">Terms of Service</Link> and <Link to="/privacy-policy">Privacy Policy</Link>
                 </div>
 
                 <div className="login-redirect">
@@ -231,6 +234,7 @@ const Register = () => {
                 </div>
             </div>
         </div>
+    </>
     );
 };
 

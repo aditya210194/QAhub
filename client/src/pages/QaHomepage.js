@@ -114,6 +114,23 @@ const QaHomepage = () => {
                     Showing page {page} of {totalPages}
                 </span>
             </div>
+             {/* NEW INFO BOX */}
+                    <div className={styles.infoBox}>
+                        <div className={styles.infoBoxIcon}>💡</div>
+                        <div className={styles.infoBoxContent}>
+                            <h3 className={styles.infoBoxTitle}>QA Community Q&A</h3>
+                            <p className={styles.infoBoxText}>
+                                Have a testing question? Stuck with a bug? This is the place to ask and answer.
+                                Our community of QA professionals is here to help you grow.
+                            </p>
+                            <ul className={styles.infoBoxList}>
+                                <li><span>❓</span> Ask any testing-related question</li>
+                                <li><span>💬</span> Get answers from experienced testers</li>
+                                <li><span>🏆</span> Earn reputation points for helpful answers</li>
+                                <li><span>🔍</span> Search previous answers for quick solutions</li>
+                            </ul>
+                        </div>
+                    </div>
 
             {error && (
                 <div className={styles.errorAlert}>

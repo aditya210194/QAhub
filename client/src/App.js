@@ -73,12 +73,20 @@ const App = () => {
                     <Route path="/" element={<Home />} />
                     <Route path="/terms-and-conditions" element={<TermsConditions />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                    <Route path="/courses" element={<Courses />} />
+                    <Route
+                      path="/courses"
+                      element={
+                        <ProtectedRoute>
+                          <Courses />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="/course/:courseId" element={<ProtectedRoute><CourseDetailPage /></ProtectedRoute>} />
                     <Route path="/articles" element={<Articles />} />
                     <Route path="/resources" element={<Resources />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/about" element={<AboutUs />} />
-                    <Route path="/course/:courseId" element={<CourseDetailPage />} />
+
 
                     {/* Topic Pages with Error Boundaries */}
                     <Route path="/software-testing" element={<ErrorBoundaryRoute element={SoftwareTesting} />} />

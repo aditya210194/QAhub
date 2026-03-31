@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchTutorials } from '../components/services/tutorialsAPI';
 import { transformApiResponse } from '../utils/tutorialUtils';
 
-const useTutorialData = () => {
+const useTutorialData = (fileName = 'software-testing.json') => {
     const [contentData, setContentData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -11,7 +11,7 @@ const useTutorialData = () => {
         const loadContent = async () => {
             try {
                 setLoading(true);
-                const data = await fetchTutorialContent();
+                const data = await fetchTutorialContent(fileName);
                 setContentData(data);
             } catch (err) {
                 console.error('Content fetch failed:', err);
@@ -22,35 +22,33 @@ const useTutorialData = () => {
         };
 
         loadContent();
-    }, []);
+    }, [fileName]);
 
     return { contentData, loading, error };
 };
 
 // Reusable fetch function
-export const fetchTutorialContent = async () => {
+export const fetchTutorialContent = async (fileName = 'software-testing.json') => {
     console.log('Fetching tutorials in', process.env.REACT_APP_API_MODE, 'mode');
 
     try {
         if (process.env.REACT_APP_API_MODE === 'local') {
-            // Fetch from local JSON
-            const response = await fetch(process.env.REACT_APP_LOCAL_TUTORIALS_PATH);
+            const response = await fetch(`/data/${fileName}`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
-            console.log('Local data loaded:', data);
+            console.log('Local data loaded:', fileName);
             return transformApiResponse(data);
         }
 
-        // Fetch from API service
-        const apiResponse = await fetchTutorials();
+        const apiResponse = await fetchTutorials(fileName);
         return transformApiResponse(apiResponse);
+
     } catch (error) {
         console.error('Content fetch failed:', error);
-        // Return fallback structure (avoid JSX inside data!)
         return {
             "Getting Started": {
                 tutorials: {
-                    "Introduction to Testing": {
+                    "Introduction": {
                         id: "intro",
                         level: "Beginner",
                         duration: "10 min",
@@ -62,5 +60,6 @@ export const fetchTutorialContent = async () => {
         };
     }
 };
+
 
 export default useTutorialData;

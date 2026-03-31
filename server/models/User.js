@@ -18,8 +18,16 @@ const userSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     resetPasswordCode: { type: String }, // Store the reset code
     resetPasswordExpires: { type: Date }, // Store the expiration time
-    role: { type: String, enum: ['User', 'Mentor'], default: 'User' },
-    mentorStatus: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' }
+     role: {
+            type: String,
+            enum: ['User', 'Mentee', 'Mentor', 'Admin'],
+            default: 'User'
+        },
+    mentorStatus: {
+           type: String,
+           enum: ['Pending', 'Approved', 'Rejected'],
+           default: 'Pending'
+       }
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);

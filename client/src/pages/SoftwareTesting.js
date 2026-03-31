@@ -31,7 +31,7 @@ const SoftwareTesting = () => {
     const [isOnline, setIsOnline] = useState(navigator.onLine);
 
     // Hooks
-    const { contentData, loading, error } = useTutorialData();
+    const { contentData, loading, error } = useTutorialData('software-testing.json');
     const {
         activeTutorial,
         recentlyViewed,

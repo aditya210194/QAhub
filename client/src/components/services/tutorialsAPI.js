@@ -25,30 +25,37 @@ apiClient.interceptors.response.use(
     }
 );
 
-export const fetchTutorials = async () => {
+export const fetchTutorials = async (fileName = 'software-testing.json') => {
     if (new URLSearchParams(window.location.search).has('mockError')) {
         throw new Error('Simulated API failure');
     }
+
+    // Local mode (read from /public/data/)
     if (process.env.REACT_APP_API_MODE === 'local') {
-        // Local JSON fallback
-        await new Promise(resolve => setTimeout(resolve, 800));
-        const response = await fetch(process.env.REACT_APP_LOCAL_TUTORIALS_PATH);
+        await new Promise(resolve => setTimeout(resolve, 800)); // Simulate delay
+        const filePath = `${process.env.REACT_APP_LOCAL_DATA_PATH}${fileName}`;
+        console.log('Fetching local file:', filePath);
+
+        const response = await fetch(filePath);
+        if (!response.ok) throw new Error(`Failed to load ${fileName}`);
         const data = await response.json();
         console.log('Using local mock data', data);
         return data;
     }
 
-    // Real API call
+    // Production mode (API call)
     try {
         const response = await apiClient.get(process.env.REACT_APP_TUTORIALS_ENDPOINT);
         console.log('Using live API data', response.data);
         return response.data;
     } catch (error) {
         console.error('API failed, falling back to local data');
-        const localResponse = await fetch(process.env.REACT_APP_LOCAL_TUTORIALS_PATH);
+        const fallbackFile = `${process.env.REACT_APP_LOCAL_DATA_PATH}${fileName}`;
+        const localResponse = await fetch(fallbackFile);
         return localResponse.json();
     }
 };
+
 
 
 export const trackTutorialProgress = async (tutorialId, progress) => {

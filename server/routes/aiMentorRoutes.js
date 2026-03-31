@@ -1,14 +1,19 @@
+// routes/aiMentorRoutes.js
 const express = require('express');
-const { getAiMentorResponse } = require('../controllers/aiMentorController');
+const {
+    getAiMentorResponse,
+    getAiMentorResponseWithFiles,
+    getAiConversation,
+    deleteAiConversation
+} = require('../controllers/aiMentorController');
+const { authenticate } = require('../middleware/authenticate');
 
 const router = express.Router();
 
-console.log("getAiMentorResponse:", getAiMentorResponse); // Debugging log
-
-// Ensure the function is properly used
-router.post('/response', async (req, res) => {
-    console.log("POST /api/ai-mentor/response called"); // Debugging log
-    await getAiMentorResponse(req, res);
-});
+// AI Mentor chat endpoints
+router.post('/response', authenticate, getAiMentorResponse);
+router.post('/response-with-files', authenticate, getAiMentorResponseWithFiles);
+router.get('/conversation', authenticate, getAiConversation);
+router.delete('/conversation', authenticate, deleteAiConversation);
 
 module.exports = router;

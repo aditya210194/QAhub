@@ -15,9 +15,9 @@ const Message = require('./models/Message');
 const profileRoute = require('./routes/profileRoutes'); // Import the profile route
 const qaRoutes = require('./routes/qaRoutes');
 const adminRoutes = require("./routes/adminRoutes");
-//const mentorshipRoutes = require("./routes/mentorshipRoutes");
+const mentorshipRoutes = require("./routes/mentorshipRoutes");
 //const { setSocketIO } = require('./controllers/mentorshipController');
-//const aiMentorRoutes = require("./routes/aiMentorRoutes");
+const aiMentorRoutes = require("./routes/aiMentorRoutes");
 const cookieParser = require('cookie-parser');
 const cron = require('node-cron');
 const calculateTrendingScore = require('./cron/trendingScore');
@@ -40,6 +40,8 @@ const io = socketIo(server, {
     transports: ['websocket', 'polling'],
     allowEIO3: true, // Ensure compatibility with older clients
 });
+const { setSocketIO } = require('./controllers/mentorshipController');
+setSocketIO(io);
 
 // Connect to MongoDB
 
@@ -127,8 +129,8 @@ app.get("/", (req, res) => {
     res.send("API is working!");
 });
 app.use("/api/admin", adminRoutes);
-//app.use("/api/mentorship", mentorshipRoutes);
-//app.use("/api/ai-mentorship", aiMentorRoutes);
+app.use("/api/mentorship", mentorshipRoutes);
+app.use("/api/ai-mentor", aiMentorRoutes);
 // Serve static files from the "uploads" directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

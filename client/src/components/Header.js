@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import logo from '../images/horizontal-logo.png';
+import logo from '../images/Qahub_logo.svg';
 import './Header.css';
+import { getProfileImageUrl } from '../utils/imageUtils';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -100,19 +101,22 @@ const Header = () => {
 
                     {/* Auth Buttons / User Avatar */}
                     {!token ? (
-                        <div className="ms-3">
-                            <Link to="/login">
-                                <button className="btn btn-primary ms-2" onClick={closeMobileMenu}>Login</button>
+                        <div className="auth-buttons">
+                            <Link to="/login" className="auth-link">
+                                <button className="btn btn-primary auth-btn" onClick={closeMobileMenu}>
+                                    Login
+                                </button>
                             </Link>
-                            <Link to="/register">
-                                <button className="btn btn-outline-primary ms-2" onClick={closeMobileMenu}>Sign Up</button>
+                            <Link to="/register" className="auth-link">
+                                <button className="btn btn-outline-primary auth-btn" onClick={closeMobileMenu}>
+                                    Sign Up
+                                </button>
                             </Link>
                         </div>
                     ) : (
-                        <div className="ms-3 d-flex align-items-center">
-                            {/* User Avatar */}
+                        <div className="auth-avatar">
                             <img
-                                src={user?.profilePicture ? `${process.env.REACT_APP_API_URL}/${user.profilePicture}` : '/default-avatar.png'}
+                                src={getProfileImageUrl(user?.profilePicture)}
                                 alt="User Avatar"
                                 className="avatar"
                                 onClick={() => navigate('/profile')}

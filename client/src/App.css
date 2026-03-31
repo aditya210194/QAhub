@@ -1,79 +1,52 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f8f9fa;
+/* MentorshipPage.css - Remove scroll-causing animations */
+
+/* Replace the rotating background animations with static ones */
+.mentorship-page {
+    min-height: 100vh;
+    background: var(--primary-gradient);
+    position: relative;
+    overflow-x: hidden;
 }
 
-.fixed-header  {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 120px;
-  background-color: #343a40;
-  color: white;
-  position:fixed;
+/* Remove the rotating animations that cause scroll */
+.mentorship-page::before,
+.mentorship-page::after {
+    display: none; /* Disable the rotating background patterns */
 }
 
-header .logo img {
-  height: 50px; /* Adjust size as needed */
+/* Or replace with a simple static gradient */
+.mentorship-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-nav ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
+/* Keep other animations that don't cause scroll */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-nav ul li {
-  margin: 0 15px;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-nav ul li a {
-  color: white;
-  text-decoration: none;
-}
-
-nav ul li a:hover {
-  text-decoration: underline;
-}
-
-footer {
-  text-align: center;
-  padding: 10px;
-  background-color: #343a40;
-  color: white;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  position: inherit;
-}
-
-h1, h2 {
-  color: #343a40;
-
-}
-
-
-form {
-  max-width: 400px;
-  margin: 20px auto;
-}
-
-form div {
-  margin-bottom: 15px;
-}
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0); /* Fully transparent */
-  pointer-events: none; /* Allows clicks through to underlying content */
-}
-.logo {
-  width: 100px;
-  height: auto;
-  max-height: 40px;
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }

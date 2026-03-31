@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './Home.css';
 import SecondHeader from "./SecondHeader";
-import automationImg from '../images/Automation.jpg';
-import manualTestingImg from '../images/manual-testing.webp';
-import agileProcessImg from '../images/agile-process.png';
-import ApiTestingImg from '../images/ApiTestingImg.jpg';
-import PerformanceImg from '../images/Performance.jpg';
+//import automationImg from '../images/Automation.jpg';
+//import manualTestingImg from '../images/manual-testing.webp';
+//import agileProcessImg from '../images/agile-process.png';
+//import ApiTestingImg from '../images/ApiTestingImg.jpg';
+//import PerformanceImg from '../images/Performance.jpg';
+import CoursesData from './CoursesData';
 
 const Home = () => {
     useEffect(() => {
@@ -18,58 +19,34 @@ const Home = () => {
         });
     }, []);
 
-    const popularCourses = [
-        {
-            id: 1,
-            title: 'Automation Testing',
-            description: 'Master Selenium, Cypress, and Playwright for robust test automation solutions',
-            link: '/course/automation-testing',
-            image: automationImg,
-            duration: '4 weeks',
-            level: 'Intermediate',
-            rating: 4.8
-        },
-        {
-            id: 2,
-            title: 'Manual Testing',
-            description: 'Learn comprehensive manual testing techniques and test case design',
-            link: '/course/manual-testing',
-            image: manualTestingImg,
-            duration: '6 weeks',
-            level: 'Beginner',
-            rating: 4.6
-        },
-        {
-            id: 3,
-            title: 'Agile Methodologies',
-            description: 'Implement Agile testing practices in Scrum and Kanban environments',
-            link: '/course/agile-methodologies',
-            image: agileProcessImg,
-            duration: '3 weeks',
-            level: 'Intermediate',
-            rating: 4.7
-        },
-        {
-            id: 4,
-            title: 'Performance Testing',
-            description: 'Master JMeter and LoadRunner for application performance validation',
-            link: '/course/performance-testing',
-            image: PerformanceImg,
-            duration: '5 weeks',
-            level: 'Advanced',
-            rating: 4.9
-        },
-        {
-            id: 5,
-            title: 'API Testing',
-            description: "Expert-level API testing with Postman, REST Assured, and SoapUI",
-            link: '/course/api-testing',
-            image: ApiTestingImg,
-            duration: '4 weeks',
-            level: 'Intermediate',
-            rating: 4.8
-        },
-    ];
+    // Get the top 5 most popular courses (based on rating)
+        const popularCourses = useMemo(() => {
+            // Create a copy and sort by rating descending
+            const sorted = [...CoursesData].sort((a, b) => b.rating - a.rating);
+            return sorted.slice(0, 5);
+        }, []);
+
+         // Helper to safely display module count
+            const getModuleCount = (course) => {
+                if (course.modules && typeof course.modules === 'object') {
+                    if (Array.isArray(course.modules)) {
+                        return `${course.modules.length} Modules`;
+                    }
+                    if (course.modules.lessons && Array.isArray(course.modules.lessons)) {
+                        return `${course.modules.lessons.length} Lessons`;
+                    }
+                    if (course.modules.title) {
+                        return '12 Modules'; // fallback
+                    }
+                }
+                if (typeof course.modules === 'number') {
+                    return `${course.modules} Modules`;
+                }
+                if (typeof course.modules === 'string') {
+                    return course.modules;
+                }
+                return '12 Modules'; // default
+            };
 
     const testimonials = [
         {
@@ -207,51 +184,51 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Courses Section */}
-            <section className="courses-section py-5">
-                <div className="container">
-                    <div className="text-center mb-5" data-aos="fade-up">
-                        <h2 className="section-title">Popular Courses</h2>
-                        <p className="section-subtitle">Join thousands of students mastering QA skills</p>
-                    </div>
-                    <div className="row">
-                        {popularCourses.map((course) => (
-                            <div className="col-lg-4 col-md-6 mb-4" key={course.id} data-aos="fade-up">
-                                <div className="card course-card h-100">
-                                    <div className="card-img-top-container">
-                                        <img src={course.image} className="card-img-top" alt={course.title}/>
-                                        <div className="card-badge">{course.level}</div>
-                                    </div>
-                                    <div className="card-body">
-                                        <div className="d-flex justify-content-between align-items-start mb-2">
-                                            <h5 className="card-title">{course.title}</h5>
-                                            <div className="course-rating">
-                                                <span className="rating-value">{course.rating}</span>
-                                                <span className="rating-star">★</span>
+             {/* Courses Section */}
+                        <section className="courses-section py-5">
+                            <div className="container">
+                                <div className="text-center mb-5" data-aos="fade-up">
+                                    <h2 className="section-title">Popular Courses</h2>
+                                    <p className="section-subtitle">Join thousands of students mastering QA skills</p>
+                                </div>
+                                <div className="row">
+                                    {popularCourses.map((course) => (
+                                        <div className="col-lg-4 col-md-6 mb-4" key={course.id} data-aos="fade-up">
+                                            <div className="card course-card h-100">
+                                                <div className="card-img-top-container">
+                                                    <img src={course.image} className="card-img-top" alt={course.title} />
+                                                    <div className="card-badge">{course.level}</div>
+                                                </div>
+                                                <div className="card-body">
+                                                    <div className="d-flex justify-content-between align-items-start mb-2">
+                                                        <h5 className="card-title">{course.title}</h5>
+                                                        <div className="course-rating">
+                                                            <span className="rating-value">{course.rating}</span>
+                                                            <span className="rating-star">★</span>
+                                                        </div>
+                                                    </div>
+                                                    <p className="card-text">{course.description}</p>
+                                                    <div className="course-meta">
+                                                        <span className="meta-item">⏱️ {course.duration}</span>
+                                                        <span className="meta-item">📚 {getModuleCount(course)}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="card-footer">
+                                                    <Link to={`/course/${course.id}`} className="btn btn-primary w-100">
+                                                        Explore Course
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
-                                        <p className="card-text">{course.description}</p>
-                                        <div className="course-meta">
-                                            <span className="meta-item">⏱️ {course.duration}</span>
-                                            <span className="meta-item">📚 12 Modules</span>
-                                        </div>
-                                    </div>
-                                    <div className="card-footer">
-                                        <Link to={course.link} className="btn btn-primary w-100">
-                                            Explore Course
-                                        </Link>
-                                    </div>
+                                    ))}
+                                </div>
+                                <div className="text-center mt-4" data-aos="fade-up">
+                                    <Link to="/courses" className="btn btn-outline-primary btn-lg">
+                                        View All Courses
+                                    </Link>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                    <div className="text-center mt-4" data-aos="fade-up">
-                        <Link to="/courses" className="btn btn-outline-primary btn-lg">
-                            View All Courses
-                        </Link>
-                    </div>
-                </div>
-            </section>
+                        </section>
 
             {/* Testimonials */}
             <section className="testimonials-section py-5">

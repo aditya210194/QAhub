@@ -16,8 +16,14 @@ const TutorialCard = ({
                 onClick={() => onSelect(tutorial.title, tutorial)}
                 className="d-flex align-items-center justify-content-between w-100 text-start"
             >
-                <div className="d-flex flex-column">
-                    <span className="text-truncate">{tutorial.title}</span>
+                <div className="d-flex flex-column tutorial-title-wrapper">
+                    <span
+                        className="sidebar-title-truncate"
+                        title={tutorial.title}
+                    >
+                        {tutorial.title}
+                    </span>
+
                     <small className="text-muted">
                         <Clock size={14} className="me-1" />
                         {tutorial.duration} •
