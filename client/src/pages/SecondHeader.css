@@ -1,40 +1,356 @@
-/* SecondHeader.css */
-.fixed-second-header {
+/* SecondHeader.css - Enhanced with hidden scrollbar */
+
+/* ==================== CSS VARIABLES ==================== */
+:root {
+    --second-header-bg: #ffffff;
+    --second-header-text: #2d3748;
+    --second-header-hover: #667eea;
+    --second-header-active: #667eea;
+    --second-header-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --second-header-border: rgba(102, 126, 234, 0.2);
+    --dropdown-bg: #ffffff;
+    --dropdown-hover: #f7fafc;
+    --dropdown-border: #e2e8f0;
+    --scroll-arrow-bg: #667eea;
+    --scroll-arrow-hover: #5a67d8;
+    --transition-speed: 0.3s ease;
+}
+
+/* Dark mode variables */
+body.dark-mode {
+    --second-header-bg: #1a1a2e;
+    --second-header-text: #e2e8f0;
+    --second-header-hover: #9f7aea;
+    --second-header-active: #9f7aea;
+    --second-header-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --second-header-border: rgba(159, 122, 234, 0.3);
+    --dropdown-bg: #2d3748;
+    --dropdown-hover: #4a5568;
+    --dropdown-border: #4a5568;
+    --scroll-arrow-bg: #9f7aea;
+    --scroll-arrow-hover: #b794f4;
+    --scroll-arrow-hover: #b794f4;
+}
+
+/* ==================== BASE STYLES ==================== */
+.page-with-second-header .second-header {
     position: fixed;
-    top: 60px; /* Adjust this value based on the height of your first header */
-    width: 100%;
-    z-index: 999; /* Ensure it appears on top of the content */
-    background-color: #f8f9fa; /* Light background color */
-    border-bottom: 1px solid #ddd; /* Optional border to separate from content */
-    padding: 10px 0; /* Adds some vertical padding for the links */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+    top: 60px;
     left: 0;
+    width: 100%;
+    background: var(--second-header-bg) !important;
+    color: var(--second-header-text) !important;
+    z-index: 1000;
+    transition: all var(--transition-speed);
+    overflow: visible;
+    box-shadow: var(--second-header-shadow);
+    font-size: 11pt;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--second-header-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
-.nav-list {
+/* Sticky state */
+.page-with-second-header .second-header.sticky {
+    top: 50px;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+}
+
+body.dark-mode .page-with-second-header .second-header.sticky {
+    background: rgba(26, 26, 46, 0.95) !important;
+}
+
+/* ==================== SCROLL CONTAINER - SCROLLBAR HIDDEN ==================== */
+.page-with-second-header .scroll-container {
     display: flex;
+    align-items: center;
+    overflow-x: auto;
+    padding: 0 75px;
+    white-space: nowrap;
+    gap: 22px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    cursor: grab;
+
+    /* Hide scrollbar for all browsers */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+.page-with-second-header .scroll-container .nav-item {
+    cursor: pointer;
+}
+.page-with-second-header .scroll-container .local-nav-link {
+    cursor: pointer;
+}
+/* Hide scrollbar for Chrome/Safari/Opera */
+.page-with-second-header .scroll-container::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+    background: transparent;
+}
+
+.page-with-second-header .scroll-container.dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+}
+
+/* ==================== SCROLL ARROWS ==================== */
+.page-with-second-header .scroll-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--scroll-arrow-bg);
+    color: white;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    z-index: 20;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    opacity: 0.95;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50%) scale(0.8);
+    }
+    to {
+        opacity: 0.95;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+.page-with-second-header .scroll-arrow:hover {
+    background: var(--scroll-arrow-hover);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    opacity: 1;
+}
+
+.page-with-second-header .scroll-arrow:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.page-with-second-header .scroll-arrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.page-with-second-header .left-arrow {
+    left: 15px;
+}
+
+.page-with-second-header .right-arrow {
+    right: 15px;
+}
+
+/* ==================== NAVIGATION ITEMS ==================== */
+.page-with-second-header .nav-item {
+    position: relative;
+    margin-right: 20px;
     list-style: none;
-    margin: 0;
-    padding: 0;
+    flex-shrink: 0;
 }
 
-.nav-list li {
-    margin: 0 15px; /* Spacing between the list items */
-}
-
-.nav-list a {
+.page-with-second-header .local-nav-link {
+    color: var(--second-header-text) !important;
     text-decoration: none;
-    color: #333; /* Adjust color to match your theme */
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 140px;
+    display: block;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all var(--transition-speed);
+    position: relative;
     font-weight: 500;
-    font-size: 16px;
 }
 
-.nav-list a:hover {
-    color: #007bff; /* Link hover color */
+.page-with-second-header .local-nav-link:hover {
+    color: var(--second-header-hover) !important;
+    background: rgba(102, 126, 234, 0.08);
+    transform: translateY(-1px);
 }
 
-/* Ensure the body content is pushed down to make space for both headers */
-body {
-    padding-top: 120px; /* Adjust this value based on the total height of both headers */
+.page-with-second-header .local-nav-link.active-link {
+    font-weight: 600;
+    color: var(--second-header-active) !important;
+}
+
+/* Active indicator */
+.page-with-second-header .local-nav-link.active-link::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--second-header-active);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(-50%) scale(1.5);
+        opacity: 0.5;
+    }
+}
+
+/* ==================== DROPDOWN MENU ==================== */
+.page-with-second-header .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--dropdown-bg);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--dropdown-border);
+    border-radius: 12px;
+    z-index: 1050;
+    padding: 8px 0;
+    min-width: 220px;
+    display: block;
+    animation: fadeInDown 0.3s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-with-second-header .dropdown-item {
+    padding: 10px 20px;
+    color: var(--second-header-text);
+    text-decoration: none;
+    display: block;
+    transition: all var(--transition-speed);
+    font-size: 0.95rem;
+    position: relative;
+}
+
+.page-with-second-header .dropdown-item:hover {
+    background-color: var(--dropdown-hover);
+    color: var(--second-header-hover);
+    padding-left: 25px;
+}
+
+/* ==================== LOCKED LINK ==================== */
+.page-with-second-header .nav-item.locked .local-nav-link {
+    opacity: 0.8;
+    background: rgba(255, 0, 0, 0.03);
+    border-radius: 6px;
+    padding-left: 30px;
+    position: relative;
+}
+
+.page-with-second-header .lock-icon {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #e53e3e;
+    transition: all var(--transition-speed);
+}
+
+/* ==================== RESPONSIVE STYLES ==================== */
+@media (max-width: 767px) {
+    .page-with-second-header .second-header {
+        top: 130px !important;
+        padding: 8px 0;
+    }
+
+    .page-with-second-header .scroll-container {
+        padding: 0 12px;
+        gap: 8px;
+        cursor: default;
+    }
+
+    .page-with-second-header .scroll-arrow {
+        display: none;
+    }
+
+    .page-with-second-header .local-nav-link {
+        font-size: 12px;
+        max-width: 100px;
+        padding: 6px 10px;
+        border-radius: 20px;
+        background: rgba(102, 126, 234, 0.05);
+    }
+
+    .page-with-second-header .local-nav-link.active-link::after {
+        display: none;
+    }
+
+    .page-with-second-header .dropdown-menu {
+        min-width: 180px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .page-with-second-header .scroll-container {
+        padding: 0 50px;
+        gap: 18px;
+    }
+
+    .page-with-second-header .local-nav-link {
+        max-width: 160px;
+    }
+}
+
+/* ==================== DARK MODE ==================== */
+body.dark-mode .page-with-second-header .second-header {
+    border-bottom-color: rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .page-with-second-header .local-nav-link {
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .page-with-second-header .local-nav-link:hover {
+    color: #b794f4 !important;
+    background: rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .page-with-second-header .local-nav-link.active-link {
+    color: #b794f4 !important;
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+    .page-with-second-header .second-header {
+        display: none !important;
+    }
+}
+
+/* ==================== FOCUS STATES ==================== */
+.page-with-second-header .local-nav-link:focus-visible,
+.page-with-second-header .dropdown-item:focus-visible,
+.page-with-second-header .scroll-arrow:focus-visible {
+    outline: 2px solid var(--second-header-hover);
+    outline-offset: 2px;
 }

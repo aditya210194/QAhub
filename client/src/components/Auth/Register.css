@@ -1,0 +1,689 @@
+/* Register.css */
+
+/* ==================== GLOBAL STYLES ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.register-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.register-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.register-container::after {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+    animation: rotateReverse 25s linear infinite;
+}
+
+@keyframes rotateReverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+/* ==================== REGISTER CARD ==================== */
+.register-card {
+    max-width: 550px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.8s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.register-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+    background-size: 200% 100%;
+    animation: gradientMove 3s linear infinite;
+    border-radius: 30px 30px 0 0;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 200% 0%; }
+}
+
+/* ==================== HEADER ==================== */
+.register-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+.register-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeInDown 0.5s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.register-header p {
+    color: #718096;
+    font-size: 1.1rem;
+    animation: fadeIn 0.5s ease 0.2s both;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ==================== ERROR MESSAGE ==================== */
+.register-error {
+    background: #fff5f5;
+    border-left: 4px solid #f56565;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.error-icon {
+    width: 28px;
+    height: 28px;
+    background: #f56565;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.error-message {
+    color: #c53030;
+    font-size: 0.95rem;
+    flex: 1;
+}
+
+/* ==================== FORM STYLES ==================== */
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #4a5568;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.label-icon {
+    color: #667eea;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group:focus-within .label-icon {
+    transform: scale(1.1);
+    color: #764ba2;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input::placeholder {
+    color: #a0aec0;
+    opacity: 0.8;
+}
+
+/* Password Input Container */
+.password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-container input {
+    padding-right: 3rem;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #a0aec0;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.password-toggle:hover {
+    color: #667eea;
+    transform: scale(1.1);
+}
+
+/* ==================== PASSWORD STRENGTH ==================== */
+.password-strength {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.strength-bar {
+    flex: 1;
+    height: 5px;
+    background: #e0e0e0;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.strength-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.strength-bar.active[data-strength="very-weak"]::before {
+    width: 100%;
+    background: #f56565;
+}
+
+.strength-bar.active[data-strength="weak"]::before {
+    width: 100%;
+    background: #ed8936;
+}
+
+.strength-bar.active[data-strength="medium"]::before {
+    width: 100%;
+    background: #ecc94b;
+}
+
+.strength-bar.active[data-strength="strong"]::before {
+    width: 100%;
+    background: #48bb78;
+}
+
+.strength-bar.active[data-strength="very-strong"]::before {
+    width: 100%;
+    background: #38a169;
+}
+
+.strength-label {
+    width: 100%;
+    font-size: 0.85rem;
+    color: #718096;
+    margin-top: 0.3rem;
+    text-align: right;
+    font-weight: 500;
+}
+
+/* ==================== REGISTER BUTTON ==================== */
+.register-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1.2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.register-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.register-button:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+}
+
+.register-button:hover:not(:disabled)::before {
+    width: 500px;
+    height: 500px;
+}
+
+.register-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Spinner */
+.spinner {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ==================== TERMS AGREEMENT ==================== */
+.terms-agreement {
+    margin-top: 2rem;
+    text-align: center;
+    color: #718096;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.terms-agreement a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    position: relative;
+    transition: all 0.3s ease;
+    margin: 0 0.2rem;
+}
+
+.terms-agreement a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
+}
+
+.terms-agreement a:hover {
+    color: #764ba2;
+}
+
+.terms-agreement a:hover::after {
+    width: 100%;
+}
+
+/* ==================== LOGIN REDIRECT ==================== */
+.login-redirect {
+    margin-top: 2rem;
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 2px solid #e0e0e0;
+    color: #718096;
+    font-size: 1rem;
+}
+
+.login-redirect a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 0.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.login-redirect a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
+}
+
+.login-redirect a:hover {
+    color: #764ba2;
+}
+
+.login-redirect a:hover::after {
+    width: 100%;
+}
+
+/* ==================== INPUT VALIDATION STYLES ==================== */
+input:invalid:not(:placeholder-shown) {
+    border-color: #f56565;
+}
+
+input:invalid:not(:placeholder-shown):focus {
+    border-color: #f56565;
+    box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.1);
+}
+
+input:valid:not(:placeholder-shown) {
+    border-color: #48bb78;
+}
+
+input:valid:not(:placeholder-shown):focus {
+    border-color: #48bb78;
+    box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+    .register-container {
+        padding: 1rem;
+    }
+
+    .register-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .register-header h2 {
+        font-size: 2rem;
+    }
+
+    .register-header p {
+        font-size: 1rem;
+    }
+
+    .form-group input {
+        padding: 0.9rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .register-button {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .terms-agreement {
+        font-size: 0.85rem;
+    }
+
+    .login-redirect {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .register-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .register-header h2 {
+        font-size: 1.8rem;
+    }
+
+    .register-error {
+        padding: 0.8rem 1rem;
+    }
+
+    .error-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 1rem;
+    }
+
+    .form-group label {
+        font-size: 0.9rem;
+    }
+
+    .form-group input {
+        padding: 0.8rem 0.9rem;
+        font-size: 0.9rem;
+    }
+
+    .password-strength {
+        gap: 0.2rem;
+    }
+
+    .strength-label {
+        font-size: 0.8rem;
+    }
+
+    .register-button {
+        padding: 0.9rem;
+        font-size: 0.95rem;
+    }
+
+    .login-redirect {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .login-redirect a {
+        margin-left: 0;
+    }
+}
+
+/* ==================== FOCUS STATES ==================== */
+input:focus-visible,
+.register-button:focus-visible,
+.password-toggle:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* ==================== CUSTOM SCROLLBAR ==================== */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+    .register-container {
+        background: white;
+        padding: 0;
+    }
+
+    .register-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        max-width: 100%;
+    }
+
+    .register-card::before {
+        display: none;
+    }
+
+    .register-button,
+    .password-toggle {
+        display: none !important;
+    }
+
+    .register-header h2 {
+        -webkit-text-fill-color: #2d3748;
+        background: none;
+    }
+}
+
+/* ==================== LOADING STATE ==================== */
+.register-button:disabled .spinner {
+    margin-right: 0.5rem;
+}
+
+/* ==================== AUTO-FILL STYLES ==================== */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: #2d3748 !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* ==================== TOOLTIP STYLES ==================== */
+input[title] {
+    cursor: help;
+}
+
+input[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    background: #2d3748;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    bottom: 100%;
+    left: 0;
+    white-space: nowrap;
+    z-index: 10;
+    animation: fadeIn 0.3s ease;
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* ==================== SUCCESS ANIMATION ==================== */
+@keyframes checkmark {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.success-icon {
+    animation: checkmark 0.5s ease;
+}

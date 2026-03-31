@@ -1,89 +1,324 @@
-import React from 'react';
-import SecondHeader from './SecondHeader';
-import './SoftwareTesting.css'; // You can style this page separately
+import React, { useState, useEffect } from 'react';
+import { Toast, Offcanvas, Alert, Button, Spinner } from 'react-bootstrap';
+import {Moon, Sun, XLg, Search, List, XCircle, StarFill,ArrowUp} from 'react-bootstrap-icons';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import './SoftwareTesting.css';
+
+// Components
+import TutorialHeader from '../components/Tutorials/TutorialHeader';
+import CategoryAccordion from '../components/Tutorials/CategoryAccordion';
+import TutorialContent from '../components/Tutorials/TutorialContent';
+import TutorialsEmptyState from '../components/Tutorials/TutorialsEmptyState';
+import MobileTutorialsSidebar from '../components/Tutorials/MobileTutorialsSidebar';
+
+// Hooks
+import useTutorialData from '../hooks/useTutorialData';
+import useTutorialTracking from '../hooks/useTutorialTracking';
+
+// Utils
+import { filterTutorials } from '../utils/tutorialUtils';
 
 const SoftwareTesting = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
+    const [darkMode, setDarkMode] = useState(false);
+    const [rating, setRating] = useState(0);
+    const [hoverRating, setHoverRating] = useState(0);
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+    // Hooks
+    const { contentData, loading, error } = useTutorialData('software-testing.json');
+    const {
+        activeTutorial,
+        recentlyViewed,
+        bookmarks,
+        completedTutorials,
+        progress,
+        trackView,
+        toggleBookmark,
+        toggleCompletion,
+        setRecentlyViewed
+
+    } = useTutorialTracking();
+
+    useEffect(() => {
+        AOS.init({
+            duration: 800,
+            once: true,
+            easing: 'ease-out-cubic'
+        });
+
+        const handleOnline = () => setIsOnline(true);
+        const handleOffline = () => setIsOnline(false);
+
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, []);
+
+    useEffect(() => {
+        document.body.classList.toggle('dark-mode', darkMode);
+        return () => document.body.classList.remove('dark-mode');
+    }, [darkMode]);
+
+    const showNotification = (message) => {
+        setToastMessage(message);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+    };
+
+    const handleToggleBookmark = (title) => {
+        toggleBookmark(title);
+        showNotification(bookmarks.includes(title) ? 'Bookmark removed' : 'Bookmark added');
+    };
+
+    const handleToggleCompletion = (title) => {
+        toggleCompletion(title, contentData);
+        showNotification(completedTutorials.includes(title)
+            ? 'Marked as incomplete'
+            : 'Marked as complete'
+        );
+    };
+
+    const navigateTutorial = (direction) => {
+        if (!contentData || !activeTutorial) return;
+        const allTutorials = Object.values(contentData)
+            .flatMap(category => Object.entries(category.tutorials || {}));
+        const currentIndex = allTutorials.findIndex(
+            ([title]) => title === activeTutorial.title
+        );
+        if (currentIndex === -1) return;
+        const newIndex = direction === 'next'
+            ? (currentIndex + 1) % allTutorials.length
+            : (currentIndex - 1 + allTutorials.length) % allTutorials.length;
+        const [title, tutorial] = allTutorials[newIndex];
+        trackView(title, tutorial);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const renderStars = () => {
+        return [1, 2, 3, 4, 5].map((star) => (
+            <StarFill
+                key={star}
+                className={`star-icon ${star <= (hoverRating || rating) ? 'active' : ''}`}
+                size={24}
+                onClick={() => {
+                    setRating(star);
+                    showNotification(`Thanks for your ${star} star rating!`);
+                }}
+                onMouseEnter={() => setHoverRating(star)}
+                onMouseLeave={() => setHoverRating(0)}
+            />
+        ));
+    };
+
+    const toggleDarkMode = () => setDarkMode(!darkMode);
+
+    const filteredContent = filterTutorials(contentData, searchQuery);
+
     return (
-        <div className="software-testing-page">
-            {/* Include the second header here */}
-            <SecondHeader />
-            <div className="container">
-                <h1>Software Testing</h1>
+        <div className={`software-testing-page ${darkMode ? 'dark-mode' : ''}`}>
+            {!isOnline && (
+                <Alert variant="warning" className="fixed-top">
+                    You are currently offline. Some content may not be up-to-date.
+                </Alert>
+            )}
 
-                {/* Introduction Section */}
-                <div className="section">
-                    <h4>Introduction to Software Testing</h4>
-                    <p>
-                        Software Testing is the process of evaluating and verifying that a software application works as expected. It ensures that the software is free of defects and satisfies the requirements set by stakeholders.
-                    </p>
-                </div>
+            <div className="floating-actions">
+                <button
+                    className="fab dark-mode-toggle"
+                    onClick={toggleDarkMode}
+                    data-tooltip={darkMode ? "Light Mode" : "Dark Mode"}
+                >
+                    {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                </button>
+                {activeTutorial && (
+                    <button
+                        className="fab scroll-top"
+                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                        data-tooltip="Back to top"
+                    >
+                        <ArrowUp />
+                    </button>
+                )}
+            </div>
 
-                {/* Types of Software Testing */}
-                <div className="section">
-                    <h4>Types of Software Testing</h4>
-                    <ul>
-                        <li>Manual Testing</li>
-                        <li>Automation Testing</li>
-                        <li>Functional Testing</li>
-                        <li>Non-Functional Testing</li>
-                        <li>Unit Testing</li>
-                        <li>Integration Testing</li>
-                        <li>System Testing</li>
-                        <li>Acceptance Testing</li>
-                    </ul>
-                </div>
+            <TutorialHeader
+                title="Software Testing Tutorials"
+                subtitle="Comprehensive guides curated by industry experts"
+                progress={progress}
+            />
 
-                {/* Manual vs Automation Testing */}
-                <div className="section">
-                    <h4>Manual vs Automation Testing</h4>
-                    <p>
-                        Manual testing involves human intervention to manually execute test cases without the use of automation tools. Automation testing, on the other hand, uses scripts and tools to run tests automatically, saving time and effort on repetitive tasks.
-                    </p>
-                </div>
+            <div className="container mt-4">
+                <div className="row">
+                    <div className="d-lg-none mb-4">
+                        <div className="search-container" data-aos="fade-up">
+                            <div className={`search-box ${isSearchFocused ? 'focused' : ''}`}>
+                                <Search className="search-icon" />
+                                <input
+                                    type="text"
+                                    placeholder="Search tutorials..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onFocus={() => setIsSearchFocused(true)}
+                                    onBlur={() => setIsSearchFocused(false)}
+                                    disabled={loading || error}
+                                />
+                                <button
+                                    className="search-clear"
+                                    onClick={() => setSearchQuery('')}
+                                >
+                                    <XLg />
+                                </button>
+                            </div>
+                        </div>
+                        <Button
+                            variant="glass"
+                            onClick={() => setShowMobileSidebar(true)}
+                            className="w-100 d-flex align-items-center justify-content-center mt-3"
+                            data-aos="fade-up"
+                        >
+                            <List className="me-2" /> Browse Tutorials
+                        </Button>
+                    </div>
 
-                {/* Software Testing Life Cycle (STLC) */}
-                <div className="section">
-                    <h4>Software Testing Life Cycle (STLC)</h4>
-                    <ul>
-                        <li>Requirement Analysis</li>
-                        <li>Test Planning</li>
-                        <li>Test Case Development</li>
-                        <li>Test Environment Setup</li>
-                        <li>Test Execution</li>
-                        <li>Test Cycle Closure</li>
-                    </ul>
-                </div>
+                    <aside className="sidebar-col d-none d-lg-block col-lg-4">
+                        <div className="sidebar-card">
+                            <div className="card glass-card" data-aos="fade-right">
+                                <div className="card-body">
+                                    <div className="search-container mb-4">
+                                        <div className={`search-box ${isSearchFocused ? 'focused' : ''}`}>
+                                            <Search className="search-icon" />
+                                            <input
+                                                type="text"
+                                                placeholder="Search tutorials..."
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                onFocus={() => setIsSearchFocused(true)}
+                                                onBlur={() => setIsSearchFocused(false)}
+                                                disabled={loading || error}
+                                            />
+                                            <button
+                                                className="search-clear"
+                                                onClick={() => setSearchQuery('')}
+                                            >
+                                                <XLg />
+                                            </button>
+                                        </div>
+                                    </div>
 
-                {/* Importance of Testing in SDLC */}
-                <div className="section">
-                    <h4>Importance of Testing in SDLC</h4>
-                    <p>
-                        Testing is critical in the Software Development Life Cycle (SDLC) as it helps in identifying defects early in the process, ensuring that the final product is of high quality, and meeting user expectations. It helps avoid costly errors in production.
-                    </p>
-                </div>
+                                    {loading ? (
+                                        <div className="text-center py-4">
+                                            <Spinner animation="border" variant="primary" />
+                                            <p className="mt-2">Loading tutorials...</p>
+                                        </div>
+                                    ) : error ? (
+                                        <Alert variant="danger">{error}</Alert>
+                                    ) : (
+                                        <CategoryAccordion
+                                            categories={filteredContent}
+                                            activeTutorialTitle={activeTutorial?.title}
+                                            onSelectTutorial={trackView}
+                                            bookmarks={bookmarks}
+                                            completedTutorials={completedTutorials}
+                                        />
+                                    )}
+                                </div>
+                            </div>
 
-                {/* Popular Testing Tools */}
-                <div className="section">
-                    <h4>Popular Testing Tools</h4>
-                    <ul>
-                        <li>Selenium</li>
-                        <li>Postman</li>
-                        <li>JUnit/TestNG</li>
-                        <li>Cucumber</li>
-                        <li>LoadRunner</li>
-                        <li>JMeter</li>
-                        <li>Appium</li>
-                    </ul>
-                </div>
+                            {recentlyViewed.length > 0 && (
+                                <div className="card glass-card" data-aos="fade-right">
+                                    <div className="card-body">
+                                        <h5 className="card-title mb-3">Recently Viewed</h5>
+                                        <ul className="recent-list">
+                                            {recentlyViewed.map((item, i) => (
+                                                <li key={i} className="d-flex justify-content-between align-items-center mb-2">
+                                                    <Button
+                                                        variant="link"
+                                                        className="p-0 text-truncate text-start recent-item"
+                                                        onClick={() => trackView(item.title, item.tutorial)}
+                                                    >
+                                                        {item.title}
+                                                    </Button>
+                                                    <Button
+                                                        variant="link"
+                                                        className="p-0 text-danger ms-2"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setRecentlyViewed(prev => prev.filter(view => view.title !== item.title));
+                                                        }}
+                                                    >
+                                                        <XCircle size={18} />
+                                                    </Button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </aside>
 
-                {/* Conclusion */}
-                <div className="section">
-                    <h4>Conclusion</h4>
-                    <p>
-                        Software testing is an integral part of software development, ensuring the reliability, security, and performance of applications. By identifying and fixing defects early, it plays a crucial role in delivering high-quality products to end-users.
-                    </p>
+                    <main className="main-content-col col-lg-8">
+                        {activeTutorial ? (
+                            <TutorialContent
+                                activeTutorial={activeTutorial}
+                                isBookmarked={bookmarks.includes(activeTutorial.title)}
+                                isCompleted={completedTutorials.includes(activeTutorial.title)}
+                                onToggleBookmark={() => handleToggleBookmark(activeTutorial.title)}
+                                onToggleCompletion={() => handleToggleCompletion(activeTutorial.title)}
+                                navigateTutorial={navigateTutorial}
+                                renderStars={renderStars}
+                            />
+                        ) : (
+                            <TutorialsEmptyState
+                                onShowMobileSidebar={() => setShowMobileSidebar(true)}
+                            />
+                        )}
+                    </main>
                 </div>
             </div>
+
+            <MobileTutorialsSidebar
+                show={showMobileSidebar}
+                onHide={() => setShowMobileSidebar(false)}
+                categories={filteredContent}
+                activeTutorialTitle={activeTutorial?.title}
+                onSelectTutorial={trackView}
+                bookmarks={bookmarks}
+                completedTutorials={completedTutorials}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                isSearchFocused={isSearchFocused}
+                setIsSearchFocused={setIsSearchFocused}
+                loading={loading}
+                error={error}
+                recentlyViewed={recentlyViewed}
+                onRemoveRecentlyViewed={(title) => {
+                    setRecentlyViewed(prev => prev.filter(item => item.title !== title));
+                }}
+            />
+
+            <Toast
+                show={showToast}
+                onClose={() => setShowToast(false)}
+                className="position-fixed bottom-0 end-0 m-3 glass-toast"
+                delay={3000}
+                autohide
+            >
+                <Toast.Header className="bg-primary text-white">
+                    <strong className="me-auto">Notification</strong>
+                </Toast.Header>
+                <Toast.Body>{toastMessage}</Toast.Body>
+            </Toast>
         </div>
     );
 };
