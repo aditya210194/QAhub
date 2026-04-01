@@ -38,6 +38,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import MentorshipProgram from "./pages/MentorshipPage";
 import ConsentBanner from "./components/ConsentBanner";
 import ErrorBoundary from './components/ErrorBoundary';
+import { Analytics } from '@vercel/analytics/react';
 
 import ReactGA from 'react-ga';
 
@@ -123,6 +124,7 @@ const App = () => {
             </main>
 
             <Footer />
+            <Analytics />
         </>
     );
 };
