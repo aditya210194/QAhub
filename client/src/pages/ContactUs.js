@@ -108,7 +108,7 @@ const ContactUs = () => {
             <div className="container contact-container">
                 <div className="row">
                     {/* Contact Form */}
-                    <div className="col-lg-6" data-aos="fade-right">
+                    <div className="col-lg-8 col-md-10" data-aos="fade-right">
                         <div className="contact-form-container">
                             <h3 className="form-title">
                                 <FontAwesomeIcon icon={faPaperPlane} className="form-icon" />
@@ -203,7 +203,8 @@ const ContactUs = () => {
                         </div>
                     </div>
 
-                    {/* Contact Info */}
+                   {/* Contact Info */}
+                    {/*
                     <div className="col-lg-6" data-aos="fade-left">
                         <div className="contact-info-container">
                             <h3 className="info-title">
@@ -255,7 +256,7 @@ const ContactUs = () => {
                                 ></iframe>
                             </div>
                         </div>
-                    </div>
+                    </div>*/}
                 </div>
             </div>
         </div>
