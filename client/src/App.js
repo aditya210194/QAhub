@@ -39,6 +39,7 @@ import MentorshipProgram from "./pages/MentorshipPage";
 import ConsentBanner from "./components/ConsentBanner";
 import ErrorBoundary from './components/ErrorBoundary';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import ReactGA from 'react-ga';
 
@@ -125,6 +126,7 @@ const App = () => {
 
             <Footer />
             <Analytics />
+            <SpeedInsights />
         </>
     );
 };
