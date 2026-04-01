@@ -12,6 +12,7 @@
     "@tiptap/extension-highlight": "^2.27.2",
     "@tiptap/extension-image": "^3.22.0",
     "@tiptap/extension-link": "^3.22.0",
+    "@tiptap/extension-placeholder": "^3.22.0",
     "@tiptap/extension-underline": "^2.27.2",
     "@tiptap/react": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
