@@ -90,7 +90,7 @@ const PrivacyPolicy = () => {
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                     >
-                        Effective Date: 21st February 2025
+                        Effective Date: 1st April 2026
                     </motion.div>
                 </div>
             </motion.div>

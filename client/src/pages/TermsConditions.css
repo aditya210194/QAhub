@@ -11,17 +11,17 @@
     min-height: 100vh;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     position: relative;
-    overflow-x: hidden;
+
     padding: 2rem 0;
 }
 
 .terms-page::before {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 200%;
-    height: 200%;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
     background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
     animation: rotate 20s linear infinite;
     z-index: 0;
@@ -35,10 +35,10 @@
 .terms-page::after {
     content: '';
     position: absolute;
-    bottom: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
     background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
     animation: rotateReverse 25s linear infinite;
     z-index: 0;

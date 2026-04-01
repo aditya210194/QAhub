@@ -70,7 +70,7 @@ const TermsConditions = () => {
         {
             icon: <FaGavel />,
             title: "8. Governing Law",
-            content: "These terms are governed by the laws of [Your Country/State]. Any disputes shall be resolved in the appropriate courts of jurisdiction."
+            content: "These terms are governed by the laws of India. Any disputes shall be resolved in the appropriate courts of jurisdiction."
         }
     ];
 
@@ -97,7 +97,7 @@ const TermsConditions = () => {
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                     >
-                        Effective Date: 21st February 2025
+                        Effective Date: 1st April 2026
                     </motion.div>
                 </div>
             </motion.div>
