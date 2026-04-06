@@ -6,20 +6,26 @@ import {
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useAuth } from "../context/AuthContext";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
     FaPlus, FaChartBar, FaUser, FaEnvelope, FaPhone,
     FaMagic, FaEdit, FaBriefcase, FaGraduationCap, FaCode,
     FaAward, FaTrash, FaDownload, FaCog, FaEye, FaPalette,
     FaColumns, FaQuestionCircle, FaCheck, FaExclamationTriangle,
-    FaSave, FaFilePdf, FaArrowLeft, FaArrowRight, FaGripVertical
+    FaSave, FaFilePdf, FaArrowLeft, FaArrowRight, FaGripVertical,
+    FaUpload, FaSpinner, FaTimes  // Add FaTimes here
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactSwitch from "react-switch";
 import { debounce } from "lodash";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import * as pdfjsLib from 'pdfjs-dist';
 import "./ResumeGenerator.css";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+
+// Configure PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 // ==================== CONSTANTS & CONFIG ====================
 const KEYWORD_CATEGORIES = {
@@ -90,6 +96,72 @@ const INITIAL_SECTIONS = [
 ];
 
 // ==================== UTILITY FUNCTIONS ====================
+// Function to extract text from PDF
+const extractTextFromPDF = async (arrayBuffer) => {
+    try {
+        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+        const pdf = await loadingTask.promise;
+        let fullText = '';
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items.map(item => item.str).join(' ');
+            fullText += pageText + ' ';
+        }
+
+        return fullText;
+    } catch (error) {
+        console.error('Error extracting text from PDF:', error);
+        return '';
+    }
+};
+
+// Function to parse resume text and extract information
+const parseResumeText = (text) => {
+    const extractedData = {};
+
+    // Extract email
+    const emailMatch = text.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/);
+    if (emailMatch) extractedData.email = emailMatch[0];
+
+    // Extract phone (various formats)
+    const phoneMatch = text.match(/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
+    if (phoneMatch) extractedData.phone = phoneMatch[0];
+
+    // Extract name (look for capitalized words near the top)
+    const lines = text.split('\n');
+    for (let i = 0; i < Math.min(5, lines.length); i++) {
+        const line = lines[i].trim();
+        if (line.length > 0 && line.length < 50 && /^[A-Z][a-z]+ [A-Z][a-z]+/.test(line)) {
+            extractedData.name = line;
+            break;
+        }
+    }
+
+    // Extract skills (look for common QA keywords)
+    const extractedSkills = [];
+    Object.values(KEYWORD_CATEGORIES).flat().forEach(keyword => {
+        if (text.toLowerCase().includes(keyword.toLowerCase())) {
+            extractedSkills.push(keyword);
+        }
+    });
+    if (extractedSkills.length > 0) {
+        extractedData.skills = [...new Set(extractedSkills)];
+    }
+
+    // Extract summary (first paragraph of substantial text)
+    const paragraphs = text.split('\n\n');
+    for (let para of paragraphs) {
+        if (para.length > 100 && para.length < 500) {
+            extractedData.summary = para.trim();
+            break;
+        }
+    }
+
+    return extractedData;
+};
+
 const analyzeResume = (resumeData) => {
     let totalScore = 0;
     let keywordFrequency = {};
@@ -127,9 +199,9 @@ const analyzeResume = (resumeData) => {
     });
 
     if (!resumeData.summary) missingSections.push("Professional Summary");
-    if (!resumeData.experience?.length) missingSections.push("Work Experience");
-    if (!resumeData.projects?.length) missingSections.push("Projects");
-    if (!resumeData.education?.length) missingSections.push("Education");
+    if (!resumeData.experience?.length || (resumeData.experience.length === 1 && !resumeData.experience[0].company)) missingSections.push("Work Experience");
+    if (!resumeData.projects?.length || (resumeData.projects.length === 1 && !resumeData.projects[0].title)) missingSections.push("Projects");
+    if (!resumeData.education?.length || (resumeData.education.length === 1 && !resumeData.education[0].institution)) missingSections.push("Education");
     if (!resumeData.skills?.length || resumeData.skills.length < 3) missingSections.push("Skills Section");
 
     if (missingSections.length > 0) {
@@ -140,14 +212,8 @@ const analyzeResume = (resumeData) => {
         suggestions.push("Consider expanding your professional summary for better impact.");
     }
 
-    const words = resumeText.split(/\s+/).length;
-    const sentences = Math.max(1, resumeText.split(/[.!?]+/).length);
-    const syllables = resumeText.split(/[aeiouy]{1,2}/).length;
-    const readabilityScore = 206.835 - (1.015 * (words / sentences)) - (84.6 * (syllables / words));
-
     return {
         totalScore: Math.min(100, totalScore.toFixed(1)),
-        readability: Math.min(100, Math.max(0, readabilityScore.toFixed(1))),
         suggestions,
         missingSections,
         categoryScores,
@@ -218,7 +284,6 @@ const useAutoSave = (data, delay = 1000) => {
         if (data !== INITIAL_RESUME_DATA) {
             setStatus('saving');
             const timer = setTimeout(() => {
-                // Simulate save to localStorage/API
                 localStorage.setItem('resumeData', JSON.stringify(data));
                 setStatus('saved');
                 setTimeout(() => setStatus('idle'), 1000);
@@ -684,7 +749,7 @@ const ResumePreview = memo(({
             transition={{ type: "spring", stiffness: 200 }}
         >
             <header className="resume-header text-center mb-4">
-                <h1 className="name-gradient">{data.name}</h1>
+                <h1 className="name-gradient">{data.name || "Your Name"}</h1>
                 <div className="contact-badges d-flex justify-content-center gap-3">
                     {data.email && (
                         <Badge bg="secondary" className="p-2">
@@ -771,9 +836,35 @@ const ATSDashboard = memo(({ results, darkMode }) => (
     </motion.div>
 ));
 
+// Upload Success Alert Component
+const UploadSuccessAlert = memo(({ fileName, onDismiss }) => (
+    <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -50 }}
+        className="upload-success-alert position-fixed top-0 start-50 translate-middle-x mt-3 z-3"
+        style={{ zIndex: 9999 }}
+    >
+        <Alert variant="success" className="shadow-lg">
+            <div className="d-flex align-items-center">
+                <FaCheck className="me-2" size={20} />
+                <div>
+                    <strong>Resume Uploaded Successfully!</strong>
+                    <div className="small">"{fileName}" has been loaded. You can now edit your resume.</div>
+                </div>
+                <Button variant="link" className="ms-3 p-0" onClick={onDismiss}>
+                    <FaTimes />
+                </Button>
+            </div>
+        </Alert>
+    </motion.div>
+));
+
 // ==================== MAIN COMPONENT ====================
 const ResumeGenerator = () => {
     const { currentUser } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
     const [resumeData, setResumeData] = useState(() => {
         const saved = localStorage.getItem('resumeData');
         return saved ? JSON.parse(saved) : INITIAL_RESUME_DATA;
@@ -792,10 +883,78 @@ const ResumeGenerator = () => {
     const [styledPdf, setStyledPdf] = useState(true);
     const [dynamicAtsFriendly, setDynamicAtsFriendly] = useState(true);
     const [sections, setSections] = useState(INITIAL_SECTIONS);
+    const [isProcessingUpload, setIsProcessingUpload] = useState(false);
+    const [showUploadSuccess, setShowUploadSuccess] = useState(false);
+    const [uploadedFileName, setUploadedFileName] = useState("");
 
     const resumeContentRef = useRef(null);
     const autoSaveStatus = useAutoSave(resumeData);
     const completionPercentage = calculateCompletion(resumeData);
+
+    // Process uploaded file from navigation state
+    useEffect(() => {
+        const processUploadedFile = async () => {
+            if (location.state && location.state.uploadedFile) {
+                const { uploadedFile, source, timestamp } = location.state;
+
+                console.log("Processing uploaded file:", uploadedFile.name);
+                setIsProcessingUpload(true);
+                setUploadedFileName(uploadedFile.name);
+
+                try {
+                    // Extract text from PDF
+                    if (uploadedFile.arrayBuffer) {
+                        const extractedText = await extractTextFromPDF(uploadedFile.arrayBuffer);
+                        console.log("Extracted text length:", extractedText.length);
+
+                        // Parse the extracted text to populate resume data
+                        const parsedData = parseResumeText(extractedText);
+                        console.log("Parsed data:", parsedData);
+
+                        // Merge parsed data with existing resume data
+                        setResumeData(prev => ({
+                            ...prev,
+                            ...parsedData,
+                            // Preserve existing arrays but add parsed data if available
+                            skills: parsedData.skills && parsedData.skills.length > 0
+                                ? [...new Set([...prev.skills, ...parsedData.skills])]
+                                : prev.skills,
+                            // If summary was extracted, use it
+                            summary: parsedData.summary || prev.summary,
+                            name: parsedData.name || prev.name,
+                            email: parsedData.email || prev.email,
+                            phone: parsedData.phone || prev.phone,
+                        }));
+
+                        // Show success message
+                        setShowUploadSuccess(true);
+
+                        // Auto-hide success message after 5 seconds
+                        setTimeout(() => {
+                            setShowUploadSuccess(false);
+                        }, 5000);
+
+                        // Clear the location state to prevent reprocessing on refresh
+                        window.history.replaceState({}, document.title);
+
+                        // Optional: Navigate to first step or stay on current step
+                        // setCurrentStep(0); // Uncomment if you want to go to personal info step
+                    }
+                } catch (error) {
+                    console.error("Error processing uploaded file:", error);
+                    // Show error alert
+                    setErrors(prev => ({
+                        ...prev,
+                        upload: "Failed to process uploaded resume. Please try again."
+                    }));
+                } finally {
+                    setIsProcessingUpload(false);
+                }
+            }
+        };
+
+        processUploadedFile();
+    }, [location.state]);
 
     // Debounced ATS Analysis
     const debouncedAnalysis = useCallback(
@@ -1034,7 +1193,7 @@ const ResumeGenerator = () => {
                     </section>
                 );
             case 'experience-2':
-                return data.experience?.length > 0 && (
+                return data.experience?.length > 0 && data.experience.some(exp => exp.company) && (
                     <section className="resume-section mb-4">
                         <h2 className="section-title"><FaBriefcase className="me-2" />Experience</h2>
                         {data.experience.map((exp, index) => (
@@ -1049,7 +1208,7 @@ const ResumeGenerator = () => {
                     </section>
                 );
             case 'education-3':
-                return data.education?.length > 0 && (
+                return data.education?.length > 0 && data.education.some(edu => edu.institution) && (
                     <section className="resume-section mb-4">
                         <h2 className="section-title"><FaGraduationCap className="me-2" />Education</h2>
                         {data.education.map((edu, index) => (
@@ -1090,7 +1249,7 @@ const ResumeGenerator = () => {
                     </section>
                 );
             case 'projects-6':
-                return data.projects?.length > 0 && (
+                return data.projects?.length > 0 && data.projects.some(proj => proj.title) && (
                     <section className="resume-section mb-4">
                         <h2 className="section-title"><FaCode className="me-2" />Projects</h2>
                         {data.projects.map((proj, index) => (
@@ -1120,6 +1279,27 @@ const ResumeGenerator = () => {
 
     return (
         <Container fluid className={`resume-generator-container ${darkMode ? 'dark-mode' : ''}`}>
+            {/* Upload Processing Overlay */}
+            {isProcessingUpload && (
+                <div className="upload-processing-overlay position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style={{ backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 10000 }}>
+                    <Card className="text-center p-4">
+                        <FaSpinner className="spinner-animation mb-3" size={40} />
+                        <h5>Processing Your Resume...</h5>
+                        <p className="text-muted mb-0">Extracting information from "{uploadedFileName}"</p>
+                    </Card>
+                </div>
+            )}
+
+            {/* Upload Success Alert */}
+            <AnimatePresence>
+                {showUploadSuccess && (
+                    <UploadSuccessAlert
+                        fileName={uploadedFileName}
+                        onDismiss={() => setShowUploadSuccess(false)}
+                    />
+                )}
+            </AnimatePresence>
+
             <StatusBar completion={completionPercentage} status={autoSaveStatus} />
 
             <FloatingControls
@@ -1340,6 +1520,17 @@ const ResumeGenerator = () => {
                         Follow the steps on the left to build your resume. Each section corresponds to a part of your resume.
                         Fill in all the required fields to create a complete resume.
                     </p>
+
+                    <h5 className="mt-4">Upload Feature</h5>
+                    <p>
+                        You can upload an existing resume from the Resume Library page. The system will automatically:
+                    </p>
+                    <ul>
+                        <li>Extract text from your PDF resume</li>
+                        <li>Auto-fill personal information (name, email, phone)</li>
+                        <li>Identify and populate relevant skills</li>
+                        <li>Extract your professional summary</li>
+                    </ul>
 
                     <h5 className="mt-4">Tips for a Strong Resume</h5>
                     <ul>

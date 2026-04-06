@@ -732,3 +732,46 @@
 .col-lg-9 {
     width: 68%;
     }
+    /* Spinner animation */
+    .spinner-animation {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Upload processing overlay */
+    .upload-processing-overlay {
+        backdrop-filter: blur(4px);
+    }
+
+    /* Upload success alert animation */
+    .upload-success-alert {
+        min-width: 350px;
+        max-width: 500px;
+    }
+
+    /* Drag handle styles */
+    .drag-handle {
+        position: absolute;
+        left: -30px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: grab;
+        opacity: 0.5;
+        transition: opacity 0.2s;
+    }
+
+    .drag-handle:hover {
+        opacity: 1;
+    }
+
+    .drag-handle:active {
+        cursor: grabbing;
+    }

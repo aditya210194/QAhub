@@ -32,6 +32,7 @@ const Resumes = () => {
     const navigate = useNavigate();
     const [selectedResume, setSelectedResume] = useState(sampleResume1);
     const [uploadedResume, setUploadedResume] = useState(null);
+    const [uploadedFileData, setUploadedFileData] = useState(null);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [pdfKey, setPdfKey] = useState(Date.now());
@@ -374,7 +375,8 @@ const Resumes = () => {
         setTimeout(() => setIsLoading(false), 500);
     };
 
-    const handleFileUpload = (event) => {
+    // Updated file upload handler with navigation to resume generator
+    const handleFileUpload = async (event) => {
         const file = event.target.files[0];
         if (file) {
             if (file.type !== "application/pdf") {
@@ -384,16 +386,51 @@ const Resumes = () => {
             }
 
             setIsLoading(true);
-            if (uploadedResume) {
-                URL.revokeObjectURL(uploadedResume);
-            }
 
-            const fileURL = URL.createObjectURL(file);
-            setUploadedResume(fileURL);
-            setSelectedResume(fileURL);
-            setError("");
-            setPdfKey(Date.now());
-            setTimeout(() => setIsLoading(false), 500);
+            try {
+                // Read the file as ArrayBuffer for text extraction
+                const arrayBuffer = await file.arrayBuffer();
+
+                // Create file URL for preview
+                const fileURL = URL.createObjectURL(file);
+                setUploadedResume(fileURL);
+                setSelectedResume(fileURL);
+
+                // Store file data to pass to resume generator
+                const fileData = {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    lastModified: file.lastModified,
+                    arrayBuffer: arrayBuffer, // Store for potential text extraction
+                    objectURL: fileURL
+                };
+
+                setUploadedFileData(fileData);
+                setError("");
+                setPdfKey(Date.now());
+
+                // Show success message
+                setError(""); // Clear any previous errors
+
+                // Navigate to resume generator after a short delay to show loading state
+                setTimeout(() => {
+                    setIsLoading(false);
+                    // Navigate with state containing the uploaded file data
+                    navigate("/resume-generator", {
+                        state: {
+                            uploadedFile: fileData,
+                            source: 'resume-upload',
+                            timestamp: Date.now()
+                        }
+                    });
+                }, 1000);
+
+            } catch (err) {
+                console.error("Error processing file:", err);
+                setError("Error processing file. Please try again.");
+                setIsLoading(false);
+            }
         }
     };
 
