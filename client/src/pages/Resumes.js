@@ -27,6 +27,7 @@ import sampleResume8 from "../resumes/sampleResume8.pdf";
 import sampleResume9 from "../resumes/sampleResume9.pdf";
 import sampleResume10 from "../resumes/sampleResume10.pdf";
 import "./Resumes.css";
+import { processUploadedResume } from "../utils/pdfExtractor";
 
 const Resumes = () => {
     const navigate = useNavigate();
@@ -376,63 +377,50 @@ const Resumes = () => {
     };
 
     // Updated file upload handler with navigation to resume generator
-    const handleFileUpload = async (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            if (file.type !== "application/pdf") {
-                setError("Please upload a valid PDF file.");
-                setUploadedResume(null);
-                return;
-            }
+   const handleFileUpload = async (event) => {
+       const file = event.target.files[0];
+       if (!file) return;
 
-            setIsLoading(true);
+       if (file.type !== "application/pdf") {
+           setError("Please upload a valid PDF file.");
+           return;
+       }
 
-            try {
-                // Read the file as ArrayBuffer for text extraction
-                const arrayBuffer = await file.arrayBuffer();
+       setIsLoading(true);
+       setError("");
 
-                // Create file URL for preview
-                const fileURL = URL.createObjectURL(file);
-                setUploadedResume(fileURL);
-                setSelectedResume(fileURL);
+       try {
+           const result = await processUploadedResume(file);
 
-                // Store file data to pass to resume generator
-                const fileData = {
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
-                    lastModified: file.lastModified,
-                    arrayBuffer: arrayBuffer, // Store for potential text extraction
-                    objectURL: fileURL
-                };
+           if (!result.success) {
+               throw new Error(result.error || "Failed to parse resume");
+           }
 
-                setUploadedFileData(fileData);
-                setError("");
-                setPdfKey(Date.now());
+           console.log("✅ Parsed Data:", result.data);
+           console.log("✅ Experience Data:", result.data.experience);
 
-                // Show success message
-                setError(""); // Clear any previous errors
-
-                // Navigate to resume generator after a short delay to show loading state
-                setTimeout(() => {
-                    setIsLoading(false);
-                    // Navigate with state containing the uploaded file data
-                    navigate("/resume-generator", {
-                        state: {
-                            uploadedFile: fileData,
-                            source: 'resume-upload',
-                            timestamp: Date.now()
-                        }
-                    });
-                }, 1000);
-
-            } catch (err) {
-                console.error("Error processing file:", err);
-                setError("Error processing file. Please try again.");
-                setIsLoading(false);
-            }
-        }
-    };
+           // Navigate to generator with parsed data
+           navigate("/resume-generator", {
+               state: {
+                   uploadedFile: {
+                       name: file.name,
+                       type: file.type,
+                       size: file.size,
+                       arrayBuffer: await file.arrayBuffer() // Pass the arrayBuffer for preview
+                   },
+                   parsedResume: result.data,  // Pass the parsed data
+                   rawText: result.rawText,
+                   source: 'resume-upload',
+                   timestamp: Date.now()
+               }
+           });
+       } catch (err) {
+           console.error("❌ Parsing error:", err);
+           setError("Could not parse resume. Please try a different file.");
+       } finally {
+           setIsLoading(false);
+       }
+   };
 
     const handleCreateResume = () => {
         navigate("/resume-generator");

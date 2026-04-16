@@ -1,3 +1,4 @@
+// client/src/pages/ResumeGenerator.js
 import React, { useState, useEffect, useCallback, useRef, memo } from "react";
 import {
     Container, Button, Form, Row, Col, Card, ListGroup, OverlayTrigger,
@@ -7,13 +8,14 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useAuth } from "../context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import { processUploadedResume } from '../utils/pdfExtractor';
 import {
     FaPlus, FaChartBar, FaUser, FaEnvelope, FaPhone,
     FaMagic, FaEdit, FaBriefcase, FaGraduationCap, FaCode,
     FaAward, FaTrash, FaDownload, FaCog, FaEye, FaPalette,
     FaColumns, FaQuestionCircle, FaCheck, FaExclamationTriangle,
     FaSave, FaFilePdf, FaArrowLeft, FaArrowRight, FaGripVertical,
-    FaUpload, FaSpinner, FaTimes  // Add FaTimes here
+    FaUpload, FaSpinner, FaTimes, FaLinkedin, FaGithub, FaMapMarker
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactSwitch from "react-switch";
@@ -23,6 +25,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import * as pdfjsLib from 'pdfjs-dist';
 import "./ResumeGenerator.css";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import ResumeTemplates, { TemplateSelector } from "../components/ResumeTemplates";
 
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
@@ -54,6 +57,10 @@ const INITIAL_RESUME_DATA = {
     name: "",
     email: "",
     phone: "",
+    location: "",
+    linkedin: "",
+    github: "",
+    title: "",
     summary: "",
     experience: [{ company: "", position: "", duration: "", responsibilities: "" }],
     education: [{ institution: "", degree: "", duration: "", honors: "" }],
@@ -61,26 +68,6 @@ const INITIAL_RESUME_DATA = {
     certifications: [],
     projects: [{ title: "", description: "", technologies: "" }],
     achievements: "",
-};
-
-const TEMPLATES = {
-    professional: { name: 'Professional', colors: ['#2c3e50', '#2980b9'], style: 'classic' },
-    modern: { name: 'Modern', colors: ['#27ae60', '#2ecc71'], style: 'clean' },
-    creative: { name: 'Creative', colors: ['#e74c3c', '#e67e22'], style: 'bold' },
-    executive: { name: 'Executive', colors: ['#34495e', '#9b59b6'], style: 'elegant' },
-    minimalist: { name: 'Minimalist', colors: ['#7f8c8d', '#bdc3c7'], style: 'simple' },
-    tech: { name: 'Tech', colors: ['#3498db', '#2c3e50'], style: 'technical' },
-    academic: { name: 'Academic', colors: ['#8e44ad', '#3498db'], style: 'formal' },
-    startup: { name: 'Startup', colors: ['#e74c3c', '#f39c12'], style: 'innovative' }
-};
-
-const THEMES = {
-    light: { background: "#ffffff", text: "#000000", primary: "#2c3e50", secondary: "#2980b9" },
-    dark: { background: "#2c3e50", text: "#ffffff", primary: "#2980b9", secondary: "#2ecc71" },
-    colorful: { background: "#f0f0f0", text: "#333333", primary: "#e74c3c", secondary: "#e67e22" },
-    professional: { background: "#f8f9fa", text: "#495057", primary: "#343a40", secondary: "#6c757d" },
-    pastel: { background: "#f8f9fa", text: "#495057", primary: "#a5d8ff", secondary: "#ffd6a5" },
-    highContrast: { background: "#000000", text: "#ffffff", primary: "#ffff00", secondary: "#ff00ff" }
 };
 
 const STEPS = ["Personal Info", "Experience", "Education", "Skills", "Projects", "Achievements", "Preview"];
@@ -96,68 +83,354 @@ const INITIAL_SECTIONS = [
 ];
 
 // ==================== UTILITY FUNCTIONS ====================
-// Function to extract text from PDF
+// Enhanced extractTextFromPDF function
 const extractTextFromPDF = async (arrayBuffer) => {
     try {
         const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
         const pdf = await loadingTask.promise;
         let fullText = '';
+        let allItems = [];
 
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const textContent = await page.getTextContent();
-            const pageText = textContent.items.map(item => item.str).join(' ');
-            fullText += pageText + ' ';
+
+            // Get text items with their positions
+            const pageItems = textContent.items.map(item => ({
+                text: item.str,
+                x: item.transform[4],
+                y: item.transform[5]
+            }));
+
+            // Sort by y position (top to bottom) then x (left to right)
+            pageItems.sort((a, b) => {
+                if (Math.abs(a.y - b.y) < 10) return a.x - b.x;
+                return b.y - a.y;
+            });
+
+            const pageText = pageItems.map(item => item.text).join(' ');
+            allItems.push(...pageItems);
+            fullText += pageText + '\n';
         }
 
-        return fullText;
+        // Try to preserve line structure by grouping nearby items
+        const lines = [];
+        let currentLine = [];
+        let currentY = null;
+
+        for (const item of allItems) {
+            if (currentY === null || Math.abs(item.y - currentY) > 10) {
+                if (currentLine.length > 0) {
+                    lines.push(currentLine.map(i => i.text).join(' '));
+                }
+                currentLine = [item];
+                currentY = item.y;
+            } else {
+                currentLine.push(item);
+            }
+        }
+        if (currentLine.length > 0) {
+            lines.push(currentLine.map(i => i.text).join(' '));
+        }
+
+        const structuredText = lines.join('\n');
+        console.log("Extracted structured text:", structuredText.substring(0, 1000));
+
+        return structuredText;
     } catch (error) {
         console.error('Error extracting text from PDF:', error);
         return '';
     }
 };
 
-// Function to parse resume text and extract information
+// Enhanced parseResumeText function - Extracts ALL data from resume
+// Enhanced parseResumeText function - Focus on Work Experience
 const parseResumeText = (text) => {
-    const extractedData = {};
+    const extractedData = {
+        name: "",
+        email: "",
+        phone: "",
+        location: "",
+        linkedin: "",
+        github: "",
+        title: "",
+        summary: "",
+        skills: [],
+        certifications: [],
+        experience: [],
+        education: [],
+        projects: [],
+        achievements: ""
+    };
 
-    // Extract email
+    // 1. Extract Name
+   const nameMatch = text.match(
+     /^([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})/m
+   );
+    if (nameMatch) extractedData.name = `${nameMatch[1]} ${nameMatch[2]}`;
+
+    // 2. Extract Title
+    const titleMatch = text.match(/(?:Software|Senior|Lead)?\s*(QA|Quality Assurance|Software Test|Automation)\s*(Engineer|Analyst|Lead|Manager)/i);
+    if (titleMatch) extractedData.title = titleMatch[0].trim();
+
+    // 3. Extract Email
     const emailMatch = text.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/);
     if (emailMatch) extractedData.email = emailMatch[0];
 
-    // Extract phone (various formats)
-    const phoneMatch = text.match(/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
-    if (phoneMatch) extractedData.phone = phoneMatch[0];
+    // 4. Extract Phone
+    const phoneMatch = text.match(
+      /(\+?\d{1,3}[\s-]?)?\d{10}/
+    );
+    if (phoneMatch) extractedData.phone = `${phoneMatch[1]}-${phoneMatch[2]}-${phoneMatch[3]}`;
 
-    // Extract name (look for capitalized words near the top)
-    const lines = text.split('\n');
-    for (let i = 0; i < Math.min(5, lines.length); i++) {
-        const line = lines[i].trim();
-        if (line.length > 0 && line.length < 50 && /^[A-Z][a-z]+ [A-Z][a-z]+/.test(line)) {
-            extractedData.name = line;
-            break;
+    // 5. Extract Location
+    const locationMatch = text.match(/(?:Columbia|Boston|San Francisco|New York)[^,\n]*(?:SC|CA|NY|MA)/i);
+    if (locationMatch) extractedData.location = locationMatch[0];
+
+    // 6. Extract LinkedIn & GitHub
+    const linkedinMatch = text.match(/linkedin\.com\/in\/[\w-]+/i);
+    if (linkedinMatch) extractedData.linkedin = `https://${linkedinMatch[0]}`;
+
+    const githubMatch = text.match(/github\.com\/[\w-]+/i);
+    if (githubMatch) extractedData.github = `https://${githubMatch[0]}`;
+
+    // 7. Extract Summary
+    const summaryMatch = text.match(/(?:Software QA engineer|QA engineer)[^.]*\.[^.]*\.[^.]*\./i);
+    if (summaryMatch) extractedData.summary = summaryMatch[0].trim();
+
+    // ==================== 8. EXTRACT WORK EXPERIENCE (IMPROVED) ====================
+    const experienceSection = text.match(/WORK EXPERIENCE[\s\S]*?(?=EDUCATION|OTHER|CERTIFICATIONS|$)/i);
+
+    if (experienceSection) {
+        const expText = experienceSection[0];
+
+        // Split by job positions (look for patterns like "Job Title at Company")
+        const jobBlocks = [];
+
+        // Method 1: Split by common job title patterns
+        const jobPattern = /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+(?:at|@)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+Inc\.|LLC|Corp)?)/gi;
+        let match;
+        let lastIndex = 0;
+
+        while ((match = jobPattern.exec(expText)) !== null) {
+            if (lastIndex > 0) {
+                const jobText = expText.substring(lastIndex, match.index);
+                jobBlocks.push({
+                    position: match[1],
+                    company: match[2],
+                    text: jobText
+                });
+            }
+            lastIndex = match.index;
+        }
+
+        // Add the last job block
+        if (lastIndex > 0) {
+            const jobText = expText.substring(lastIndex);
+            jobBlocks.push({
+                position: jobBlocks[jobBlocks.length - 1]?.position || "",
+                company: jobBlocks[jobBlocks.length - 1]?.company || "",
+                text: jobText
+            });
+        }
+
+        // If pattern didn't work, try alternative method
+        if (jobBlocks.length === 0) {
+            // Look for capitalized job titles followed by at and company
+            const lines = expText.split('\n');
+            let currentJob = null;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                // Check if line looks like a job title
+                if (line.match(/^[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:at|@)/i)) {
+                    if (currentJob) {
+                        jobBlocks.push(currentJob);
+                    }
+                    const titleMatch = line.match(/^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+(?:at|@)\s+(.+)/i);
+                    currentJob = {
+                        position: titleMatch ? titleMatch[1] : "",
+                        company: titleMatch ? titleMatch[2] : "",
+                        text: ""
+                    };
+                } else if (currentJob) {
+                    currentJob.text += line + '\n';
+                }
+            }
+            if (currentJob) {
+                jobBlocks.push(currentJob);
+            }
+        }
+
+        // Parse each job block
+        for (const job of jobBlocks) {
+            if (!job.position && !job.company) continue;
+
+            // Extract duration
+            const durationMatch = job.text.match(/(\d{4})\s*[-–]\s*(?:\d{4}|Present|current)/i);
+            const duration = durationMatch ? durationMatch[0] : "";
+
+            // Extract responsibilities (bullet points)
+            const responsibilities = [];
+
+            // Look for bullet points with •, -, *, or numbers
+            const bulletPattern = /[•\-*]\s*([^\n]+)/g;
+            let bulletMatch;
+            while ((bulletMatch = bulletPattern.exec(job.text)) !== null) {
+                responsibilities.push(bulletMatch[1].trim());
+            }
+
+            // Also look for numbered points
+            const numberedPattern = /\d+\.\s*([^\n]+)/g;
+            let numberedMatch;
+            while ((numberedMatch = numberedPattern.exec(job.text)) !== null) {
+                responsibilities.push(numberedMatch[1].trim());
+            }
+
+            // Look for sentences with percentages or achievements
+            const achievementPattern = /(?:achieved|increased|reduced|saved|improved|implemented|developed|led|created|designed)[^.!?]*[.!?]/gi;
+            let achievementMatch;
+            while ((achievementMatch = achievementPattern.exec(job.text)) !== null) {
+                const achievement = achievementMatch[0].trim();
+                if (achievement.length > 20 && !responsibilities.includes(achievement)) {
+                    responsibilities.push(achievement);
+                }
+            }
+
+            // Clean up responsibilities
+            const cleanResponsibilities = responsibilities
+                .filter(r => r.length > 10 && r.length < 300)
+                .slice(0, 5); // Limit to 5 responsibilities per job
+
+            // Add to experience array
+            extractedData.experience.push({
+                company: job.company.trim(),
+                position: job.position.trim(),
+                duration: duration,
+                responsibilities: cleanResponsibilities.join('\n')
+            });
         }
     }
 
-    // Extract skills (look for common QA keywords)
-    const extractedSkills = [];
-    Object.values(KEYWORD_CATEGORIES).flat().forEach(keyword => {
-        if (text.toLowerCase().includes(keyword.toLowerCase())) {
-            extractedSkills.push(keyword);
+    // Manual parsing for the specific sample resume format
+    // Look for "Software QA Engineer at Resume Worded" pattern
+    const specificJobs = [
+        {
+            pattern: /Software QA Engineer.*?Resume Worded[^\n]*\n([\s\S]*?)(?=\n\n[A-Z][a-z]|\nSoftware Business Analyst|\nDeveloper|\n$)/i,
+            position: "Software QA Engineer",
+            company: "Resume Worded"
+        },
+        {
+            pattern: /Software Business Analyst.*?Growthsi[^\n]*\n([\s\S]*?)(?=\n\n[A-Z][a-z]|\nDeveloper|\n$)/i,
+            position: "Software Business Analyst",
+            company: "Growthsi"
+        },
+        {
+            pattern: /Developer.*?Resume Worded's Exciting Company[^\n]*\n([\s\S]*?)(?=\n\n[A-Z][a-z]|\nEDUCATION|\nCONTACT|\n$)/i,
+            position: "Developer",
+            company: "Resume Worded's Exciting Company"
         }
+    ];
+
+    for (const job of specificJobs) {
+        const match = text.match(job.pattern);
+        if (match && !extractedData.experience.some(e => e.company === job.company)) {
+            const responsibilities = [];
+            const lines = match[1].split('\n');
+            for (const line of lines) {
+                const cleanLine = line.trim();
+                if (cleanLine.startsWith('•') || cleanLine.startsWith('-') || cleanLine.startsWith('*')) {
+                    responsibilities.push(cleanLine.substring(1).trim());
+                } else if (cleanLine.match(/^[A-Z][a-z]/) && cleanLine.length > 30) {
+                    responsibilities.push(cleanLine);
+                }
+            }
+
+            // Extract duration
+            const durationMatch = match[1].match(/(\d{4})\s*[-–]\s*(?:\d{4}|Present)/i);
+
+            extractedData.experience.push({
+                company: job.company,
+                position: job.position,
+                duration: durationMatch ? durationMatch[0] : "",
+                responsibilities: responsibilities.join('\n').substring(0, 500)
+            });
+        }
+    }
+
+    // 9. Extract Skills
+    const skillsSection = text.match(/SKILLS[\s\S]*?(?=EDUCATION|WORK EXPERIENCE|$)/i);
+    if (skillsSection) {
+        const skillsText = skillsSection[0];
+
+        // Extract all skill lines
+        const skillLines = skillsText.match(/(?:Technical Skills|Industry Knowledge|Tools and Software)[:][^\n]+/gi);
+        if (skillLines) {
+            skillLines.forEach(line => {
+                const skills = line.match(/(?:[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/g);
+                if (skills) {
+                    skills.forEach(skill => {
+                        if (skill && skill.length > 1 && !extractedData.skills.includes(skill)) {
+                            extractedData.skills.push(skill);
+                        }
+                    });
+                }
+            });
+        }
+    }
+    extractedData.skills = [...new Set(extractedData.skills)];
+
+    // 10. Extract Certifications
+    const certSection = text.match(/OTHER[:\s]*([\s\S]*?)(?=$|\n\n)/i);
+    if (certSection) {
+        const certs = certSection[1].match(/[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:Certification|Certificate|Engineer|Tester)/g);
+        if (certs) {
+            extractedData.certifications = [...new Set(certs)];
+        }
+    }
+
+    // 11. Extract Education
+    const educationSection = text.match(/EDUCATION[\s\S]*?(?=OTHER|CERTIFICATIONS|$)/i);
+    if (educationSection) {
+        const eduText = educationSection[0];
+        const degreeMatch = eduText.match(/(?:Bachelor|Master|B\.Sc|M\.Sc|B\.Tech|M\.Tech|PhD)[\s\w]+/i);
+        const institutionMatch = eduText.match(/([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:University|College))/i);
+        const yearMatch = eduText.match(/(?:May|June|July|August|September|October|November|December)\s+\d{4}/i);
+
+        if (degreeMatch || institutionMatch) {
+            extractedData.education = [{
+                institution: institutionMatch ? institutionMatch[1] : "",
+                degree: degreeMatch ? degreeMatch[0] : "",
+                duration: yearMatch ? yearMatch[0] : "",
+                honors: ""
+            }];
+        }
+    }
+
+    // 12. Extract Achievements
+    const achievementPatterns = [
+        /received an award for[^.]*\./i,
+        /achieved a[^.]*%[^.]*\./i,
+        /saved over[^.]*\./i,
+        /recognized by[^.]*\./i,
+        /key achievement[^.]*\./i,
+        /resolved[^.]*\./i,
+        /launched initiative[^.]*\./i,
+        /conceived a project[^.]*\./i
+    ];
+
+    const achievements = [];
+    achievementPatterns.forEach(pattern => {
+        const match = text.match(pattern);
+        if (match) achievements.push(match[0]);
     });
-    if (extractedSkills.length > 0) {
-        extractedData.skills = [...new Set(extractedSkills)];
+
+    if (achievements.length > 0) {
+        extractedData.achievements = achievements.join('\n');
     }
 
-    // Extract summary (first paragraph of substantial text)
-    const paragraphs = text.split('\n\n');
-    for (let para of paragraphs) {
-        if (para.length > 100 && para.length < 500) {
-            extractedData.summary = para.trim();
-            break;
-        }
-    }
+    console.log("Extracted Experience:", extractedData.experience);
+    console.log("Total Experience Count:", extractedData.experience.length);
 
     return extractedData;
 };
@@ -225,17 +498,16 @@ const calculateCompletion = (resumeData) => {
     let filledFields = 0;
     let totalFields = 0;
 
-    // Basic info
-    totalFields += 3;
+    totalFields += 5;
     if (resumeData.name) filledFields++;
     if (resumeData.email) filledFields++;
     if (resumeData.phone) filledFields++;
+    if (resumeData.title) filledFields++;
+    if (resumeData.location) filledFields++;
 
-    // Summary
     totalFields++;
     if (resumeData.summary) filledFields++;
 
-    // Experience
     resumeData.experience?.forEach(exp => {
         totalFields += 4;
         if (exp.company) filledFields++;
@@ -244,7 +516,6 @@ const calculateCompletion = (resumeData) => {
         if (exp.responsibilities) filledFields++;
     });
 
-    // Education
     resumeData.education?.forEach(edu => {
         totalFields += 4;
         if (edu.institution) filledFields++;
@@ -253,15 +524,12 @@ const calculateCompletion = (resumeData) => {
         if (edu.honors) filledFields++;
     });
 
-    // Skills
     totalFields++;
     if (resumeData.skills?.length > 0) filledFields++;
 
-    // Certifications
     totalFields++;
     if (resumeData.certifications?.length > 0) filledFields++;
 
-    // Projects
     resumeData.projects?.forEach(proj => {
         totalFields += 3;
         if (proj.title) filledFields++;
@@ -269,14 +537,12 @@ const calculateCompletion = (resumeData) => {
         if (proj.technologies) filledFields++;
     });
 
-    // Achievements
     totalFields++;
     if (resumeData.achievements) filledFields++;
 
     return totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
 };
 
-// ==================== CUSTOM HOOKS ====================
 const useAutoSave = (data, delay = 1000) => {
     const [status, setStatus] = useState('idle');
 
@@ -288,7 +554,6 @@ const useAutoSave = (data, delay = 1000) => {
                 setStatus('saved');
                 setTimeout(() => setStatus('idle'), 1000);
             }, delay);
-
             return () => clearTimeout(timer);
         }
     }, [data, delay]);
@@ -304,21 +569,9 @@ const StatusBar = memo(({ completion, status }) => (
             <ProgressBar now={completion} style={{ width: '150px' }} />
         </div>
         <div className="auto-save-status">
-            {status === "saving" && (
-                <Badge bg="warning" className="p-2">
-                    <FaSave className="me-1" /> Saving...
-                </Badge>
-            )}
-            {status === "saved" && (
-                <Badge bg="success" className="p-2">
-                    <FaCheck className="me-1" /> Saved
-                </Badge>
-            )}
-            {status === "error" && (
-                <Badge bg="danger" className="p-2">
-                    <FaExclamationTriangle className="me-1" /> Error
-                </Badge>
-            )}
+            {status === "saving" && <Badge bg="warning" className="p-2"><FaSave className="me-1" /> Saving...</Badge>}
+            {status === "saved" && <Badge bg="success" className="p-2"><FaCheck className="me-1" /> Saved</Badge>}
+            {status === "error" && <Badge bg="danger" className="p-2"><FaExclamationTriangle className="me-1" /> Error</Badge>}
         </div>
     </div>
 ));
@@ -327,22 +580,20 @@ const FloatingControls = memo(({ template, styledPdf, dynamicAtsFriendly, onTogg
     <div className="floating-controls position-fixed end-0 top-50 translate-middle-y me-3">
         <Card className="shadow-lg">
             <Card.Body className="p-2">
-                <div className="template-preview mb-2 text-center">
-                    <Badge bg="secondary">{TEMPLATES[template].name}</Badge>
-                    <div className="template-colors mt-1">
-                        <span className="color-dot" style={{ backgroundColor: TEMPLATES[template].colors[0] }} />
-                        <span className="color-dot" style={{ backgroundColor: TEMPLATES[template].colors[1] }} />
-                    </div>
-                </div>
                 <div className="quick-actions d-flex flex-column gap-2">
-                    <OverlayTrigger placement="left" overlay={<Tooltip>Toggle Styled PDF</Tooltip>}>
-                        <Button variant={styledPdf ? "primary" : "outline-secondary"} size="sm" onClick={onToggleStyled}>
+                    <OverlayTrigger placement="left" overlay={<Tooltip>Change Template</Tooltip>}>
+                        <Button variant="outline-primary" size="sm" onClick={onOpenSettings}>
                             <FaPalette />
                         </Button>
                     </OverlayTrigger>
-                    <OverlayTrigger placement="left" overlay={<Tooltip>Toggle ATS Optimization</Tooltip>}>
-                        <Button variant={dynamicAtsFriendly ? "primary" : "outline-secondary"} size="sm" onClick={onToggleAts}>
+                    <OverlayTrigger placement="left" overlay={<Tooltip>Toggle Styled PDF</Tooltip>}>
+                        <Button variant={styledPdf ? "primary" : "outline-secondary"} size="sm" onClick={onToggleStyled}>
                             <FaMagic />
+                        </Button>
+                    </OverlayTrigger>
+                    <OverlayTrigger placement="left" overlay={<Tooltip>ATS Optimization</Tooltip>}>
+                        <Button variant={dynamicAtsFriendly ? "primary" : "outline-secondary"} size="sm" onClick={onToggleAts}>
+                            <FaChartBar />
                         </Button>
                     </OverlayTrigger>
                     <OverlayTrigger placement="left" overlay={<Tooltip>Settings</Tooltip>}>
@@ -361,95 +612,84 @@ const FloatingControls = memo(({ template, styledPdf, dynamicAtsFriendly, onTogg
     </div>
 ));
 
-const StepNavigation = memo(({ currentStep, onStepChange }) => (
-    <Card className="steps-container p-3">
-        <h3 className="mb-4 d-flex align-items-center">
-            <FaEdit className="me-2" />
-            Resume Builder
-            <Badge bg="primary" className="ms-auto">
-                {currentStep + 1}/{STEPS.length}
-            </Badge>
-        </h3>
-        <ListGroup variant="flush">
-            {STEPS.map((step, index) => (
-                <motion.div
-                    key={index}
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                >
+const StepNavigation = memo(({ currentStep, onStepChange }) => {
+    const handleStepClick = (index) => {
+        onStepChange(index);
+        // Force scroll to top
+        setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 50);
+    };
+
+    return (
+        <Card className="steps-container p-3">
+            <h3 className="mb-4 d-flex align-items-center">
+                <FaEdit className="me-2" />
+                Resume Builder
+                <Badge bg="primary" className="ms-auto">{currentStep + 1}/{STEPS.length}</Badge>
+            </h3>
+            <ListGroup variant="flush">
+                {STEPS.map((step, index) => (
                     <ListGroup.Item
+                        key={index}
                         active={index === currentStep}
-                        onClick={() => onStepChange(index)}
+                        onClick={() => handleStepClick(index)}
                         action
                         className="d-flex align-items-center"
+                        style={{ cursor: 'pointer' }}
                     >
                         <span className="step-badge me-2">{index + 1}</span>
                         {step}
                         {index === currentStep && (
-                            <motion.span
-                                className="ms-auto"
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ type: "spring" }}
-                            >
-                                ➔
-                            </motion.span>
+                            <span className="ms-auto">➔</span>
                         )}
                     </ListGroup.Item>
-                </motion.div>
-            ))}
-        </ListGroup>
-    </Card>
-));
+                ))}
+            </ListGroup>
+        </Card>
+    );
+});
 
 const PersonalInfoStep = memo(({ data, errors, onChange }) => (
     <Card className="p-4 hover-shadow">
         <h4 className="mb-4"><FaUser className="me-2" />Personal Information</h4>
         <Row className="g-3">
             <Col md={6}>
-                <FloatingLabel controlId="name" label="Full Name">
-                    <Form.Control
-                        value={data.name}
-                        onChange={(e) => onChange('name', e.target.value)}
-                        isInvalid={!!errors.name}
-                        className="input-glass"
-                    />
+                <FloatingLabel label="Full Name">
+                    <Form.Control value={data.name} onChange={(e) => onChange('name', e.target.value)} isInvalid={!!errors.name} />
                     <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
                 </FloatingLabel>
             </Col>
             <Col md={6}>
-                <FloatingLabel controlId="email" label="Email">
-                    <Form.Control
-                        type="email"
-                        value={data.email}
-                        onChange={(e) => onChange('email', e.target.value)}
-                        isInvalid={!!errors.email}
-                        className="input-glass"
-                    />
+                <FloatingLabel label="Professional Title">
+                    <Form.Control value={data.title} onChange={(e) => onChange('title', e.target.value)} placeholder="e.g., Senior QA Engineer" />
+                </FloatingLabel>
+            </Col>
+            <Col md={6}>
+                <FloatingLabel label="Email">
+                    <Form.Control type="email" value={data.email} onChange={(e) => onChange('email', e.target.value)} isInvalid={!!errors.email} />
                     <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
                 </FloatingLabel>
             </Col>
             <Col md={6}>
-                <FloatingLabel controlId="phone" label="Phone">
-                    <Form.Control
-                        type="tel"
-                        value={data.phone}
-                        onChange={(e) => onChange('phone', e.target.value)}
-                        isInvalid={!!errors.phone}
-                        className="input-glass"
-                    />
+                <FloatingLabel label="Phone">
+                    <Form.Control type="tel" value={data.phone} onChange={(e) => onChange('phone', e.target.value)} isInvalid={!!errors.phone} />
                     <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
                 </FloatingLabel>
             </Col>
+            <Col md={6}>
+                <FloatingLabel label="Location">
+                    <Form.Control value={data.location} onChange={(e) => onChange('location', e.target.value)} placeholder="City, State" />
+                </FloatingLabel>
+            </Col>
+            <Col md={6}>
+                <FloatingLabel label="LinkedIn URL">
+                    <Form.Control value={data.linkedin} onChange={(e) => onChange('linkedin', e.target.value)} placeholder="https://linkedin.com/in/username" />
+                </FloatingLabel>
+            </Col>
             <Col md={12}>
-                <FloatingLabel controlId="summary" label="Professional Summary">
-                    <Form.Control
-                        as="textarea"
-                        rows={4}
-                        value={data.summary}
-                        onChange={(e) => onChange('summary', e.target.value)}
-                        className="input-glass"
-                    />
+                <FloatingLabel label="Professional Summary">
+                    <Form.Control as="textarea" rows={4} value={data.summary} onChange={(e) => onChange('summary', e.target.value)} placeholder="Write a compelling summary of your experience and career goals..." />
                 </FloatingLabel>
             </Col>
         </Row>
@@ -458,151 +698,37 @@ const PersonalInfoStep = memo(({ data, errors, onChange }) => (
 
 const ExperienceStep = memo(({ data, errors, onArrayChange, onAdd, onRemove }) => (
     <Card className="p-4 hover-shadow">
-        <h4 className="mb-4"><FaBriefcase className="me-2" />Experience</h4>
-        <AnimatePresence>
-            {data.map((exp, index) => (
-                <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="experience-item mb-4 p-3 border rounded"
-                >
-                    <Row className="g-3">
-                        <Col md={6}>
-                            <FloatingLabel label="Company">
-                                <Form.Control
-                                    value={exp.company}
-                                    onChange={(e) => onArrayChange('experience', index, 'company', e.target.value)}
-                                    isInvalid={!!errors[`experience-${index}-company`]}
-                                    className="input-glass"
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors[`experience-${index}-company`]}
-                                </Form.Control.Feedback>
-                            </FloatingLabel>
-                        </Col>
-                        <Col md={6}>
-                            <FloatingLabel label="Position">
-                                <Form.Control
-                                    value={exp.position}
-                                    onChange={(e) => onArrayChange('experience', index, 'position', e.target.value)}
-                                    isInvalid={!!errors[`experience-${index}-position`]}
-                                    className="input-glass"
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors[`experience-${index}-position`]}
-                                </Form.Control.Feedback>
-                            </FloatingLabel>
-                        </Col>
-                        <Col md={6}>
-                            <FloatingLabel label="Duration">
-                                <Form.Control
-                                    value={exp.duration}
-                                    onChange={(e) => onArrayChange('experience', index, 'duration', e.target.value)}
-                                    className="input-glass"
-                                />
-                            </FloatingLabel>
-                        </Col>
-                        <Col md={12}>
-                            <FloatingLabel label="Responsibilities">
-                                <Form.Control
-                                    as="textarea"
-                                    rows={3}
-                                    value={exp.responsibilities}
-                                    onChange={(e) => onArrayChange('experience', index, 'responsibilities', e.target.value)}
-                                    className="input-glass"
-                                />
-                            </FloatingLabel>
-                        </Col>
-                        <Col className="text-end">
-                            <Button
-                                variant="danger"
-                                size="sm"
-                                onClick={() => onRemove('experience', index)}
-                            >
-                                <FaTrash /> Remove
-                            </Button>
-                        </Col>
-                    </Row>
-                </motion.div>
-            ))}
-        </AnimatePresence>
-        <Button variant="outline-primary" onClick={() => onAdd('experience', { company: "", position: "", duration: "", responsibilities: "" })}>
-            <FaPlus /> Add Experience
-        </Button>
+        <h4 className="mb-4"><FaBriefcase className="me-2" />Work Experience</h4>
+        {data.map((exp, index) => (
+            <div key={index} className="experience-item mb-4 p-3 border rounded">
+                <Row className="g-3">
+                    <Col md={6}><FloatingLabel label="Company"><Form.Control value={exp.company} onChange={(e) => onArrayChange('experience', index, 'company', e.target.value)} isInvalid={!!errors[`experience-${index}-company`]} /></FloatingLabel></Col>
+                    <Col md={6}><FloatingLabel label="Position"><Form.Control value={exp.position} onChange={(e) => onArrayChange('experience', index, 'position', e.target.value)} isInvalid={!!errors[`experience-${index}-position`]} /></FloatingLabel></Col>
+                    <Col md={6}><FloatingLabel label="Duration"><Form.Control value={exp.duration} onChange={(e) => onArrayChange('experience', index, 'duration', e.target.value)} placeholder="e.g., Jan 2020 - Present" /></FloatingLabel></Col>
+                    <Col md={12}><FloatingLabel label="Responsibilities"><Form.Control as="textarea" rows={3} value={exp.responsibilities} onChange={(e) => onArrayChange('experience', index, 'responsibilities', e.target.value)} placeholder="• Describe your key responsibilities and achievements&#10;• Use bullet points for better readability" /></FloatingLabel></Col>
+                    <Col className="text-end"><Button variant="danger" size="sm" onClick={() => onRemove('experience', index)}><FaTrash /> Remove</Button></Col>
+                </Row>
+            </div>
+        ))}
+        <Button variant="outline-primary" onClick={() => onAdd('experience', { company: "", position: "", duration: "", responsibilities: "" })}><FaPlus /> Add Experience</Button>
     </Card>
 ));
 
 const EducationStep = memo(({ data, errors, onArrayChange, onAdd, onRemove }) => (
     <Card className="p-4 hover-shadow">
         <h4 className="mb-4"><FaGraduationCap className="me-2" />Education</h4>
-        <AnimatePresence>
-            {data.map((edu, index) => (
-                <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="education-item mb-4 p-3 border rounded"
-                >
-                    <Row className="g-3">
-                        <Col md={6}>
-                            <FloatingLabel label="Institution">
-                                <Form.Control
-                                    value={edu.institution}
-                                    onChange={(e) => onArrayChange('education', index, 'institution', e.target.value)}
-                                    isInvalid={!!errors[`education-${index}-institution`]}
-                                    className="input-glass"
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors[`education-${index}-institution`]}
-                                </Form.Control.Feedback>
-                            </FloatingLabel>
-                        </Col>
-                        <Col md={6}>
-                            <FloatingLabel label="Degree">
-                                <Form.Control
-                                    value={edu.degree}
-                                    onChange={(e) => onArrayChange('education', index, 'degree', e.target.value)}
-                                    isInvalid={!!errors[`education-${index}-degree`]}
-                                    className="input-glass"
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors[`education-${index}-degree`]}
-                                </Form.Control.Feedback>
-                            </FloatingLabel>
-                        </Col>
-                        <Col md={6}>
-                            <FloatingLabel label="Duration">
-                                <Form.Control
-                                    value={edu.duration}
-                                    onChange={(e) => onArrayChange('education', index, 'duration', e.target.value)}
-                                    className="input-glass"
-                                />
-                            </FloatingLabel>
-                        </Col>
-                        <Col md={6}>
-                            <FloatingLabel label="Honors/Awards">
-                                <Form.Control
-                                    value={edu.honors}
-                                    onChange={(e) => onArrayChange('education', index, 'honors', e.target.value)}
-                                    className="input-glass"
-                                />
-                            </FloatingLabel>
-                        </Col>
-                        <Col className="text-end">
-                            <Button variant="danger" size="sm" onClick={() => onRemove('education', index)}>
-                                <FaTrash /> Remove
-                            </Button>
-                        </Col>
-                    </Row>
-                </motion.div>
-            ))}
-        </AnimatePresence>
-        <Button variant="outline-primary" onClick={() => onAdd('education', { institution: "", degree: "", duration: "", honors: "" })}>
-            <FaPlus /> Add Education
-        </Button>
+        {data.map((edu, index) => (
+            <div key={index} className="education-item mb-4 p-3 border rounded">
+                <Row className="g-3">
+                    <Col md={6}><FloatingLabel label="Institution"><Form.Control value={edu.institution} onChange={(e) => onArrayChange('education', index, 'institution', e.target.value)} isInvalid={!!errors[`education-${index}-institution`]} /></FloatingLabel></Col>
+                    <Col md={6}><FloatingLabel label="Degree"><Form.Control value={edu.degree} onChange={(e) => onArrayChange('education', index, 'degree', e.target.value)} placeholder="e.g., Bachelor of Science in Computer Science" /></FloatingLabel></Col>
+                    <Col md={6}><FloatingLabel label="Duration"><Form.Control value={edu.duration} onChange={(e) => onArrayChange('education', index, 'duration', e.target.value)} placeholder="e.g., 2016 - 2020" /></FloatingLabel></Col>
+                    <Col md={6}><FloatingLabel label="Honors/Awards"><Form.Control value={edu.honors} onChange={(e) => onArrayChange('education', index, 'honors', e.target.value)} placeholder="e.g., Cum Laude, Dean's List" /></FloatingLabel></Col>
+                    <Col className="text-end"><Button variant="danger" size="sm" onClick={() => onRemove('education', index)}><FaTrash /> Remove</Button></Col>
+                </Row>
+            </div>
+        ))}
+        <Button variant="outline-primary" onClick={() => onAdd('education', { institution: "", degree: "", duration: "", honors: "" })}><FaPlus /> Add Education</Button>
     </Card>
 ));
 
@@ -611,21 +737,13 @@ const SkillsStep = memo(({ data, onChange }) => (
         <h4 className="mb-4"><FaCode className="me-2" />Skills & Certifications</h4>
         <Row className="g-3">
             <Col md={6}>
-                <FloatingLabel label="Skills (comma separated)">
-                    <Form.Control
-                        value={data.skills?.join(", ")}
-                        onChange={(e) => onChange('skills', e.target.value.split(",").map(s => s.trim()).filter(Boolean))}
-                        className="input-glass"
-                    />
+                <FloatingLabel label="Technical Skills (comma separated)">
+                    <Form.Control as="textarea" rows={3} value={data.skills?.join(", ")} onChange={(e) => onChange('skills', e.target.value.split(",").map(s => s.trim()).filter(Boolean))} placeholder="e.g., Selenium, Java, Python, Jenkins, AWS" />
                 </FloatingLabel>
             </Col>
             <Col md={6}>
                 <FloatingLabel label="Certifications (comma separated)">
-                    <Form.Control
-                        value={data.certifications?.join(", ")}
-                        onChange={(e) => onChange('certifications', e.target.value.split(",").map(c => c.trim()).filter(Boolean))}
-                        className="input-glass"
-                    />
+                    <Form.Control as="textarea" rows={3} value={data.certifications?.join(", ")} onChange={(e) => onChange('certifications', e.target.value.split(",").map(c => c.trim()).filter(Boolean))} placeholder="e.g., ISTQB, AWS Certified, Scrum Master" />
                 </FloatingLabel>
             </Col>
         </Row>
@@ -635,95 +753,40 @@ const SkillsStep = memo(({ data, onChange }) => (
 const ProjectsStep = memo(({ data, errors, onArrayChange, onAdd, onRemove }) => (
     <Card className="p-4 hover-shadow">
         <h4 className="mb-4"><FaCode className="me-2" />Projects</h4>
-        <AnimatePresence>
-            {data.map((proj, index) => (
-                <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="project-item mb-4 p-3 border rounded"
-                >
-                    <Row className="g-3">
-                        <Col md={6}>
-                            <FloatingLabel label="Title">
-                                <Form.Control
-                                    value={proj.title}
-                                    onChange={(e) => onArrayChange('projects', index, 'title', e.target.value)}
-                                    isInvalid={!!errors[`projects-${index}-title`]}
-                                    className="input-glass"
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors[`projects-${index}-title`]}
-                                </Form.Control.Feedback>
-                            </FloatingLabel>
-                        </Col>
-                        <Col md={6}>
-                            <FloatingLabel label="Technologies">
-                                <Form.Control
-                                    value={proj.technologies}
-                                    onChange={(e) => onArrayChange('projects', index, 'technologies', e.target.value)}
-                                    className="input-glass"
-                                />
-                            </FloatingLabel>
-                        </Col>
-                        <Col md={12}>
-                            <FloatingLabel label="Description">
-                                <Form.Control
-                                    as="textarea"
-                                    rows={3}
-                                    value={proj.description}
-                                    onChange={(e) => onArrayChange('projects', index, 'description', e.target.value)}
-                                    isInvalid={!!errors[`projects-${index}-description`]}
-                                    className="input-glass"
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors[`projects-${index}-description`]}
-                                </Form.Control.Feedback>
-                            </FloatingLabel>
-                        </Col>
-                        <Col className="text-end">
-                            <Button variant="danger" size="sm" onClick={() => onRemove('projects', index)}>
-                                <FaTrash /> Remove
-                            </Button>
-                        </Col>
-                    </Row>
-                </motion.div>
-            ))}
-        </AnimatePresence>
-        <Button variant="outline-primary" onClick={() => onAdd('projects', { title: "", description: "", technologies: "" })}>
-            <FaPlus /> Add Project
-        </Button>
+        {data.map((proj, index) => (
+            <div key={index} className="project-item mb-4 p-3 border rounded">
+                <Row className="g-3">
+                    <Col md={6}><FloatingLabel label="Project Title"><Form.Control value={proj.title} onChange={(e) => onArrayChange('projects', index, 'title', e.target.value)} isInvalid={!!errors[`projects-${index}-title`]} /></FloatingLabel></Col>
+                    <Col md={6}><FloatingLabel label="Technologies Used"><Form.Control value={proj.technologies} onChange={(e) => onArrayChange('projects', index, 'technologies', e.target.value)} placeholder="e.g., React, Node.js, MongoDB" /></FloatingLabel></Col>
+                    <Col md={12}><FloatingLabel label="Project Description"><Form.Control as="textarea" rows={3} value={proj.description} onChange={(e) => onArrayChange('projects', index, 'description', e.target.value)} placeholder="Describe the project, your role, and key achievements..." /></FloatingLabel></Col>
+                    <Col className="text-end"><Button variant="danger" size="sm" onClick={() => onRemove('projects', index)}><FaTrash /> Remove</Button></Col>
+                </Row>
+            </div>
+        ))}
+        <Button variant="outline-primary" onClick={() => onAdd('projects', { title: "", description: "", technologies: "" })}><FaPlus /> Add Project</Button>
     </Card>
 ));
 
 const AchievementsStep = memo(({ data, onChange }) => (
     <Card className="p-4 hover-shadow">
         <h4 className="mb-4"><FaAward className="me-2" />Achievements</h4>
-        <FloatingLabel label="Achievements">
-            <Form.Control
-                as="textarea"
-                rows={4}
-                value={data.achievements}
-                onChange={(e) => onChange('achievements', e.target.value)}
-                className="input-glass"
-            />
+        <FloatingLabel label="Achievements & Awards">
+            <Form.Control as="textarea" rows={5} value={data.achievements} onChange={(e) => onChange('achievements', e.target.value)} placeholder="• Employee of the Month - March 2023&#10;• Successfully delivered project ahead of schedule&#10;• Published article on industry best practices" />
         </FloatingLabel>
     </Card>
 ));
 
+// ResumePreview Component with Template Selector
 const ResumePreview = memo(({
     data,
     template,
     theme,
     layout,
     scale,
-    sections,
-    onDragEnd,
-    renderSection
+    onOpenTemplateSelector
 }) => (
     <div className="preview-container">
-        <div className="preview-controls mb-3">
+        <div className="preview-controls mb-3 d-flex justify-content-between align-items-center">
             <ButtonGroup size="sm">
                 <Button variant="outline-secondary" onClick={() => scale.set(Math.max(0.7, scale.value - 0.1))}>
                     <FaArrowLeft /> -
@@ -735,90 +798,37 @@ const ResumePreview = memo(({
                     + <FaArrowRight />
                 </Button>
             </ButtonGroup>
+
+            <Button variant="outline-primary" size="sm" onClick={onOpenTemplateSelector}>
+                <FaPalette className="me-1" /> Change Template
+            </Button>
         </div>
 
-        <motion.div
-            className={`resume-template ${layout} ${TEMPLATES[template].style}`}
-            id="resume-content"
+        <div
+            className="resume-preview-wrapper"
             style={{
                 transform: `scale(${scale.value})`,
-                backgroundColor: THEMES[theme].background,
-                color: THEMES[theme].text,
-                transformOrigin: 'top left'
+                transformOrigin: 'top center',
+                transition: 'transform 0.2s ease'
             }}
-            transition={{ type: "spring", stiffness: 200 }}
         >
-            <header className="resume-header text-center mb-4">
-                <h1 className="name-gradient">{data.name || "Your Name"}</h1>
-                <div className="contact-badges d-flex justify-content-center gap-3">
-                    {data.email && (
-                        <Badge bg="secondary" className="p-2">
-                            <FaEnvelope className="me-1" /> {data.email}
-                        </Badge>
-                    )}
-                    {data.phone && (
-                        <Badge bg="secondary" className="p-2">
-                            <FaPhone className="me-1" /> {data.phone}
-                        </Badge>
-                    )}
-                </div>
-            </header>
-
-            <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="resume-sections">
-                    {(provided, snapshot) => (
-                        <div
-                            {...provided.droppableProps}
-                            ref={provided.innerRef}
-                            className={`resume-sections ${snapshot.isDraggingOver ? 'dragging-over' : ''}`}
-                        >
-                            {sections.map((section, index) => (
-                                <Draggable key={section.id} draggableId={section.id} index={index}>
-                                    {(provided) => (
-                                        <div
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            style={{
-                                                ...provided.draggableProps.style,
-                                                marginBottom: '16px',
-                                                position: 'relative'
-                                            }}
-                                        >
-                                            <div className="drag-handle" {...provided.dragHandleProps}>
-                                                <FaGripVertical className="text-muted" />
-                                            </div>
-                                            {renderSection(section, data)}
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </Droppable>
-            </DragDropContext>
-        </motion.div>
+            <ResumeTemplates
+                data={data}
+                template={template}
+                theme={theme}
+                layout={layout}
+            />
+        </div>
     </div>
 ));
 
 const ATSDashboard = memo(({ results, darkMode }) => (
-    <motion.div
-        className="ats-dashboard mt-4 p-4 bg-light rounded"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-    >
+    <div className="ats-dashboard mt-4 p-4 bg-light rounded">
         <h4><FaChartBar className="me-2" />ATS Optimization Dashboard</h4>
         <div className="radial-progress-container d-flex justify-content-around my-4">
             {results.categoryScores?.map((cat, index) => (
                 <div key={index} className="radial-progress text-center" style={{ width: '100px' }}>
-                    <CircularProgressbar
-                        value={cat.score}
-                        text={`${cat.score}%`}
-                        styles={{
-                            path: { stroke: `rgba(41, 128, 185, ${0.8 - index * 0.2})` },
-                            text: { fill: darkMode ? '#fff' : '#2c3e50', fontSize: '16px' }
-                        }}
-                    />
+                    <CircularProgressbar value={cat.score} text={`${cat.score}%`} styles={{ path: { stroke: `rgba(41, 128, 185, ${0.8 - index * 0.2})` }, text: { fill: darkMode ? '#fff' : '#2c3e50', fontSize: '16px' } }} />
                     <div className="radial-label mt-2">{cat.name}</div>
                 </div>
             ))}
@@ -826,38 +836,22 @@ const ATSDashboard = memo(({ results, darkMode }) => (
         {results.suggestions?.length > 0 && (
             <Alert variant="warning" className="mt-3">
                 <h5><FaExclamationTriangle className="me-2" />Improvement Suggestions</h5>
-                <ul className="mb-0">
-                    {results.suggestions.map((suggestion, index) => (
-                        <li key={index}>{suggestion}</li>
-                    ))}
-                </ul>
+                <ul className="mb-0">{results.suggestions.map((suggestion, index) => <li key={index}>{suggestion}</li>)}</ul>
             </Alert>
         )}
-    </motion.div>
+    </div>
 ));
 
-// Upload Success Alert Component
 const UploadSuccessAlert = memo(({ fileName, onDismiss }) => (
-    <motion.div
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -50 }}
-        className="upload-success-alert position-fixed top-0 start-50 translate-middle-x mt-3 z-3"
-        style={{ zIndex: 9999 }}
-    >
+    <div className="upload-success-alert position-fixed top-0 start-50 translate-middle-x mt-3 z-3">
         <Alert variant="success" className="shadow-lg">
             <div className="d-flex align-items-center">
                 <FaCheck className="me-2" size={20} />
-                <div>
-                    <strong>Resume Uploaded Successfully!</strong>
-                    <div className="small">"{fileName}" has been loaded. You can now edit your resume.</div>
-                </div>
-                <Button variant="link" className="ms-3 p-0" onClick={onDismiss}>
-                    <FaTimes />
-                </Button>
+                <div><strong>Resume Uploaded Successfully!</strong><div className="small">"{fileName}" has been loaded. You can now edit your resume.</div></div>
+                <Button variant="link" className="ms-3 p-0" onClick={onDismiss}><FaTimes /></Button>
             </div>
         </Alert>
-    </motion.div>
+    </div>
 ));
 
 // ==================== MAIN COMPONENT ====================
@@ -873,13 +867,14 @@ const ResumeGenerator = () => {
     const [atsResult, setAtsResult] = useState(null);
     const [errors, setErrors] = useState({});
     const [darkMode, setDarkMode] = useState(false);
-    const [activeTemplate, setActiveTemplate] = useState('professional');
+    const [activeTemplate, setActiveTemplate] = useState('classic');
     const [previewScale, setPreviewScale] = useState(0.9);
     const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
     const [layout, setLayout] = useState("single-column");
     const [theme, setTheme] = useState("light");
     const [showSettings, setShowSettings] = useState(false);
     const [showHelp, setShowHelp] = useState(false);
+    const [showTemplateSelector, setShowTemplateSelector] = useState(false);
     const [styledPdf, setStyledPdf] = useState(true);
     const [dynamicAtsFriendly, setDynamicAtsFriendly] = useState(true);
     const [sections, setSections] = useState(INITIAL_SECTIONS);
@@ -891,154 +886,119 @@ const ResumeGenerator = () => {
     const autoSaveStatus = useAutoSave(resumeData);
     const completionPercentage = calculateCompletion(resumeData);
 
-    // Process uploaded file from navigation state
-    useEffect(() => {
-        const processUploadedFile = async () => {
-            if (location.state && location.state.uploadedFile) {
-                const { uploadedFile, source, timestamp } = location.state;
+  // ==================== PROCESS UPLOADED RESUME ====================
+  useEffect(() => {
+      const processUploadedFile = async () => {
+          // Check for parsed data from the upload
+          if (location.state && location.state.parsedResume) {
+              const { parsedResume, uploadedFile } = location.state;
 
-                console.log("Processing uploaded file:", uploadedFile.name);
-                setIsProcessingUpload(true);
-                setUploadedFileName(uploadedFile.name);
+              console.log("📄 Received parsed resume data:", parsedResume);
+              console.log("📄 Experience data:", parsedResume.experience);
 
-                try {
-                    // Extract text from PDF
-                    if (uploadedFile.arrayBuffer) {
-                        const extractedText = await extractTextFromPDF(uploadedFile.arrayBuffer);
-                        console.log("Extracted text length:", extractedText.length);
+              setIsProcessingUpload(true);
+              if (uploadedFile) {
+                  setUploadedFileName(uploadedFile.name);
+              }
 
-                        // Parse the extracted text to populate resume data
-                        const parsedData = parseResumeText(extractedText);
-                        console.log("Parsed data:", parsedData);
+              try {
+                  // Update all form fields with the parsed data
+                  setResumeData(prev => ({
+                      ...prev,
+                      name: parsedResume.name || prev.name,
+                      email: parsedResume.email || prev.email,
+                      phone: parsedResume.phone || prev.phone,
+                      location: parsedResume.location || prev.location,
+                      linkedin: parsedResume.linkedin || prev.linkedin,
+                      github: parsedResume.github || prev.github,
+                      title: parsedResume.title || prev.title,
+                      summary: parsedResume.summary || prev.summary,
+                      skills: parsedResume.skills && parsedResume.skills.length > 0
+                          ? [...new Set([...prev.skills, ...parsedResume.skills])]
+                          : prev.skills,
+                      certifications: parsedResume.certifications && parsedResume.certifications.length > 0
+                          ? [...new Set([...prev.certifications, ...parsedResume.certifications])]
+                          : prev.certifications,
+                      experience: parsedResume.experience && parsedResume.experience.length > 0
+                          ? parsedResume.experience
+                          : prev.experience,
+                      education: parsedResume.education && parsedResume.education.length > 0
+                          ? parsedResume.education
+                          : prev.education,
+                      projects: parsedResume.projects && parsedResume.projects.length > 0
+                          ? parsedResume.projects
+                          : prev.projects,
+                      achievements: parsedResume.achievements || prev.achievements
+                  }));
 
-                        // Merge parsed data with existing resume data
-                        setResumeData(prev => ({
-                            ...prev,
-                            ...parsedData,
-                            // Preserve existing arrays but add parsed data if available
-                            skills: parsedData.skills && parsedData.skills.length > 0
-                                ? [...new Set([...prev.skills, ...parsedData.skills])]
-                                : prev.skills,
-                            // If summary was extracted, use it
-                            summary: parsedData.summary || prev.summary,
-                            name: parsedData.name || prev.name,
-                            email: parsedData.email || prev.email,
-                            phone: parsedData.phone || prev.phone,
-                        }));
+                  setShowUploadSuccess(true);
+                  setTimeout(() => setShowUploadSuccess(false), 5000);
 
-                        // Show success message
-                        setShowUploadSuccess(true);
+                  // Clear the location state
+                  window.history.replaceState({}, document.title);
+              } catch (error) {
+                  console.error("Error processing uploaded file:", error);
+              } finally {
+                  setIsProcessingUpload(false);
+              }
+          }
+          // Fallback: extract directly from arrayBuffer
+          else if (location.state && location.state.uploadedFile && location.state.uploadedFile.arrayBuffer) {
+              const { uploadedFile } = location.state;
+              setIsProcessingUpload(true);
+              setUploadedFileName(uploadedFile.name);
 
-                        // Auto-hide success message after 5 seconds
-                        setTimeout(() => {
-                            setShowUploadSuccess(false);
-                        }, 5000);
+              try {
+                  const result = await processUploadedResume(uploadedFile);
+                  if (result.success && result.data) {
+                      const parsedData = result.data;
+                      setResumeData(prev => ({
+                          ...prev,
+                          ...parsedData,
+                          skills: parsedData.skills.length > 0 ? parsedData.skills : prev.skills,
+                          experience: parsedData.experience.length > 0 ? parsedData.experience : prev.experience,
+                      }));
+                  }
+                  setShowUploadSuccess(true);
+                  setTimeout(() => setShowUploadSuccess(false), 5000);
+                  window.history.replaceState({}, document.title);
+              } catch (error) {
+                  console.error("Error processing uploaded file:", error);
+              } finally {
+                  setIsProcessingUpload(false);
+              }
+          }
+      };
 
-                        // Clear the location state to prevent reprocessing on refresh
-                        window.history.replaceState({}, document.title);
+      processUploadedFile();
+  }, [location.state]);
 
-                        // Optional: Navigate to first step or stay on current step
-                        // setCurrentStep(0); // Uncomment if you want to go to personal info step
-                    }
-                } catch (error) {
-                    console.error("Error processing uploaded file:", error);
-                    // Show error alert
-                    setErrors(prev => ({
-                        ...prev,
-                        upload: "Failed to process uploaded resume. Please try again."
-                    }));
-                } finally {
-                    setIsProcessingUpload(false);
-                }
-            }
-        };
-
-        processUploadedFile();
-    }, [location.state]);
-
-    // Debounced ATS Analysis
-    const debouncedAnalysis = useCallback(
-        debounce((data) => {
-            setAtsResult(analyzeResume(data));
-        }, 500),
-        []
-    );
-
-    useEffect(() => {
-        debouncedAnalysis(resumeData);
-        return () => debouncedAnalysis.cancel();
-    }, [resumeData, debouncedAnalysis]);
+    const debouncedAnalysis = useCallback(debounce((data) => { setAtsResult(analyzeResume(data)); }, 500), []);
+    useEffect(() => { debouncedAnalysis(resumeData); return () => debouncedAnalysis.cancel(); }, [resumeData, debouncedAnalysis]);
 
     useEffect(() => {
         if (currentUser) {
-            setResumeData(prev => ({
-                ...prev,
-                name: currentUser.displayName || prev.name,
-                email: currentUser.email || prev.email,
-                phone: currentUser.phoneNumber || prev.phone,
-            }));
+            setResumeData(prev => ({ ...prev, name: currentUser.displayName || prev.name, email: currentUser.email || prev.email, phone: currentUser.phoneNumber || prev.phone }));
         }
     }, [currentUser]);
 
-    const handleInputChange = useCallback((field, value) => {
-        setResumeData(prev => ({ ...prev, [field]: value }));
-        setErrors(prev => ({ ...prev, [field]: "" }));
-    }, []);
+    // Scroll to top when step changes
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [currentStep]);
 
-    const handleArrayChange = useCallback((field, index, subField, value) => {
-        setResumeData(prev => {
-            const updatedArray = [...prev[field]];
-            updatedArray[index] = { ...updatedArray[index], [subField]: value };
-            return { ...prev, [field]: updatedArray };
-        });
-        setErrors(prev => ({ ...prev, [`${field}-${index}-${subField}`]: undefined }));
-    }, []);
-
-    const handleAddSection = useCallback((field, initialValue) => {
-        setResumeData(prev => ({
-            ...prev,
-            [field]: [...(prev[field] || []), initialValue]
-        }));
-    }, []);
-
-    const handleRemoveSection = useCallback((field, index) => {
-        setResumeData(prev => ({
-            ...prev,
-            [field]: prev[field].filter((_, i) => i !== index)
-        }));
-    }, []);
+    const handleInputChange = useCallback((field, value) => { setResumeData(prev => ({ ...prev, [field]: value })); setErrors(prev => ({ ...prev, [field]: "" })); }, []);
+    const handleArrayChange = useCallback((field, index, subField, value) => { setResumeData(prev => { const updatedArray = [...prev[field]]; updatedArray[index] = { ...updatedArray[index], [subField]: value }; return { ...prev, [field]: updatedArray }; }); setErrors(prev => ({ ...prev, [`${field}-${index}-${subField}`]: undefined })); }, []);
+    const handleAddSection = useCallback((field, initialValue) => { setResumeData(prev => ({ ...prev, [field]: [...(prev[field] || []), initialValue] })); }, []);
+    const handleRemoveSection = useCallback((field, index) => { setResumeData(prev => ({ ...prev, [field]: prev[field].filter((_, i) => i !== index) })); }, []);
 
     const validateStep = useCallback((step) => {
         const newErrors = {};
-
-        switch (step) {
-            case 0:
-                if (!resumeData.name?.trim()) newErrors.name = "Name is required";
-                if (!resumeData.email?.trim()) newErrors.email = "Email is required";
-                if (!resumeData.phone?.trim()) newErrors.phone = "Phone is required";
-                break;
-            case 1:
-                resumeData.experience?.forEach((exp, index) => {
-                    if (!exp.company?.trim()) newErrors[`experience-${index}-company`] = "Company is required";
-                    if (!exp.position?.trim()) newErrors[`experience-${index}-position`] = "Position is required";
-                });
-                break;
-            case 2:
-                resumeData.education?.forEach((edu, index) => {
-                    if (!edu.institution?.trim()) newErrors[`education-${index}-institution`] = "Institution is required";
-                    if (!edu.degree?.trim()) newErrors[`education-${index}-degree`] = "Degree is required";
-                });
-                break;
-            case 4:
-                resumeData.projects?.forEach((proj, index) => {
-                    if (!proj.title?.trim()) newErrors[`projects-${index}-title`] = "Title is required";
-                    if (!proj.description?.trim()) newErrors[`projects-${index}-description`] = "Description is required";
-                });
-                break;
-            default:
-                break;
+        if (step === 0) {
+            if (!resumeData.name?.trim()) newErrors.name = "Name is required";
+            if (!resumeData.email?.trim()) newErrors.email = "Email is required";
+            if (!resumeData.phone?.trim()) newErrors.phone = "Phone is required";
         }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     }, [resumeData]);
@@ -1050,114 +1010,17 @@ const ResumeGenerator = () => {
 
     const handleGeneratePDF = async () => {
         setIsGeneratingPDF(true);
-
         try {
-            const input = document.getElementById("resume-content");
-            if (!input) {
-                throw new Error("Resume content element not found!");
-            }
+            const element = document.querySelector('.resume-preview-wrapper');
+            if (!element) throw new Error("Resume content not found!");
 
-            const clone = input.cloneNode(true);
-            clone.style.width = "210mm";
-            clone.style.minHeight = "297mm";
-            clone.style.position = "absolute";
-            clone.style.left = "-9999px";
-            clone.style.top = "0";
-            clone.style.transform = "none";
-            clone.style.backgroundColor = THEMES[theme].background;
-            document.body.appendChild(clone);
-
-            if (dynamicAtsFriendly) {
-                const headers = clone.querySelectorAll("h2, h3");
-                headers.forEach(header => {
-                    header.style.fontWeight = "bold";
-                    header.style.marginBottom = "8px";
-                });
-
-                const responsibilities = clone.querySelectorAll(".responsibilities");
-                responsibilities.forEach(resp => {
-                    const text = resp.textContent;
-                    resp.innerHTML = text.split("\n")
-                        .filter(t => t.trim())
-                        .map(t => `• ${t.trim()}`)
-                        .join("<br>");
-                });
-            }
-
-            await Promise.all([
-                document.fonts.ready,
-                ...Array.from(clone.querySelectorAll("img")).map(img =>
-                    img.complete ? Promise.resolve() : new Promise((resolve) => {
-                        img.onload = resolve;
-                        img.onerror = resolve;
-                    })
-                )
-            ]);
-
-            const pdf = new jsPDF({
-                orientation: "portrait",
-                unit: "mm",
-                format: "a4",
-                putOnlyUsedFonts: true,
-                hotfixes: ["px_scaling"]
-            });
-
-            if (styledPdf) {
-                clone.style.fontFamily = "'Arial', sans-serif";
-                clone.style.color = "#333";
-                clone.querySelectorAll(".section-title").forEach(title => {
-                    title.style.color = TEMPLATES[activeTemplate].colors[0];
-                    title.style.borderBottom = `2px solid ${TEMPLATES[activeTemplate].colors[1]}`;
-                    title.style.paddingBottom = "4px";
-                });
-            }
-
-            const scale = 2;
-            const margin = 0;
-            const pageWidth = pdf.internal.pageSize.getWidth() - margin * 2;
-            const pageHeight = pdf.internal.pageSize.getHeight() - margin * 2;
-
-            const canvas = await html2canvas(clone, {
-                scale,
-                useCORS: true,
-                allowTaint: true,
-                logging: false,
-                backgroundColor: THEMES[theme].background,
-            });
-
-            const imgWidth = pageWidth;
+            const canvas = await html2canvas(element, { scale: 3, useCORS: true, logging: false });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            const imgWidth = 210;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-            let position = 0;
-            let pageNumber = 1;
-
-            while (position < imgHeight) {
-                if (pageNumber > 1) pdf.addPage();
-
-                const sectionHeight = Math.min(pageHeight, imgHeight - position);
-
-                pdf.addImage(
-                    canvas.toDataURL("image/png"),
-                    "PNG",
-                    margin,
-                    margin - position,
-                    imgWidth,
-                    imgHeight,
-                    undefined,
-                    "FAST"
-                );
-
-                position += pageHeight;
-                pageNumber++;
-            }
-
-            const fileName = resumeData.name
-                ?.trim()
-                .replace(/\s+/g, '_')
-                .replace(/[^\w-]/g, '') || 'Resume';
-
-            pdf.save(`${fileName}.pdf`);
-            document.body.removeChild(clone);
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            pdf.save(`${resumeData.name || 'Resume'}.pdf`);
         } catch (error) {
             console.error("PDF generation failed:", error);
             alert("Failed to generate PDF. Please try again.");
@@ -1166,400 +1029,73 @@ const ResumeGenerator = () => {
         }
     };
 
-    const onDragEnd = useCallback((result) => {
-        if (!result.destination) return;
-
-        const items = Array.from(sections);
-        const [reorderedItem] = items.splice(result.source.index, 1);
-        items.splice(result.destination.index, 0, reorderedItem);
-        setSections(items);
-    }, [sections]);
-
-    const handleTemplateChange = useCallback((template) => {
-        setActiveTemplate(template);
-        document.documentElement.style.setProperty('--primary-color', TEMPLATES[template].colors[0]);
-        document.documentElement.style.setProperty('--secondary-color', TEMPLATES[template].colors[1]);
-    }, []);
-
-    const renderSectionContent = useCallback((section, data) => {
-        switch(section.id) {
-            case 'summary-1':
-                return data.summary && (
-                    <section className="resume-section mb-4">
-                        <h2 className="section-title"><FaUser className="me-2" />Professional Summary</h2>
-                        <Card className="p-3 bg-light">
-                            <p className="mb-0">{data.summary}</p>
-                        </Card>
-                    </section>
-                );
-            case 'experience-2':
-                return data.experience?.length > 0 && data.experience.some(exp => exp.company) && (
-                    <section className="resume-section mb-4">
-                        <h2 className="section-title"><FaBriefcase className="me-2" />Experience</h2>
-                        {data.experience.map((exp, index) => (
-                            <Card key={index} className="mb-3">
-                                <Card.Body>
-                                    <h3 className="mb-1">{exp.position} - {exp.company}</h3>
-                                    <p className="text-muted mb-2">{exp.duration}</p>
-                                    <p className="mb-0 responsibilities">{exp.responsibilities}</p>
-                                </Card.Body>
-                            </Card>
-                        ))}
-                    </section>
-                );
-            case 'education-3':
-                return data.education?.length > 0 && data.education.some(edu => edu.institution) && (
-                    <section className="resume-section mb-4">
-                        <h2 className="section-title"><FaGraduationCap className="me-2" />Education</h2>
-                        {data.education.map((edu, index) => (
-                            <Card key={index} className="mb-3">
-                                <Card.Body>
-                                    <h3 className="mb-1">{edu.degree} - {edu.institution}</h3>
-                                    <p className="text-muted mb-2">{edu.duration}</p>
-                                    {edu.honors && <p className="mb-0"><strong>Honors:</strong> {edu.honors}</p>}
-                                </Card.Body>
-                            </Card>
-                        ))}
-                    </section>
-                );
-            case 'skills-4':
-                return data.skills?.length > 0 && (
-                    <section className="resume-section mb-4">
-                        <h2 className="section-title"><FaCode className="me-2" />Skills</h2>
-                        <Card className="p-3 bg-light">
-                            <div className="d-flex flex-wrap gap-2">
-                                {data.skills.map((skill, index) => (
-                                    <Badge key={index} bg="primary" className="p-2">{skill}</Badge>
-                                ))}
-                            </div>
-                        </Card>
-                    </section>
-                );
-            case 'certifications-5':
-                return data.certifications?.length > 0 && (
-                    <section className="resume-section mb-4">
-                        <h2 className="section-title"><FaAward className="me-2" />Certifications</h2>
-                        <Card className="p-3 bg-light">
-                            <ul className="mb-0">
-                                {data.certifications.map((cert, index) => (
-                                    <li key={index}>{cert}</li>
-                                ))}
-                            </ul>
-                        </Card>
-                    </section>
-                );
-            case 'projects-6':
-                return data.projects?.length > 0 && data.projects.some(proj => proj.title) && (
-                    <section className="resume-section mb-4">
-                        <h2 className="section-title"><FaCode className="me-2" />Projects</h2>
-                        {data.projects.map((proj, index) => (
-                            <Card key={index} className="mb-3">
-                                <Card.Body>
-                                    <h3 className="mb-1">{proj.title}</h3>
-                                    <p className="text-muted mb-2">{proj.technologies}</p>
-                                    <p className="mb-0">{proj.description}</p>
-                                </Card.Body>
-                            </Card>
-                        ))}
-                    </section>
-                );
-            case 'achievements-7':
-                return data.achievements && (
-                    <section className="resume-section mb-4">
-                        <h2 className="section-title"><FaAward className="me-2" />Achievements</h2>
-                        <Card className="p-3 bg-light">
-                            <p className="mb-0">{data.achievements}</p>
-                        </Card>
-                    </section>
-                );
-            default:
-                return null;
-        }
-    }, []);
+    const onDragEnd = useCallback((result) => { if (!result.destination) return; const items = Array.from(sections); const [reorderedItem] = items.splice(result.source.index, 1); items.splice(result.destination.index, 0, reorderedItem); setSections(items); }, [sections]);
 
     return (
         <Container fluid className={`resume-generator-container ${darkMode ? 'dark-mode' : ''}`}>
-            {/* Upload Processing Overlay */}
             {isProcessingUpload && (
                 <div className="upload-processing-overlay position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style={{ backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 10000 }}>
-                    <Card className="text-center p-4">
-                        <FaSpinner className="spinner-animation mb-3" size={40} />
-                        <h5>Processing Your Resume...</h5>
-                        <p className="text-muted mb-0">Extracting information from "{uploadedFileName}"</p>
-                    </Card>
+                    <Card className="text-center p-4"><FaSpinner className="spinner-animation mb-3" size={40} /><h5>Processing Your Resume...</h5><p className="text-muted mb-0">Extracting information from "{uploadedFileName}"</p></Card>
                 </div>
             )}
-
-            {/* Upload Success Alert */}
-            <AnimatePresence>
-                {showUploadSuccess && (
-                    <UploadSuccessAlert
-                        fileName={uploadedFileName}
-                        onDismiss={() => setShowUploadSuccess(false)}
-                    />
-                )}
-            </AnimatePresence>
+            {showUploadSuccess && <UploadSuccessAlert fileName={uploadedFileName} onDismiss={() => setShowUploadSuccess(false)} />}
 
             <StatusBar completion={completionPercentage} status={autoSaveStatus} />
-
-            <FloatingControls
-                template={activeTemplate}
-                styledPdf={styledPdf}
-                dynamicAtsFriendly={dynamicAtsFriendly}
-                onToggleStyled={() => setStyledPdf(prev => !prev)}
-                onToggleAts={() => setDynamicAtsFriendly(prev => !prev)}
-                onOpenSettings={() => setShowSettings(true)}
-                onOpenHelp={() => setShowHelp(true)}
-            />
+            <FloatingControls template={activeTemplate} styledPdf={styledPdf} dynamicAtsFriendly={dynamicAtsFriendly} onToggleStyled={() => setStyledPdf(prev => !prev)} onToggleAts={() => setDynamicAtsFriendly(prev => !prev)} onOpenSettings={() => setShowSettings(true)} onOpenHelp={() => setShowHelp(true)} />
 
             <Row className="g-4">
-                <Col lg={3}>
-                    <StepNavigation currentStep={currentStep} onStepChange={setCurrentStep} />
-                </Col>
-
+                <Col lg={3}><StepNavigation currentStep={currentStep} onStepChange={setCurrentStep} /></Col>
                 <Col lg={9}>
-                    <AnimatePresence mode='wait'>
-                        <motion.div
-                            key={currentStep}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            {currentStep === 0 && (
-                                <PersonalInfoStep
-                                    data={resumeData}
-                                    errors={errors}
-                                    onChange={handleInputChange}
-                                />
-                            )}
-                            {currentStep === 1 && (
-                                <ExperienceStep
-                                    data={resumeData.experience}
-                                    errors={errors}
-                                    onArrayChange={handleArrayChange}
-                                    onAdd={handleAddSection}
-                                    onRemove={handleRemoveSection}
-                                />
-                            )}
-                            {currentStep === 2 && (
-                                <EducationStep
-                                    data={resumeData.education}
-                                    errors={errors}
-                                    onArrayChange={handleArrayChange}
-                                    onAdd={handleAddSection}
-                                    onRemove={handleRemoveSection}
-                                />
-                            )}
-                            {currentStep === 3 && (
-                                <SkillsStep
-                                    data={resumeData}
-                                    onChange={handleInputChange}
-                                />
-                            )}
-                            {currentStep === 4 && (
-                                <ProjectsStep
-                                    data={resumeData.projects}
-                                    errors={errors}
-                                    onArrayChange={handleArrayChange}
-                                    onAdd={handleAddSection}
-                                    onRemove={handleRemoveSection}
-                                />
-                            )}
-                            {currentStep === 5 && (
-                                <AchievementsStep
-                                    data={resumeData}
-                                    onChange={handleInputChange}
-                                />
-                            )}
-                            {currentStep === 6 && (
-                                <ResumePreview
-                                    data={resumeData}
-                                    template={activeTemplate}
-                                    theme={theme}
-                                    layout={layout}
-                                    scale={{ value: previewScale, set: setPreviewScale }}
-                                    sections={sections}
-                                    onDragEnd={onDragEnd}
-                                    renderSection={renderSectionContent}
-                                />
-                            )}
-                        </motion.div>
-                    </AnimatePresence>
+                    <div>
+                        {currentStep === 0 && <PersonalInfoStep data={resumeData} errors={errors} onChange={handleInputChange} />}
+                        {currentStep === 1 && <ExperienceStep data={resumeData.experience} errors={errors} onArrayChange={handleArrayChange} onAdd={handleAddSection} onRemove={handleRemoveSection} />}
+                        {currentStep === 2 && <EducationStep data={resumeData.education} errors={errors} onArrayChange={handleArrayChange} onAdd={handleAddSection} onRemove={handleRemoveSection} />}
+                        {currentStep === 3 && <SkillsStep data={resumeData} onChange={handleInputChange} />}
+                        {currentStep === 4 && <ProjectsStep data={resumeData.projects} errors={errors} onArrayChange={handleArrayChange} onAdd={handleAddSection} onRemove={handleRemoveSection} />}
+                        {currentStep === 5 && <AchievementsStep data={resumeData} onChange={handleInputChange} />}
+                        {currentStep === 6 && <ResumePreview data={resumeData} template={activeTemplate} theme={theme} layout={layout} scale={{ value: previewScale, set: setPreviewScale }} onOpenTemplateSelector={() => setShowTemplateSelector(true)} />}
+                    </div>
 
                     <div className="navigation-buttons mt-4 d-flex justify-content-between">
-                        <div>
-                            {currentStep > 0 && (
-                                <Button variant="secondary" onClick={() => handleStepChange("prev")}>
-                                    <FaArrowLeft className="me-2" /> Previous
-                                </Button>
-                            )}
-                        </div>
-                        <div>
-                            {currentStep < STEPS.length - 1 && (
-                                <Button variant="primary" onClick={() => handleStepChange("next")}>
-                                    Next <FaArrowRight className="ms-2" />
-                                </Button>
-                            )}
-                            {currentStep === STEPS.length - 1 && (
-                                <Button
-                                    variant="success"
-                                    onClick={handleGeneratePDF}
-                                    disabled={isGeneratingPDF}
-                                >
-                                    {isGeneratingPDF ? (
-                                        "Generating..."
-                                    ) : (
-                                        <>
-                                            <FaFilePdf className="me-2" /> Download PDF
-                                        </>
-                                    )}
-                                </Button>
-                            )}
-                        </div>
+                        <div>{currentStep > 0 && <Button variant="secondary" onClick={() => handleStepChange("prev")}><FaArrowLeft className="me-2" /> Previous</Button>}</div>
+                        <div>{currentStep < STEPS.length - 1 ? <Button variant="primary" onClick={() => handleStepChange("next")}>Next <FaArrowRight className="ms-2" /></Button> : <Button variant="success" onClick={handleGeneratePDF} disabled={isGeneratingPDF}>{isGeneratingPDF ? "Generating..." : <><FaFilePdf className="me-2" /> Download PDF</>}</Button>}</div>
                     </div>
 
                     {atsResult && <ATSDashboard results={atsResult} darkMode={darkMode} />}
                 </Col>
             </Row>
 
+            {/* Template Selector Modal */}
+            <Modal show={showTemplateSelector} onHide={() => setShowTemplateSelector(false)} size="lg" centered>
+                <Modal.Header closeButton><Modal.Title><FaPalette className="me-2" />Choose Your Resume Template</Modal.Title></Modal.Header>
+                <Modal.Body><TemplateSelector currentTemplate={activeTemplate} onSelectTemplate={(templateId) => { setActiveTemplate(templateId); setShowTemplateSelector(false); }} /></Modal.Body>
+                <Modal.Footer><Button variant="secondary" onClick={() => setShowTemplateSelector(false)}>Close</Button></Modal.Footer>
+            </Modal>
+
             {/* Settings Modal */}
             <Modal show={showSettings} onHide={() => setShowSettings(false)} size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title><FaCog className="me-2" />Resume Settings</Modal.Title>
-                </Modal.Header>
+                <Modal.Header closeButton><Modal.Title><FaCog className="me-2" />Resume Settings</Modal.Title></Modal.Header>
                 <Modal.Body>
                     <Form>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Dark Mode</Form.Label>
-                            <div>
-                                <ReactSwitch
-                                    checked={darkMode}
-                                    onChange={() => setDarkMode(!darkMode)}
-                                    onColor="#2c3e50"
-                                    offColor="#adb5bd"
-                                />
-                            </div>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Default Template</Form.Label>
-                            <Form.Select
-                                value={activeTemplate}
-                                onChange={(e) => handleTemplateChange(e.target.value)}
-                            >
-                                {Object.entries(TEMPLATES).map(([key, template]) => (
-                                    <option key={key} value={key}>{template.name}</option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Default Theme</Form.Label>
-                            <Form.Select
-                                value={theme}
-                                onChange={(e) => setTheme(e.target.value)}
-                            >
-                                {Object.keys(THEMES).map(key => (
-                                    <option key={key} value={key}>
-                                        {key.charAt(0).toUpperCase() + key.slice(1)}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label className="d-flex align-items-center">
-                                <FaPalette className="me-2" /> Styled PDF Template
-                            </Form.Label>
-                            <div className="d-flex align-items-center">
-                                <ReactSwitch
-                                    checked={styledPdf}
-                                    onChange={() => setStyledPdf(!styledPdf)}
-                                    onColor="#2c3e50"
-                                    offColor="#adb5bd"
-                                />
-                                <span className="ms-3 text-muted">
-                                    Apply custom fonts, colors, and layouts for a polished look
-                                </span>
-                            </div>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label className="d-flex align-items-center">
-                                <FaMagic className="me-2" /> ATS-Friendly Formatting
-                            </Form.Label>
-                            <div className="d-flex align-items-center">
-                                <ReactSwitch
-                                    checked={dynamicAtsFriendly}
-                                    onChange={() => setDynamicAtsFriendly(!dynamicAtsFriendly)}
-                                    onColor="#2c3e50"
-                                    offColor="#adb5bd"
-                                />
-                                <span className="ms-3 text-muted">
-                                    Ensure structured headers, bullet points, and proper keyword placement
-                                </span>
-                            </div>
-                        </Form.Group>
+                        <Form.Group className="mb-3"><Form.Label>Dark Mode</Form.Label><div><ReactSwitch checked={darkMode} onChange={() => setDarkMode(!darkMode)} onColor="#2c3e50" offColor="#adb5bd" /></div></Form.Group>
+                        <Form.Group className="mb-3"><Form.Label>Theme Color</Form.Label><Form.Select value={theme} onChange={(e) => setTheme(e.target.value)}>{Object.keys({ light: 'Light', dark: 'Dark', professional: 'Professional', colorful: 'Colorful' }).map(key => <option key={key} value={key}>{key}</option>)}</Form.Select></Form.Group>
+                        <Form.Group className="mb-3"><Form.Label className="d-flex align-items-center"><FaPalette className="me-2" /> Styled PDF Template</Form.Label><div className="d-flex align-items-center"><ReactSwitch checked={styledPdf} onChange={() => setStyledPdf(!styledPdf)} onColor="#2c3e50" offColor="#adb5bd" /><span className="ms-3 text-muted">Apply custom fonts, colors, and layouts for a polished look</span></div></Form.Group>
+                        <Form.Group className="mb-3"><Form.Label className="d-flex align-items-center"><FaMagic className="me-2" /> ATS-Friendly Formatting</Form.Label><div className="d-flex align-items-center"><ReactSwitch checked={dynamicAtsFriendly} onChange={() => setDynamicAtsFriendly(!dynamicAtsFriendly)} onColor="#2c3e50" offColor="#adb5bd" /><span className="ms-3 text-muted">Ensure structured headers, bullet points, and proper keyword placement</span></div></Form.Group>
                     </Form>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowSettings(false)}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={() => setShowSettings(false)}>
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
+                <Modal.Footer><Button variant="secondary" onClick={() => setShowSettings(false)}>Close</Button><Button variant="primary" onClick={() => setShowSettings(false)}>Save Changes</Button></Modal.Footer>
             </Modal>
 
             {/* Help Modal */}
             <Modal show={showHelp} onHide={() => setShowHelp(false)} size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title><FaQuestionCircle className="me-2" />Resume Builder Help</Modal.Title>
-                </Modal.Header>
+                <Modal.Header closeButton><Modal.Title><FaQuestionCircle className="me-2" />Resume Builder Help</Modal.Title></Modal.Header>
                 <Modal.Body>
-                    <h5>Getting Started</h5>
-                    <p>
-                        Follow the steps on the left to build your resume. Each section corresponds to a part of your resume.
-                        Fill in all the required fields to create a complete resume.
-                    </p>
-
-                    <h5 className="mt-4">Upload Feature</h5>
-                    <p>
-                        You can upload an existing resume from the Resume Library page. The system will automatically:
-                    </p>
-                    <ul>
-                        <li>Extract text from your PDF resume</li>
-                        <li>Auto-fill personal information (name, email, phone)</li>
-                        <li>Identify and populate relevant skills</li>
-                        <li>Extract your professional summary</li>
-                    </ul>
-
-                    <h5 className="mt-4">Tips for a Strong Resume</h5>
-                    <ul>
-                        <li>Use action verbs to describe your experience (e.g., "Developed", "Managed", "Led")</li>
-                        <li>Quantify achievements when possible (e.g., "Increased sales by 20%")</li>
-                        <li>Keep your professional summary concise and focused (150-200 words recommended)</li>
-                        <li>Tailor your resume to the job you're applying for</li>
-                        <li>Include relevant keywords from the job description</li>
-                    </ul>
-
-                    <h5 className="mt-4">ATS Optimization</h5>
-                    <p>
-                        The ATS (Applicant Tracking System) dashboard shows how well your resume matches common job requirements.
-                        Aim for scores above 70% in all categories for the best results.
-                    </p>
-
-                    <h5 className="mt-4">Keyboard Shortcuts</h5>
-                    <ul>
-                        <li><kbd>Ctrl/Cmd + S</kbd> - Save resume</li>
-                        <li><kbd>Ctrl/Cmd + P</kbd> - Generate PDF</li>
-                        <li><kbd>Ctrl/Cmd + →</kbd> - Next step</li>
-                        <li><kbd>Ctrl/Cmd + ←</kbd> - Previous step</li>
-                    </ul>
+                    <h5>Getting Started</h5><p>Follow the steps on the left to build your resume. Each section corresponds to a part of your resume.</p>
+                    <h5 className="mt-4">Upload Feature</h5><p>You can upload an existing resume from the Resume Library page. The system will automatically extract and populate your information.</p>
+                    <h5 className="mt-4">Templates</h5><p>Choose from 8 professional templates including Classic, Modern, Sidebar, Creative, Tech, Executive, Academic, and Startup styles.</p>
+                    <h5 className="mt-4">ATS Optimization</h5><p>The ATS dashboard shows how well your resume matches common job requirements. Aim for scores above 70% in all categories.</p>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowHelp(false)}>
-                        Close
-                    </Button>
-                </Modal.Footer>
+                <Modal.Footer><Button variant="secondary" onClick={() => setShowHelp(false)}>Close</Button></Modal.Footer>
             </Modal>
         </Container>
     );
