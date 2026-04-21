@@ -35,8 +35,55 @@ const AboutUs = () => {
                 </div>
             </div>
 
-            {/* Mission Section */}
+            {/* Our Story Section - NEW for AdSense depth */}
             <div className="container">
+                <div className="story-section" data-aos="fade-up">
+                    <div className="container">
+                        <div className="section-header">
+                            <h2>Who We Are</h2>
+                            <div className="divider"></div>
+                        </div>
+                        <div className="row">
+                            <div className="col-lg-12">
+                                <div className="story-content">
+                                    <p>
+                                        QA Hub was founded with a simple yet powerful mission: to make quality software testing
+                                        education accessible, practical, and career-focused. As experienced QA professionals
+                                        ourselves, we saw a gap between traditional testing courses and what the industry actually
+                                        demands from testing professionals today.
+                                    </p>
+                                    <p>
+                                        Our team consists of certified testing professionals with years of hands-on experience in
+                                        various domains including e-commerce, fintech, healthcare, and enterprise software. We have
+                                        successfully delivered testing solutions for clients across India and internationally, giving
+                                        us deep insights into what employers truly value in QA professionals.
+                                    </p>
+                                    <p>
+                                        What makes QA Hub different is our practical, project-based approach. We don't just teach
+                                        theory – we simulate real testing scenarios, share actual bug reports from production
+                                        systems, and provide hands-on assignments that mirror what you'll face in your daily work
+                                        as a tester. Our courses are continuously updated to reflect the latest tools, frameworks,
+                                        and best practices in the rapidly evolving QA landscape.
+                                    </p>
+                                    <p>
+                                        Today, QA Hub serves thousands of learners across India and around the world. Our community
+                                        includes fresh graduates starting their careers, manual testers transitioning to automation,
+                                        and experienced professionals looking to stay current with modern testing methodologies.
+                                        We're proud to have helped numerous students achieve certifications, land better jobs, and
+                                        advance their careers in quality assurance.
+                                    </p>
+                                    <p>
+                                        We are headquartered in Haryana, India, and our team is committed to providing the highest
+                                        quality learning experience. Every course, every resource, and every interaction is guided
+                                        by our core values: quality, integrity, and student success.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mission Section */}
                 <div className="mission-section" data-aos="fade-up">
                     <div className="row align-items-center">
                         <div className="col-lg-6" data-aos="fade-right">
@@ -182,7 +229,7 @@ const AboutUs = () => {
                         </p>
                         <div className="stats-container">
                             <div className="stat-item" data-aos="zoom-in" data-aos-delay="100">
-                                <div className="stat-number">1000+</div>
+                                <div className="stat-number">10,000+</div>
                                 <div className="stat-label">Active Learners</div>
                             </div>
                             <div className="stat-item" data-aos="zoom-in" data-aos-delay="200">

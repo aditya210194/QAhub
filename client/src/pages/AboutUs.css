@@ -437,6 +437,67 @@
     transform: scale(1.2);
     color: #764ba2;
 }
+/* ==================== STORY SECTION ==================== */
+.story-section {
+    margin: 4rem 0;
+    background: white;
+    border-radius: 30px;
+    padding: 3rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.story-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 60px rgba(102, 126, 234, 0.15);
+}
+
+.story-content p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #4a5568;
+    margin-bottom: 1.5rem;
+    text-align: justify;
+}
+
+.story-content p:first-child {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #2d3748;
+}
+
+.story-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive for Story Section */
+@media (max-width: 992px) {
+    .story-section {
+        padding: 2rem;
+        margin: 3rem 0;
+    }
+
+    .story-content p {
+        font-size: 0.95rem;
+        text-align: left;
+    }
+}
+
+@media (max-width: 768px) {
+    .story-section {
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .story-content p {
+        font-size: 0.9rem;
+        line-height: 1.7;
+    }
+
+    .story-content p:first-child {
+        font-size: 0.95rem;
+    }
+}
 
 /* ==================== COMMITMENT SECTION ==================== */
 .commitment-section {

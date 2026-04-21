@@ -20,8 +20,8 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 0;
-    height: 0;
+    width: 300px;
+    height: 300px;
     background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
     animation: rotate 20s linear infinite;
     z-index: 0;
@@ -37,8 +37,8 @@
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 0;
-    height: 0;
+    width: 250px;
+    height: 250px;
     background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
     animation: rotateReverse 25s linear infinite;
     z-index: 0;
@@ -355,7 +355,7 @@
     z-index: 100;
     opacity: 0;
     visibility: hidden;
-    animation: fadeIn 0.3s ease forwards;
+    animation: all 0.3s ease;
 }
 
 .back-to-top.visible {
