@@ -81,6 +81,8 @@ const Home = () => {
 
     return (
         <div className="home">
+          {/* Hidden H1 for crawlers */}
+            <h1 style={{ display: 'none' }}>QA Hub - Software Testing Education Platform</h1>
             <SecondHeader />
 
             {/* Hero Section */}
