@@ -1,0 +1,501 @@
+/* Footer.css */
+
+/* ==================== CSS VARIABLES ==================== */
+:root {
+    --footer-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    --footer-text: #e2e8f0;
+    --footer-link: #a0aec0;
+    --footer-link-hover: #667eea;
+    --footer-border: rgba(255, 255, 255, 0.1);
+    --transition-normal: 0.3s ease;
+    --shadow-lg: 0 -10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Light mode variables */
+:root.light-mode {
+    --footer-bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    --footer-text: #2d3748;
+    --footer-link: #4a5568;
+    --footer-link-hover: #667eea;
+    --footer-border: rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== FOOTER BASE STYLES ==================== */
+.footer {
+    background: var(--footer-bg);
+    color: var(--footer-text);
+    padding: 2rem 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border-top: 1px solid var(--footer-border);
+    transition: all var(--transition-normal);
+}
+
+/* Animated background pattern */
+.footer::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.03) 0%, transparent 50%);
+    animation: rotate 30s linear infinite;
+    z-index: 0;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.footer::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #667eea, #764ba2, #667eea, transparent);
+    animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Container styles */
+.footer .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* ==================== FOOTER CONTENT ==================== */
+.footer p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    text-align: center;
+    position: relative;
+}
+
+/* Copyright text animation */
+.footer p span {
+    display: inline-block;
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== LINK STYLES ==================== */
+.footer a {
+    color: var(--footer-link);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    transition: all var(--transition-normal);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+/* Link hover effect */
+.footer a:hover {
+    color: var(--footer-link-hover);
+    background: rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+/* Active link effect */
+.footer a:active {
+    transform: translateY(0);
+}
+
+/* Link underline animation */
+.footer a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width var(--transition-normal);
+    border-radius: 2px;
+}
+
+.footer a:hover::after {
+    width: 80%;
+}
+
+/* Separator styles */
+.footer .separator {
+    color: var(--footer-border);
+    font-weight: 300;
+    margin: 0 0.2rem;
+}
+
+/* ==================== ANIMATED DIVIDER ==================== */
+.footer .divider {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    margin: 0 0.5rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 992px) {
+    .footer {
+        padding: 1.8rem 0;
+    }
+
+    .footer p {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer {
+        padding: 1.5rem 0;
+    }
+
+    .footer p {
+        font-size: 0.9rem;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .footer a {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.9rem;
+    }
+
+    .footer .divider {
+        display: none;
+    }
+
+    /* Stack links vertically with better spacing */
+    .footer a::after {
+        bottom: -4px;
+    }
+
+    /* Add subtle background on mobile */
+    .footer a {
+        background: rgba(102, 126, 234, 0.05);
+        border-radius: 25px;
+        padding: 0.5rem 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer {
+        padding: 1.2rem 0;
+    }
+
+    .footer p {
+        font-size: 0.85rem;
+        gap: 0.5rem;
+    }
+
+    .footer a {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    /* Make links full width on very small screens */
+    .footer .container {
+        padding: 0 1rem;
+    }
+
+    .footer p {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .footer a {
+        justify-content: center;
+    }
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+    .footer {
+        background: white;
+        color: black;
+        padding: 1rem 0;
+        box-shadow: none;
+        border-top: 1px solid #ddd;
+    }
+
+    .footer::before,
+    .footer::after {
+        display: none;
+    }
+
+    .footer a {
+        color: black;
+        text-decoration: underline;
+    }
+
+    .footer a::after {
+        display: none;
+    }
+}
+
+/* ==================== DARK MODE SUPPORT ==================== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --footer-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        --footer-text: #e2e8f0;
+        --footer-link: #a0aec0;
+        --footer-link-hover: #667eea;
+        --footer-border: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* ==================== FOCUS STATES ==================== */
+.footer a:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+    border-radius: 20px;
+}
+
+/* ==================== ADDITIONAL ENHANCEMENTS ==================== */
+
+/* Hover card effect for links */
+.footer a {
+    position: relative;
+    overflow: hidden;
+}
+
+.footer a::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(102, 126, 234, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    z-index: -1;
+}
+
+.footer a:hover::before {
+    width: 150px;
+    height: 150px;
+}
+
+/* Copyright symbol animation */
+.footer .copyright-symbol {
+    display: inline-block;
+    animation: spin 10s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Gradient text for company name */
+.footer .company-name {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* Tooltip styles */
+.footer a[title] {
+    position: relative;
+}
+
+.footer a[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2d3748;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ==================== SOCIAL MEDIA ICONS (Optional Enhancement) ==================== */
+.footer .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.footer .social-link {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-normal);
+}
+
+.footer .social-link:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    transform: translateY(-3px) rotate(360deg);
+}
+
+/* ==================== BACK TO TOP BUTTON (Optional Enhancement) ==================== */
+.footer .back-to-top {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    border: 2px solid white;
+}
+
+.footer .back-to-top:hover {
+    transform: translateX(-50%) translateY(-5px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.6);
+}
+
+.footer .back-to-top:active {
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ==================== CUSTOM SCROLLBAR ==================== */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Apply animations to footer elements */
+.footer {
+    animation: slideInUp 0.8s ease;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

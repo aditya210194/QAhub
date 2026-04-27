@@ -1,0 +1,52 @@
+/* MentorshipPage.css - Remove scroll-causing animations */
+
+/* Replace the rotating background animations with static ones */
+.mentorship-page {
+    min-height: 100vh;
+    background: var(--primary-gradient);
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Remove the rotating animations that cause scroll */
+.mentorship-page::before,
+.mentorship-page::after {
+    display: none; /* Disable the rotating background patterns */
+}
+
+/* Or replace with a simple static gradient */
+.mentorship-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Keep other animations that don't cause scroll */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}

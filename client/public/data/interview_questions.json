@@ -1,0 +1,2463 @@
+[
+  {
+    "id": 1,
+    "question": "Explain the steps for Bug Cycle?",
+    "answer": {
+      "content": [
+        "The bug cycle, also known as the Defect Life Cycle, is a standardized workflow that a defect follows from the moment it is found until it is closed. While the exact statuses can vary by tool and organization, the core steps are as follows:",
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "**NEW/OPEN:** Once the bug is identified by the tester, it is logged in the bug tracking system and assigned to the development manager in OPEN status.",
+            "**ASSIGNED:** The development manager reviews the bug and assigns it to the appropriate developer. The status changes to ASSIGNED.",
+            "**IN-PROGRESS:** The developer starts working on the fix and updates the status to IN-PROGRESS.",
+            "**FIXED:** Once the developer has made the necessary code changes, they update the status to FIXED and reassign it to the tester for verification.",
+            "**RETEST:** The tester retests the bug. If the fix works, the status moves to CLOSED. If the fix fails, the status changes to RE-OPENED and the cycle repeats.",
+            "**REJECTED:** If the bug is not valid (e.g., user error, not reproducible), the developer marks it as REJECTED with an explanation.",
+            "**DUPLICATE:** If the same bug was already reported, it is marked as DUPLICATE and linked to the original bug report.",
+            "**POSTPONED/DEFERRED:** If the bug is valid but not critical for the current release, it may be postponed to a future release."
+          ]
+        }
+      ],
+      "codeBlocks": [
+        {
+          "title": "Sample Bug Report JSON",
+          "language": "json",
+          "code": "{\n  \"bugId\": \"BUG-1234\",\n  \"title\": \"Login button not working on Chrome browser\",\n  \"status\": \"OPEN\",\n  \"priority\": \"HIGH\",\n  \"severity\": \"CRITICAL\",\n  \"assignedTo\": \"developer@example.com\",\n  \"steps\": [\n    \"Navigate to login page\",\n    \"Enter valid credentials\",\n    \"Click login button\",\n    \"Observe that nothing happens\"\n  ]\n}"
+        }
+      ],
+      "diagrams": [
+        {
+          "type": "flowchart",
+          "title": "Bug Lifecycle Flow",
+          "steps": [
+            { "type": "start-end", "content": "Bug Found" },
+            { "type": "process", "content": "Bug Logged (NEW)" },
+            { "type": "process", "content": "Assigned to Dev (ASSIGNED)" },
+            { "type": "decision", "content": "Valid Bug?" },
+            { "type": "process", "content": "Fix Bug (IN-PROGRESS → FIXED)" },
+            { "type": "decision", "content": "Retest Pass?" },
+            { "type": "start-end", "content": "Bug Closed (CLOSED)" },
+            { "type": "process", "content": "Reopen Bug (RE-OPENED)" },
+            { "type": "process", "content": "Reject Bug (REJECTED)" }
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "Bug Status Definitions",
+          "headers": ["Status", "Description", "Responsible Party"],
+          "rows": [
+            ["NEW/OPEN", "Bug is newly identified and logged", "Tester"],
+            ["ASSIGNED", "Bug has been assigned to a developer", "Manager/Lead"],
+            ["IN-PROGRESS", "Developer is actively working on the fix", "Developer"],
+            ["FIXED", "Bug has been fixed and is ready for testing", "Developer"],
+            ["CLOSED", "Bug has been verified and is resolved", "Tester"],
+            ["RE-OPENED", "Bug fix failed verification, needs more work", "Tester"],
+            ["REJECTED", "Bug is not valid or cannot be reproduced", "Developer"],
+            ["DUPLICATE", "Bug has already been reported elsewhere", "Tester/Developer"]
+          ]
+        }
+      ]
+    },
+    "category": "Bug Tracking",
+    "difficulty": "Intermediate",
+    "tags": ["bug-cycle", "defect-lifecycle", "defect-management", "qa-process"],
+    "resources": [
+      {
+        "title": "ISTQB Bug Management Guidelines",
+        "url": "https://www.istqb.org/"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "question": "What is Software Testing?",
+    "answer": {
+      "content": [
+        "Software Testing is a critical phase in the software development lifecycle (SDLC) that involves the dynamic verification of a program's behavior on a finite set of test cases, selected from the usually infinite execution domain, against the expected behavior.",
+        "",
+        "In simpler terms, it is the process of evaluating and verifying that a software product or application:",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Meets the business and technical requirements** that guided its design and development.",
+            "**Works as expected,** ensuring there are no critical defects or bugs that negatively impact the user experience.",
+            "**Is reliable, secure, and performs well** under expected conditions.",
+            "**Satisfies end-user needs** and provides value to stakeholders."
+          ]
+        },
+        "The primary goal is to identify gaps, errors, or missing requirements, thereby helping to deliver a high-quality product that provides value to its users and stakeholders. It's not just about finding bugs, but also about gathering information to understand the level of quality (or risk) of the product."
+      ],
+      "codeBlocks": [
+        {
+          "title": "Simple Test Example (JUnit)",
+          "language": "java",
+          "code": "import org.junit.jupiter.api.Test;\nimport static org.junit.jupiter.api.Assertions.*;\n\npublic class CalculatorTest {\n    \n    @Test\n    public void testAddition() {\n        Calculator calc = new Calculator();\n        int result = calc.add(5, 3);\n        assertEquals(8, result, \"5 + 3 should equal 8\");\n    }\n    \n    @Test\n    public void testDivisionByZero() {\n        Calculator calc = new Calculator();\n        assertThrows(ArithmeticException.class, \n            () -> calc.divide(10, 0),\n            \"Division by zero should throw exception\");\n    }\n}"
+        }
+      ],
+      "tables": [
+        {
+          "title": "Cost of Fixing Bugs by Phase",
+          "headers": ["Phase Found", "Relative Cost to Fix"],
+          "rows": [
+            ["Requirements", "1x"],
+            ["Design", "3-6x"],
+            ["Development", "10x"],
+            ["Testing", "15-40x"],
+            ["Production", "30-100x"]
+          ]
+        }
+      ]
+    },
+    "category": "Fundamentals",
+    "difficulty": "Beginner",
+    "tags": ["software-testing", "qa-basics", "testing-fundamentals"]
+  },
+  {
+    "id": 3,
+    "question": "What is the difference between Verification and Validation?",
+    "answer": {
+      "content": [
+        "Verification and Validation (V&V) are two distinct but complementary activities aimed at ensuring software quality. A simple way to remember the difference is: **Verification is 'building the product right,' while Validation is 'building the right product.'**",
+        "",
+        "**Verification**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Type:** Static testing process (no code execution)",
+            "**Focus:** Evaluating work products (requirements, design, code) against specifications",
+            "**Goal:** Ensure the product is being built correctly according to standards",
+            "**Activities:** Reviews, walkthroughs, inspections, static analysis",
+            "**Question:** \"Are we building the product according to the specifications?\""
+          ]
+        },
+        "**Validation**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Type:** Dynamic testing process (code execution)",
+            "**Focus:** Testing the actual software against user needs",
+            "**Goal:** Ensure the final product meets user expectations",
+            "**Activities:** Functional testing, system testing, UAT, performance testing",
+            "**Question:** \"Are we building the product that the user actually wants?\""
+          ]
+        },
+        "In essence, verification checks the documentation and design, while validation checks the running code."
+      ],
+      "tables": [
+        {
+          "title": "Verification vs Validation Comparison",
+          "headers": ["Aspect", "Verification", "Validation"],
+          "rows": [
+            ["Code Execution", "No (Static)", "Yes (Dynamic)"],
+            ["Objective", "Check against specifications", "Check against user needs"],
+            ["Activities", "Reviews, Inspections", "Testing, UAT"],
+            ["Timing", "Early in SDLC", "Later in SDLC"],
+            ["Artefacts", "Documents, Design", "Working software"],
+            ["Performed by", "QA, Peers, Analysts", "QA, End-users"]
+          ]
+        }
+      ],
+      "diagrams": [
+        {
+          "type": "flowchart",
+          "title": "V-Model Showing V&V",
+          "steps": [
+            { "type": "process", "content": "Requirements (Verification)" },
+            { "type": "process", "content": "High-Level Design (Verification)" },
+            { "type": "process", "content": "Low-Level Design (Verification)" },
+            { "type": "process", "content": "Coding" },
+            { "type": "process", "content": "Unit Testing (Validation)" },
+            { "type": "process", "content": "Integration Testing (Validation)" },
+            { "type": "process", "content": "System Testing (Validation)" },
+            { "type": "process", "content": "Acceptance Testing (Validation)" }
+          ]
+        }
+      ]
+    },
+    "category": "Fundamentals",
+    "difficulty": "Beginner",
+    "tags": ["verification", "validation", "v-model", "static-testing", "dynamic-testing"]
+  },
+  {
+    "id": 4,
+    "question": "What are the different levels of testing?",
+    "answer": {
+      "content": [
+        "Software testing is typically organized into four main levels, each with a specific objective, scope, and target audience. They are performed sequentially, building upon each other.",
+        "",
+        "**1. Unit Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Objective:** To verify that individual components or modules of source code (e.g., functions, classes, methods) are working correctly in isolation.",
+            "**Scope:** Small, focused on a specific piece of logic.",
+            "**Who performs it:** Developers (often using frameworks like JUnit, NUnit, PyTest).",
+            "**Benefits:** It's the first line of defense against bugs."
+          ]
+        },
+        "**2. Integration Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Objective:** To verify the interactions and interfaces between different modules or services after they have been unit tested.",
+            "**Scope:** Multiple units/modules and their connections.",
+            "**Approaches:** Top-down, bottom-up, or using a 'big bang' approach.",
+            "**Focus:** Data format mismatches, API call failures."
+          ]
+        },
+        "**3. System Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Objective:** To test the complete, fully integrated application as a whole.",
+            "**Scope:** The entire application in an environment that closely resembles production.",
+            "**Types:** This includes functional, performance, security, and usability testing.",
+            "**Who performs it:** Usually performed by an independent QA team."
+          ]
+        },
+        "**4. Acceptance Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Objective:** To determine whether the software is ready for release and should be accepted by the project stakeholders.",
+            "**Scope:** Real-world scenarios and business workflows.",
+            "**Who performs it:** End-users, clients, or product managers.",
+            "**Common forms:** User Acceptance Testing (UAT), Alpha Testing, Beta Testing."
+          ]
+        }
+      ],
+      "diagrams": [
+        {
+          "type": "flowchart",
+          "title": "Testing Levels Pyramid",
+          "steps": [
+            { "type": "start-end", "content": "Acceptance Testing (Few)" },
+            { "type": "process", "content": "System Testing (More)" },
+            { "type": "process", "content": "Integration Testing (Even More)" },
+            { "type": "process", "content": "Unit Testing (Most)" }
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "Testing Levels Overview",
+          "headers": ["Level", "Scope", "Performed By", "Example"],
+          "rows": [
+            ["Unit", "Individual functions", "Developers", "Test a single method"],
+            ["Integration", "Module interactions", "Developers/QA", "Test API between services"],
+            ["System", "Entire application", "QA Team", "Test complete checkout flow"],
+            ["Acceptance", "Business workflows", "End-users", "UAT of new feature"]
+          ]
+        }
+      ]
+    },
+    "category": "Testing Levels",
+    "difficulty": "Intermediate",
+    "tags": ["testing-levels", "unit-testing", "integration-testing", "system-testing", "acceptance-testing"]
+  },
+  {
+    "id": 5,
+    "question": "Explain the difference between Functional and Non-Functional Testing",
+    "answer": {
+      "content": [
+        "Functional and Non-Functional testing are two broad categories that address different aspects of software quality.",
+        "",
+        "**Functional Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Focus:** Verifies **what** the system does.",
+            "**Approach:** Testing functions against requirement specifications.",
+            "**Examples:** Logging in, submitting forms, searching, adding to cart, processing payments.",
+            "**Common Techniques:** Unit testing, integration testing, smoke testing, sanity testing, regression testing, user acceptance testing."
+          ]
+        },
+        "**Non-Functional Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Focus:** Verifies **how** the system performs.",
+            "**Approach:** Testing operational aspects and system attributes.",
+            "**Examples:** How fast does the system respond under load? How secure is it against attacks?",
+            "**Common Types:** Performance Testing (Load, Stress, Endurance), Security Testing, Usability Testing, Compatibility Testing, Reliability Testing."
+          ]
+        },
+        "In short, functional testing ensures the features work, while non-functional testing ensures the software is a pleasure (or at least not a pain) to use in a real-world environment."
+      ],
+      "tables": [
+        {
+          "title": "Functional vs Non-Functional Testing",
+          "headers": ["Aspect", "Functional Testing", "Non-Functional Testing"],
+          "rows": [
+            ["Focus", "Features and functions", "Performance and behavior"],
+            ["Question", "Does it work?", "How well does it work?"],
+            ["Examples", "Login, CRUD operations", "Load time, security, usability"],
+            ["Timing", "Often performed first", "Often after functional testing"],
+            ["Tools", "JUnit, Selenium, TestNG", "JMeter, LoadRunner, OWASP ZAP"]
+          ]
+        }
+      ]
+    },
+    "category": "Testing Types",
+    "difficulty": "Intermediate",
+    "tags": ["functional-testing", "non-functional-testing", "performance-testing", "security-testing"]
+  },
+  {
+    "id": 6,
+    "question": "What is Regression Testing?",
+    "answer": {
+      "content": [
+        "Regression Testing is a type of software testing that aims to confirm that a recent program or code change has not adversely affected existing features. Whenever a software application is modified—whether to add new features, fix a bug, or patch a security vulnerability—there is a risk that the changes could introduce new errors in parts of the software that were previously working correctly.",
+        "",
+        "Regression testing is the safety net that mitigates this risk. It involves re-running a carefully selected subset of previously executed test cases to ensure that the existing functionality remains intact.",
+        "",
+        "**Importance:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Crucial for maintaining software quality over time",
+            "Essential in Agile environments where changes are frequent",
+            "Helps catch unintended side effects early",
+            "Prevents regression bugs from reaching production"
+          ]
+        },
+        "**Challenges:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Can be time-consuming and expensive to perform manually",
+            "Requires maintaining a comprehensive test suite",
+            "Test suite maintenance as application evolves"
+          ]
+        },
+        "**Solution:** Regression testing is a prime candidate for **test automation**. Automated regression test suites can be run quickly and consistently after every build, providing rapid feedback to the development team."
+      ],
+      "codeBlocks": [
+        {
+          "title": "Regression Test Suite Example",
+          "language": "java",
+          "code": "@RunWith(Suite.class)\n@Suite.SuiteClasses({\n    LoginTests.class,\n    SearchTests.class,\n    CheckoutTests.class,\n    PaymentTests.class\n})\npublic class RegressionTestSuite {\n    // This class runs all regression tests\n}"
+        }
+      ]
+    },
+    "category": "Testing Types",
+    "difficulty": "Beginner",
+    "tags": ["regression-testing", "automation", "test-maintenance"]
+  },
+  {
+    "id": 7,
+    "question": "What is the difference between Smoke and Sanity testing?",
+    "answer": {
+      "content": [
+        "Smoke and Sanity testing are often confused, but they serve different purposes and are performed at different times. They are both types of acceptance testing performed after a new build.",
+        "",
+        "**Smoke Testing (Build Verification Testing)**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Objective:** Check the **stability** of a new software build.",
+            "**Scope:** Broad and shallow - covers main happy-path workflows.",
+            "**When:** Performed on every new build before detailed testing.",
+            "**If fails:** Build is rejected and sent back to developers.",
+            "**Analogy:** Turning on a car and checking if it starts before a test drive."
+          ]
+        },
+        "**Sanity Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Objective:** Verify that specific fixes or changes work as expected.",
+            "**Scope:** Narrow and deep - focuses on changed areas.",
+            "**When:** Performed after receiving a build with minor changes.",
+            "**Purpose:** Check if it's 'sane' to proceed with rigorous testing.",
+            "**Analogy:** After fixing an engine problem, starting the car to listen before a full test drive."
+          ]
+        },
+        "In essence, smoke testing checks the overall health of the build, while sanity testing checks the sanity of a specific fix."
+      ],
+      "tables": [
+        {
+          "title": "Smoke vs Sanity Testing",
+          "headers": ["Aspect", "Smoke Testing", "Sanity Testing"],
+          "rows": [
+            ["Scope", "Broad and shallow", "Narrow and deep"],
+            ["Purpose", "Check build stability", "Verify specific fixes"],
+            ["When", "Every new build", "After minor changes"],
+            ["Frequency", "Regular", "Occasional"],
+            ["Documentation", "Often scripted", "Often exploratory"],
+            ["Failure impact", "Build rejected", "Fix rejected"]
+          ]
+        }
+      ]
+    },
+    "category": "Testing Types",
+    "difficulty": "Intermediate",
+    "tags": ["smoke-testing", "sanity-testing", "build-verification"]
+  },
+  {
+    "id": 8,
+    "question": "Explain Test Plan and its components",
+    "answer": {
+      "content": [
+        "A Test Plan is a detailed, dynamic document that outlines the objectives, scope, approach, resources, and schedule of the intended testing activities for a specific project or release. It serves as a blueprint for the entire testing effort, guiding the QA team and communicating the strategy to all stakeholders.",
+        "",
+        "Key components of a comprehensive Test Plan, as outlined by IEEE 829 standard, include:",
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "**Test Plan ID:** A unique identifier for the document.",
+            "**Introduction / Objectives:** High-level summary of features to be tested and overall goals.",
+            "**Test Items:** Identifies specific deliverables (software versions, modules, documents) to be tested.",
+            "**Features to be Tested:** List of all functionalities that will be actively tested.",
+            "**Features Not to be Tested:** Functionalities explicitly out of scope, with justifications.",
+            "**Testing Approach / Strategy:** Overall approach including levels, types, and techniques.",
+            "**Pass/Fail Criteria:** Defines what constitutes a successful test run.",
+            "**Suspension and Resumption Criteria:** Conditions to halt and resume testing.",
+            "**Test Deliverables:** Lists all documents and items produced during testing.",
+            "**Resource and Environmental Needs:** Hardware, software, tools, and team structure.",
+            "**Schedule and Milestones:** Timeline for testing activities.",
+            "**Risks and Contingencies:** Potential risks and mitigation plans."
+          ]
+        }
+      ],
+      "codeBlocks": [
+        {
+          "title": "Test Plan Template (YAML)",
+          "language": "yaml",
+          "code": "testPlan:\n  id: TP-2024-001\n  project: E-commerce Platform\n  version: 2.1.0\n  objectives: Validate payment gateway and checkout flow\n  featuresToTest:\n    - User authentication\n    - Product search\n    - Shopping cart\n    - Payment processing\n    - Order confirmation\n  featuresNotToTest:\n    - Admin dashboard (covered in separate plan)\n    - Legacy report generation\n  approach:\n    levels: [unit, integration, system, uat]\n    types: [functional, performance, security]\n    techniques: [bva, equivalence-partitioning]\n  passFailCriteria:\n    criticalBugs: 0\n    majorBugs: < 5\n    testPassRate: > 95%\n  environment:\n    hardware: 4 servers (8 cores, 32GB RAM)\n    software: [Windows Server 2019, MySQL 8.0, Tomcat 9]\n  schedule:\n    testCaseCreation: 2024-02-01 to 2024-02-15\n    testExecution: 2024-02-16 to 2024-03-15\n    finalReport: 2024-03-20"
+        }
+      ]
+    },
+    "category": "Test Documentation",
+    "difficulty": "Advanced",
+    "tags": ["test-plan", "test-documentation", "ieee-829", "test-strategy"]
+  },
+  {
+    "id": 9,
+    "question": "What is the difference between Severity and Priority?",
+    "answer": {
+      "content": [
+        "Severity and Priority are two key attributes used to categorize bugs, helping teams decide what to fix and when. They are independent of each other and are assigned by different people.",
+        "",
+        "**Severity**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** Measure of the **impact** of a bug on the system's functionality.",
+            "**Assigned by:** Tester (technical perspective)",
+            "**Levels:**",
+            "  - **Critical/Blocker:** System crash, data loss, key feature unusable",
+            "  - **Major:** Feature behaves incorrectly, complex workaround",
+            "  - **Minor:** Does not affect functionality, impacts look and feel",
+            "  - **Trivial:** Minimal impact (e.g., pixel misalignment)"
+          ]
+        },
+        "**Priority**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** Measure of the **urgency** with which a bug should be fixed.",
+            "**Assigned by:** Product Owner/Project Manager (business perspective)",
+            "**Levels:**",
+            "  - **High:** Must be fixed immediately, critical to release",
+            "  - **Medium:** Should be fixed in normal course of development",
+            "  - **Low:** Can be fixed later if time permits"
+          ]
+        },
+        "**Examples of the difference:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**High Severity / Low Priority:** App crashes on obscure admin report. Impact high, urgency low.",
+            "**Low Severity / High Priority:** Company logo displayed incorrectly on homepage. Functionality fine, but urgent for brand image.",
+            "**High Severity / High Priority:** Payment button fails for all users. Must be fixed immediately."
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "Severity and Priority Matrix",
+          "headers": ["", "Priority High", "Priority Medium", "Priority Low"],
+          "rows": [
+            ["Severity Critical", "Fix immediately", "Fix soon", "Evaluate"],
+            ["Severity Major", "Fix soon", "Schedule", "Consider"],
+            ["Severity Minor", "Fix if time", "Low priority", "Maybe never"],
+            ["Severity Trivial", "Ignore", "Ignore", "Ignore"]
+          ]
+        }
+      ]
+    },
+    "category": "Bug Tracking",
+    "difficulty": "Intermediate",
+    "tags": ["severity", "priority", "bug-triage", "defect-management"]
+  },
+  {
+    "id": 10,
+    "question": "What is Boundary Value Analysis?",
+    "answer": {
+      "content": [
+        "Boundary Value Analysis (BVA) is a black-box test design technique used to generate test cases that focus on the boundaries of input ranges. The fundamental principle is that a large number of defects tend to occur not at the center of an input range, but at its edges or boundaries. This is often due to developer errors in handling conditions like 'less than,' 'greater than,' 'equal to,' or off-by-one mistakes in loops and logic.",
+        "",
+        "BVA involves creating test cases for values that are on the boundaries, just above them, and just below them.",
+        "",
+        "**For a valid range of 1 to 10 (inclusive), you would test:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "The exact boundary values: **1** and **10**",
+            "The value just below the minimum boundary: **0** (invalid)",
+            "The value just above the maximum boundary: **11** (invalid)",
+            "Optional: just above minimum: **2** (valid)",
+            "Optional: just below maximum: **9** (valid)"
+          ]
+        },
+        "**Why it's effective:** By testing 0, 1, 2, 9, 10, and 11, you are effectively testing the system's behavior right at the decision points where errors are most common."
+      ],
+      "codeBlocks": [
+        {
+          "title": "BVA Test Case Generation Example",
+          "language": "java",
+          "code": "public class BVATest {\n    @Test\n    public void testAgeField() {\n        // Valid range: 18-65\n        \n        // Test boundary values\n        assertTrue(validateAge(18)); // Lower boundary\n        assertTrue(validateAge(65)); // Upper boundary\n        \n        // Test just outside boundaries\n        assertFalse(validateAge(17)); // Just below minimum\n        assertFalse(validateAge(66)); // Just above maximum\n        \n        // Test typical valid values\n        assertTrue(validateAge(30)); // Inside range\n    }\n    \n    private boolean validateAge(int age) {\n        return age >= 18 && age <= 65;\n    }\n}"
+        }
+      ],
+      "tables": [
+        {
+          "title": "BVA Test Cases for Range 1-10",
+          "headers": ["Test Value", "Expected Result", "Test Type"],
+          "rows": [
+            ["0", "Invalid", "Below minimum"],
+            ["1", "Valid", "Minimum boundary"],
+            ["2", "Valid", "Just above minimum"],
+            ["9", "Valid", "Just below maximum"],
+            ["10", "Valid", "Maximum boundary"],
+            ["11", "Invalid", "Above maximum"]
+          ]
+        }
+      ]
+    },
+    "category": "Test Design",
+    "difficulty": "Advanced",
+    "tags": ["bva", "boundary-value-analysis", "test-design", "black-box"]
+  },
+  {
+    "id": 11,
+    "question": "What is Equivalence Partitioning?",
+    "answer": {
+      "content": [
+        "Equivalence Partitioning (EP), also known as Equivalence Class Partitioning (ECP), is a black-box test design technique that reduces the number of test cases needed to test a system effectively. It works by dividing the input data of a software unit into partitions (or classes) of data from which test cases can be derived.",
+        "",
+        "The core idea is that all the data in a given partition is expected to be processed in the same way by the software. Therefore, if one test case from a partition reveals a defect, it's highly likely that any other value from that same partition would also reveal that defect. Conversely, if one test case from a partition passes, it's assumed that all others in the partition would also pass.",
+        "",
+        "**How it works:**",
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "**Identify input conditions:** Look at the requirements for a specific function.",
+            "**Define partitions:** Create valid and invalid partitions for each input condition.",
+            "**Select test values:** Choose at least one value from each valid partition and one from each invalid partition."
+          ]
+        },
+        "**Example:** A field for 'Age' on a form is designed to accept only integers between 18 and 65.",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Valid Partition:** 18 to 65 → Test with **30**",
+            "**Invalid Partition 1:** Less than 18 → Test with **15**",
+            "**Invalid Partition 2:** Greater than 65 → Test with **70**",
+            "**Invalid Partition 3:** Non-numeric → Test with **'ABC'**"
+          ]
+        }
+      ],
+      "codeBlocks": [
+        {
+          "title": "Equivalence Partitioning Example",
+          "language": "java",
+          "code": "public class EquivalencePartitioningTest {\n    @Test\n    public void testDiscountEligibility() {\n        // Discount available for: Students (18-25) OR Seniors (60+)\n        \n        // Valid partitions\n        assertTrue(isEligibleForDiscount(20)); // Student age\n        assertTrue(isEligibleForDiscount(70)); // Senior age\n        \n        // Invalid partitions\n        assertFalse(isEligibleForDiscount(30)); // Adult not eligible\n        assertFalse(isEligibleForDiscount(10)); // Child not eligible\n        \n        // Test one value from each partition\n        // Student partition: 18-25 (test 20)\n        // Senior partition: 60+ (test 70)\n        // Adult partition: 26-59 (test 40)\n        // Child partition: 0-17 (test 10)\n    }\n    \n    private boolean isEligibleForDiscount(int age) {\n        return (age >= 18 && age <= 25) || age >= 60;\n    }\n}"
+        }
+      ]
+    },
+    "category": "Test Design",
+    "difficulty": "Advanced",
+    "tags": ["equivalence-partitioning", "test-design", "black-box", "test-coverage"]
+  },
+  {
+    "id": 12,
+    "question": "What is the difference between White Box and Black Box testing?",
+    "answer": {
+      "content": [
+        "White Box and Black Box testing are two fundamental approaches to testing, differentiated by the level of knowledge the tester has about the internal workings of the software.",
+        "",
+        "**Black Box Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Perspective:** Views software as a 'black box' with unknown internals.",
+            "**Knowledge:** No knowledge of internal code, logic, or implementation.",
+            "**Focus:** Validating functionality against requirements.",
+            "**Question:** \"Does the system do what it's supposed to do?\"",
+            "**Who performs:** Independent QA testers.",
+            "**Examples:** Functional testing, system testing, UAT, BVA, EP."
+          ]
+        },
+        "**White Box Testing (Clear Box, Glass Box, Structural)**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Perspective:** Full visibility into internal code structure and logic.",
+            "**Knowledge:** Deep understanding of code, algorithms, and architecture.",
+            "**Focus:** Verifying internal workings and code paths.",
+            "**Question:** \"Have all code paths been executed? Is the code efficient?\"",
+            "**Who performs:** Developers.",
+            "**Examples:** Unit testing, code coverage, security vulnerability testing."
+          ]
+        },
+        "**Grey Box Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Perspective:** Combination of both approaches.",
+            "**Knowledge:** Partial knowledge of internals.",
+            "**Focus:** Testing with some understanding of architecture.",
+            "**Examples:** Integration testing, security testing, web application testing."
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "White Box vs Black Box Testing",
+          "headers": ["Aspect", "White Box", "Black Box", "Grey Box"],
+          "rows": [
+            ["Code Knowledge", "Full", "None", "Partial"],
+            ["Performed By", "Developers", "Testers", "Testers with dev knowledge"],
+            ["Focus", "Internal structure", "External behavior", "Interactions"],
+            ["Level", "Unit, Integration", "System, Acceptance", "Integration, Security"],
+            ["Advantage", "Thorough coverage", "User perspective", "Balanced approach"],
+            ["Disadvantage", "Time-consuming", "May miss edge cases", "Requires more skill"]
+          ]
+        }
+      ]
+    },
+    "category": "Testing Types",
+    "difficulty": "Beginner",
+    "tags": ["white-box", "black-box", "grey-box", "testing-approaches"]
+  },
+  {
+    "id": 13,
+    "question": "What is a Test Case and what are its components?",
+    "answer": {
+      "content": [
+        "A test case is a set of conditions or variables under which a tester determines whether a system under test satisfies requirements or works correctly. It is a detailed, step-by-step guide for executing a specific test. A well-written test case is essential for ensuring consistent, repeatable, and thorough testing.",
+        "",
+        "Here are the key components of a standard test case:",
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "**Test Case ID:** Unique identifier (e.g., TC001, LOGIN_01)",
+            "**Test Title/Description:** Brief summary of what is being tested",
+            "**Preconditions:** Conditions that must be met before execution",
+            "**Test Data:** Specific input values to be used",
+            "**Test Steps:** Clear, numbered list of actions to perform",
+            "**Expected Result:** Detailed description of what should happen",
+            "**Actual Result:** Filled during execution - what actually happened",
+            "**Status:** Pass/Fail/Blocked/Not Executed",
+            "**Postconditions:** State of system after test",
+            "**Additional Fields:** Requirements traceability, priority, author, attachments"
+          ]
+        }
+      ],
+      "codeBlocks": [
+        {
+          "title": "Test Case Example (JSON Format)",
+          "language": "json",
+          "code": "{\n  \"testCase\": {\n    \"id\": \"TC-LOGIN-001\",\n    \"title\": \"Verify successful login with valid credentials\",\n    \"priority\": \"HIGH\",\n    \"preconditions\": [\n      \"User is on login page\",\n      \"Test user account exists with username 'testuser' and password 'Pass123'\"\n    ],\n    \"testData\": {\n      \"username\": \"testuser\",\n      \"password\": \"Pass123\"\n    },\n    \"steps\": [\n      \"Enter username 'testuser' in username field\",\n      \"Enter password 'Pass123' in password field\",\n      \"Click the 'Login' button\"\n    ],\n    \"expectedResult\": \"User is redirected to dashboard page and welcome message 'Welcome, testuser!' is displayed\",\n    \"actualResult\": \"\",\n    \"status\": \"NOT_EXECUTED\",\n    \"requirementsTraceability\": [\"REQ-AUTH-001\"]\n  }\n}"
+        }
+      ],
+      "tables": [
+        {
+          "title": "Test Case Template",
+          "headers": ["Field", "Description", "Example"],
+          "rows": [
+            ["ID", "Unique identifier", "TC-LOGIN-001"],
+            ["Title", "Brief description", "Verify login with valid credentials"],
+            ["Preconditions", "Setup required", "User on login page"],
+            ["Test Data", "Input values", "username: testuser, password: Pass123"],
+            ["Steps", "Actions to perform", "1. Enter username, 2. Enter password, 3. Click login"],
+            ["Expected Result", "What should happen", "Redirect to dashboard"],
+            ["Actual Result", "What happened", "[Filled during test]"],
+            ["Status", "Pass/Fail", "Pass"]
+          ]
+        }
+      ]
+    },
+    "category": "Test Documentation",
+    "difficulty": "Beginner",
+    "tags": ["test-case", "test-documentation", "test-design"]
+  },
+  {
+    "id": 14,
+    "question": "Explain the concept of Traceability Matrix",
+    "answer": {
+      "content": [
+        "A Traceability Matrix, often specifically a **Requirements Traceability Matrix (RTM)** , is a document, usually in the form of a table, that links requirements to their corresponding test cases. It provides a way to map and trace user requirements with test cases created for various testing levels. The primary goal is to ensure that every single requirement has at least one test case covering it, and conversely, that no test case is testing something that isn't a requirement.",
+        "",
+        "**Purpose and Benefits:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Ensures 100% Test Coverage:** Visual confirmation all requirements are covered.",
+            "**Identifies Gaps:** Shows which requirements have no corresponding tests.",
+            "**Impact Analysis:** Quickly identifies tests affected by requirement changes.",
+            "**Provides Evidence for Audits:** Proof of thorough testing for stakeholders."
+          ]
+        },
+        "**Types of Traceability Matrix:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Forward Traceability:** Maps requirements to test cases.",
+            "**Backward Traceability:** Maps test cases back to requirements.",
+            "**Bidirectional Traceability:** Complete mapping both ways."
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "Requirements Traceability Matrix Example",
+          "headers": ["Requirement ID", "Requirement Description", "Test Case IDs", "Test Status", "Bug IDs"],
+          "rows": [
+            ["REQ-001", "User must log in with valid credentials", "TC001, TC002", "Pass", ""],
+            ["REQ-002", "User must reset forgotten password", "TC003, TC004, TC005", "In Progress", ""],
+            ["REQ-003", "System must display error for invalid login", "TC006", "Fail", "BUG-123"],
+            ["REQ-004", "Remember me functionality", "TC007", "Not Started", ""],
+            ["REQ-005", "Session timeout after 30 minutes", "TC008, TC009", "Pass", ""]
+          ]
+        }
+      ],
+      "codeBlocks": [
+        {
+          "title": "RTM in Spreadsheet Format",
+          "language": "csv",
+          "code": "Requirement ID,Requirement Description,Test Case ID,Test Status,Bug ID,Test Priority\nREQ-001,User Login with valid credentials,TC001,Pass,,High\nREQ-001,User Login with valid credentials,TC002,Pass,,High\nREQ-002,Password Reset functionality,TC003,In Progress,,Medium\nREQ-002,Password Reset with invalid email,TC004,Not Started,,Medium\nREQ-002,Password Reset email delivery,TC005,Pass,,Medium\nREQ-003,Error message for invalid login,TC006,Fail,BUG-123,High"
+        }
+      ]
+    },
+    "category": "Test Documentation",
+    "difficulty": "Intermediate",
+    "tags": ["traceability-matrix", "rtm", "test-coverage", "requirements"]
+  },
+  {
+    "id": 15,
+    "question": "What is the difference between Retesting and Regression Testing?",
+    "answer": {
+      "content": [
+        "Retesting and Regression testing are both performed after a bug fix, but they have different objectives and scopes. They are easily confused, but understanding the distinction is important.",
+        "",
+        "**Retesting (Confirmation Testing)**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Objective:** Confirm that a **specific defect** has been successfully fixed.",
+            "**Scope:** Very narrow and focused on the exact test case that found the bug.",
+            "**When:** On new build containing the fix for that specific bug.",
+            "**Analogy:** Going back to the same room and flipping the same light switch that was broken."
+          ]
+        },
+        "**Regression Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Objective:** Verify that code changes haven't **unintentionally broken other existing functionality**.",
+            "**Scope:** Broad and comprehensive, covering critical and core functionalities.",
+            "**When:** After any significant code change, including after retesting.",
+            "**Analogy:** Walking through the entire house to ensure fixing one switch didn't cause a power outage elsewhere."
+          ]
+        },
+        "In essence, **retesting** asks, \"Did we fix the specific thing that was broken?\" while **regression testing** asks, \"Did our fix break anything else?\""
+      ],
+      "tables": [
+        {
+          "title": "Retesting vs Regression Testing",
+          "headers": ["Aspect", "Retesting", "Regression Testing"],
+          "rows": [
+            ["Focus", "Specific bug fix", "Overall system stability"],
+            ["Scope", "Narrow", "Broad"],
+            ["When", "Immediately after fix", "After fixes and new features"],
+            ["Test Cases", "Same as original bug report", "Selected regression suite"],
+            ["Automation", "Often manual", "Highly automated"],
+            ["Frequency", "Once per bug fix", "Regular (every build)"]
+          ]
+        }
+      ]
+    },
+    "category": "Testing Types",
+    "difficulty": "Intermediate",
+    "tags": ["retesting", "regression-testing", "confirmation-testing"]
+  },
+  {
+    "id": 16,
+    "question": "What is the difference between Latent and Masked defects?",
+    "answer": {
+      "content": [
+        "Latent and Masked defects are two interesting types of bugs that behave differently in terms of when and how they are discovered.",
+        "",
+        "**Latent Defect (Dormant Defect)**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** A defect that exists but has not yet caused a failure because the specific conditions to trigger it haven't occurred.",
+            "**Analogy:** A 'sleeping' bug waiting for the right conditions.",
+            "**Discovery:** May remain undiscovered for a long time until triggered.",
+            "**Example:** A leap year calculation error remains dormant for 3 years until February 29th arrives and the code executes."
+          ]
+        },
+        "**Masked Defect**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** A defect that is present and active, but its visible failure is being prevented or 'masked' by another defect.",
+            "**Analogy:** One bug hiding another bug.",
+            "**Discovery:** Often discovered only after the masking defect is fixed.",
+            "**Example:** A crashing login button prevents testing the search bar. After fixing the crash, a separate search defect is revealed."
+          ]
+        },
+        "**Key Difference:** A latent defect hasn't been triggered yet. A masked defect is triggered but its symptoms are hidden by another failure."
+      ],
+      "diagrams": [
+        {
+          "type": "flowchart",
+          "title": "Latent vs Masked Defects",
+          "steps": [
+            { "type": "process", "content": "Code with Defect A (Latent)" },
+            { "type": "decision", "content": "Trigger Condition Met?" },
+            { "type": "process", "content": "No Failure (Still Latent)" },
+            { "type": "process", "content": "Failure Occurs" },
+            { "type": "process", "content": "Code with Defect B (Masked)" },
+            { "type": "process", "content": "Defect A Masks Defect B" },
+            { "type": "process", "content": "Fix Defect A" },
+            { "type": "process", "content": "Defect B Revealed" }
+          ]
+        }
+      ]
+    },
+    "category": "Bug Tracking",
+    "difficulty": "Advanced",
+    "tags": ["latent-defect", "masked-defect", "defect-types"]
+  },
+  {
+    "id": 17,
+    "question": "What is Exploratory Testing and when is it most useful?",
+    "answer": {
+      "content": [
+        "Exploratory Testing is an approach to software testing that is concurrently learning, test design, and test execution. Unlike scripted testing where you follow a pre-defined set of steps, exploratory testing emphasizes the personal freedom and creativity of the individual tester. The tester actively explores the application, designing and executing tests on the fly based on their learning, intuition, and experience.",
+        "",
+        "**Key Characteristics:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Simultaneous Learning:** Learn about the application while testing it.",
+            "**Minimal Planning:** Tests are not defined in advance; testers have a mission or charter.",
+            "**Adaptive:** Next steps are informed by previous results.",
+            "**Relies on Skill:** Effectiveness depends on tester's skill, domain knowledge, and curiosity."
+          ]
+        },
+        "**When is it most useful?**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**When time is short:** Quickly find important bugs without overhead of scripted tests.",
+            "**When requirements are vague:** Adapts well to ambiguity in Agile projects.",
+            "**To complement scripted testing:** Finds unexpected bugs that scripted tests miss.",
+            "**For new features:** Quick exploratory session can uncover major design flaws early.",
+            "**For complex, critical areas:** Yields deep insights that structured testing might miss."
+          ]
+        }
+      ],
+      "codeBlocks": [
+        {
+          "title": "Exploratory Testing Charter Example",
+          "language": "markdown",
+          "code": "# Exploratory Testing Charter\n\n**Feature:** Shopping Cart Checkout\n**Duration:** 90 minutes\n**Tester:** John Doe\n\n## Mission\nExplore the checkout flow to identify usability issues, edge cases, and potential security vulnerabilities.\n\n## Areas to Explore\n- Adding items to cart\n- Updating quantities\n- Applying discount codes\n- Guest checkout vs logged-in checkout\n- Payment method selection\n- Form validation\n- Error handling\n\n## Test Notes\n| Time | Area Tested | Findings | Bugs |\n|------|-------------|----------|------|\n| 0-15 | Add to cart | Cart updates correctly | None |\n| 15-30 | Quantity update | Quantity doesn't update when using keyboard | BUG-001 |\n| 30-45 | Discount codes | 20% off code applies twice | BUG-002 |\n| 45-60 | Payment | No validation for expired cards | BUG-003 |\n| 60-75 | Guest checkout | Email field accepts invalid format | BUG-004 |\n| 75-90 | Summary | Tax calculation incorrect for international | BUG-005 |\n\n## Summary\nFound 5 bugs in 90 minutes. Most critical: discount code can be applied multiple times."
+        }
+      ]
+    },
+    "category": "Testing Types",
+    "difficulty": "Advanced",
+    "tags": ["exploratory-testing", "ad-hoc-testing", "test-techniques"]
+  },
+  {
+    "id": 18,
+    "question": "What is the difference between Load Testing, Stress Testing, and Performance Testing?",
+    "answer": {
+      "content": [
+        "These three terms are often used interchangeably, but they refer to distinct types of non-functional testing with different goals. Performance Testing is the umbrella term, with Load and Stress Testing being specific sub-types.",
+        "",
+        "**Performance Testing (The Umbrella Term)**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Objective:** Determine system performance in terms of responsiveness and stability under a particular workload.",
+            "**Question:** \"How fast and stable is our system?\"",
+            "**Includes:** Load, stress, endurance, spike, and volume testing."
+          ]
+        },
+        "**Load Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Objective:** Simulate **expected, real-world user traffic**.",
+            "**Goal:** Verify system can handle anticipated concurrent users without degradation.",
+            "**Question:** \"Can our system handle the 10,000 users we expect on Black Friday?\""
+          ]
+        },
+        "**Stress Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Objective:** Push system beyond normal capacity to find breaking point.",
+            "**Goal:** Determine robustness, error handling, and recovery ability.",
+            "**Question:** \"What happens when we get 15,000 users? Does it recover?\""
+          ]
+        },
+        "**Other Related Types:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Spike Testing:** Sudden, sharp increase in load.",
+            "**Endurance (Soak) Testing:** Significant load over long period (24-48 hours).",
+            "**Volume Testing:** Large amounts of data."
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "Performance Testing Types",
+          "headers": ["Type", "Goal", "Load Pattern", "Key Metrics"],
+          "rows": [
+            ["Load Testing", "Verify expected performance", "Gradual increase to target", "Response time, throughput"],
+            ["Stress Testing", "Find breaking point", "Continuous increase until failure", "Breaking point, recovery time"],
+            ["Spike Testing", "Handle sudden surges", "Sudden sharp increase", "System behavior under surge"],
+            ["Endurance Testing", "Detect memory leaks", "Sustained load over time", "Memory usage, degradation"],
+            ["Volume Testing", "Handle large data", "Large data volumes", "Database performance"]
+          ]
+        }
+      ],
+      "codeBlocks": [
+        {
+          "title": "JMeter Load Test Script Example",
+          "language": "xml",
+          "code": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<jmeterTestPlan version=\"1.2\">\n  <hashTree>\n    <TestPlan>\n      <stringProp name=\"TestPlan.comments\">Load Test for Checkout API</stringProp>\n    </TestPlan>\n    <hashTree>\n      <ThreadGroup>\n        <stringProp name=\"ThreadGroup.num_threads\">100</stringProp>\n        <stringProp name=\"ThreadGroup.ramp_time\">60</stringProp>\n        <stringProp name=\"ThreadGroup.duration\">600</stringProp>\n      </ThreadGroup>\n      <hashTree>\n        <HTTPSamplerProxy>\n          <stringProp name=\"HTTPSampler.path\">/api/checkout</stringProp>\n          <stringProp name=\"HTTPSampler.method\">POST</stringProp>\n        </HTTPSamplerProxy>\n      </hashTree>\n    </hashTree>\n  </hashTree>\n</jmeterTestPlan>"
+        }
+      ]
+    },
+    "category": "Testing Types",
+    "difficulty": "Intermediate",
+    "tags": ["performance-testing", "load-testing", "stress-testing", "non-functional"]
+  },
+  {
+    "id": 19,
+    "question": "What is the difference between a Test Scenario and a Test Case?",
+    "answer": {
+      "content": [
+        "Test Scenario and Test Case are two related but distinct levels of test documentation. A Test Scenario is high-level, while a Test Case is detailed and specific.",
+        "",
+        "**Test Scenario**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** A high-level description of **what to test**.",
+            "**Purpose:** Provides a quick, top-level view of test coverage.",
+            "**Detail Level:** Brief, doesn't include specific steps or data.",
+            "**Relationship:** One scenario leads to multiple test cases.",
+            "**Example:** \"Verify the shopping cart functionality.\""
+          ]
+        },
+        "**Test Case**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** A detailed, step-by-step set of conditions to verify a specific part.",
+            "**Purpose:** Provides precise, repeatable procedure for execution.",
+            "**Detail Level:** Highly detailed and prescriptive.",
+            "**Relationship:** Multiple test cases derived from one scenario.",
+            "**Example from shopping cart scenario:**",
+            "  - TC01: Verify adding a single item to empty cart",
+            "  - TC02: Verify removing an item from cart",
+            "  - TC03: Verify cart total updates correctly",
+            "  - TC04: Verify cart persistence after logout"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "Test Scenario vs Test Case",
+          "headers": ["Aspect", "Test Scenario", "Test Case"],
+          "rows": [
+            ["Level", "High-level", "Detailed"],
+            ["Scope", "Feature/Functionality", "Specific condition"],
+            ["Documentation", "Brief", "Step-by-step"],
+            ["Data", "Not specified", "Specific test data"],
+            ["Number", "Fewer", "Many per scenario"],
+            ["Analogy", "Chapter title", "Sentences in chapter"]
+          ]
+        }
+      ],
+      "codeBlocks": [
+        {
+          "title": "Test Scenario to Test Cases Mapping",
+          "language": "yaml",
+          "code": "scenario:\n  name: \"Verify Shopping Cart Functionality\"\n  description: \"Test all aspects of shopping cart operations\"\n  testCases:\n    - id: TC-CART-001\n      name: \"Add single item to empty cart\"\n      steps: [...]\n    - id: TC-CART-002\n      name: \"Add multiple items to cart\"\n      steps: [...]\n    - id: TC-CART-003\n      name: \"Remove item from cart\"\n      steps: [...]\n    - id: TC-CART-004\n      name: \"Update item quantity\"\n      steps: [...]\n    - id: TC-CART-005\n      name: \"Apply discount code\"\n      steps: [...]\n    - id: TC-CART-006\n      name: \"Cart persistence after logout\"\n      steps: [...]"
+        }
+      ]
+    },
+    "category": "Test Documentation",
+    "difficulty": "Beginner",
+    "tags": ["test-scenario", "test-case", "test-documentation"]
+  },
+  {
+    "id": 20,
+    "question": "What is a Test Environment and what should it include?",
+    "answer": {
+      "content": [
+        "A Test Environment is a setup of hardware, software, network configurations, and test data that allows the testing team to execute test cases. It is a controlled space that is designed to mimic the production environment as closely as possible, enabling valid and reliable testing.",
+        "",
+        "A well-defined test environment is critical for obtaining accurate and meaningful test results. An incomplete or unstable environment can lead to false positives (bugs reported that aren't real) and false negatives (real bugs missed).",
+        "",
+        "**Key components of a Test Environment:**",
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "**Hardware:** Physical or virtual machines with necessary specifications (CPU, RAM, storage).",
+            "**Software:** Operating system, application server, database server, dependencies.",
+            "**Network Configuration:** Firewalls, load balancers, network protocols.",
+            "**Test Data:** Consistent and representative data for testing.",
+            "**Testing Tools:** Automation frameworks, performance tools, bug tracking systems.",
+            "**System Under Test (SUT):** Specific build or version being tested."
+          ]
+        },
+        "**Common Test Environment Types:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Development Environment:** For developers to write and unit test code.",
+            "**QA/Test Environment:** Dedicated stable environment for QA team.",
+            "**Staging Environment:** Final testing ground before production (exact replica)."
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "Test Environment Types",
+          "headers": ["Environment", "Purpose", "Stability", "Who Uses", "Data"],
+          "rows": [
+            ["Development", "Coding and unit testing", "Unstable, changes often", "Developers", "Mock/synthetic"],
+            ["QA/Test", "Functional and regression testing", "Stable", "QA Team", "Test data"],
+            ["Staging", "UAT and final validation", "Very stable", "QA, UAT testers", "Anonymized production"],
+            ["Production", "Live system", "Highly stable", "End users", "Real data"]
+          ]
+        }
+      ],
+      "codeBlocks": [
+        {
+          "title": "Docker Compose for Test Environment",
+          "language": "yaml",
+          "code": "version: '3.8'\nservices:\n  app:\n    image: myapp:latest\n    ports:\n      - \"8080:8080\"\n    environment:\n      - DB_HOST=postgres\n      - REDIS_HOST=redis\n    depends_on:\n      - postgres\n      - redis\n  \n  postgres:\n    image: postgres:13\n    environment:\n      POSTGRES_DB: testdb\n      POSTGRES_USER: tester\n      POSTGRES_PASSWORD: testpass\n    volumes:\n      - ./test-data:/docker-entrypoint-initdb.d\n  \n  redis:\n    image: redis:6\n    ports:\n      - \"6379:6379\""
+        }
+      ]
+    },
+    "category": "Test Management",
+    "difficulty": "Intermediate",
+    "tags": ["test-environment", "test-infrastructure", "qa-environment"]
+  },
+  {
+    "id": 21,
+    "question": "What is the difference between Static and Dynamic Testing?",
+    "answer": {
+      "content": [
+        "Static and Dynamic testing are two fundamental categories that address quality from different angles. The primary difference is whether or not the code is executed.",
+        "",
+        "**Static Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** Testing without executing code.",
+            "**What is tested:** Requirements, design, source code, test plans, user manuals.",
+            "**Goal:** Find defects early, verify documentation, ensure standards compliance.",
+            "**Techniques:** Reviews, walkthroughs, inspections, static analysis.",
+            "**Analogy:** Proofreading a recipe before baking."
+          ]
+        },
+        "**Dynamic Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** Testing by executing code with test data.",
+            "**What is tested:** Running software application.",
+            "**Goal:** Find defects in running software, validate behavior.",
+            "**Techniques:** Functional testing, performance testing, security testing.",
+            "**Analogy:** Actually baking and tasting the cake."
+          ]
+        },
+        "In essence: Static testing finds problems in the **blueprint**, while dynamic testing finds problems in the **finished product**."
+      ],
+      "tables": [
+        {
+          "title": "Static vs Dynamic Testing",
+          "headers": ["Aspect", "Static Testing", "Dynamic Testing"],
+          "rows": [
+            ["Code Execution", "No", "Yes"],
+            ["When", "Early in SDLC", "Later in SDLC"],
+            ["Cost to Fix", "Low", "Higher"],
+            ["Tools", "SonarQube, Checkstyle", "Selenium, JMeter, JUnit"],
+            ["Examples", "Reviews, inspections", "Functional, performance tests"],
+            ["Detects", "Syntax errors, standards violations", "Runtime errors, logic bugs"]
+          ]
+        }
+      ]
+    },
+    "category": "Fundamentals",
+    "difficulty": "Intermediate",
+    "tags": ["static-testing", "dynamic-testing", "reviews", "inspections"]
+  },
+  {
+    "id": 22,
+    "question": "What is the difference between Recoverability Testing and Reliability Testing?",
+    "answer": {
+      "content": [
+        "Recoverability and Reliability are both important non-functional attributes, but they focus on different aspects of system behavior.",
+        "",
+        "**Reliability Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** Ensure software performs required functions under stated conditions for a specified period without failure.",
+            "**Goal:** Measure Mean Time Between Failures (MTBF), assess stability.",
+            "**Focus:** Failure-free operation during normal usage.",
+            "**Question:** \"Is the system dependable during normal operation?\"",
+            "**Example:** Running an e-commerce site for 7 days straight under load to verify no crashes."
+          ]
+        },
+        "**Recoverability Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** Verify how quickly and effectively the system can recover from crashes, hardware failures, or catastrophic problems.",
+            "**Goal:** Assess ability to restore data, restart services, resume operations.",
+            "**Focus:** Restoration after failure.",
+            "**Question:** \"How quickly can we get back online after a crash?\"",
+            "**Example:** Simulating a power failure and measuring recovery time and data integrity."
+          ]
+        },
+        "**Key Difference:** Reliability is about **avoiding** failure. Recoverability is about **surviving** failure."
+      ],
+      "tables": [
+        {
+          "title": "Reliability vs Recoverability",
+          "headers": ["Aspect", "Reliability", "Recoverability"],
+          "rows": [
+            ["Focus", "Preventing failures", "Recovering from failures"],
+            ["Metrics", "MTBF, MTTR", "RTO, RPO"],
+            ["When", "During normal operation", "After failure occurs"],
+            ["Testing Method", "Long-duration testing", "Failure injection"],
+            ["Example", "7-day soak test", "Crash and restart test"]
+          ]
+        }
+      ]
+    },
+    "category": "Testing Types",
+    "difficulty": "Advanced",
+    "tags": ["reliability-testing", "recoverability-testing", "non-functional"]
+  },
+  {
+    "id": 23,
+    "question": "What is a Stub and what is a Driver in Integration Testing?",
+    "answer": {
+      "content": [
+        "Stubs and Drivers are dummy pieces of code used in integration testing, particularly when using a top-down or bottom-up approach. They act as placeholders for missing modules, allowing testing to proceed even when all components aren't fully developed.",
+        "",
+        "**Stub**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** A dummy module called from the **top-level module being tested** when a **lower-level module** is not available.",
+            "**Direction:** Called 'from above'.",
+            "**Behavior:** Simulates the missing lower-level module.",
+            "**Used in:** Top-Down Integration Testing.",
+            "**Analogy:** Testing a car's ECU with a dummy fuel sensor that returns fake fuel data."
+          ]
+        },
+        "**Driver**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** A dummy module that **calls the lower-level module being tested** when a **higher-level module** is not available.",
+            "**Direction:** Calls 'from below'.",
+            "**Behavior:** Simulates the control from missing top-level module.",
+            "**Used in:** Bottom-Up Integration Testing.",
+            "**Analogy:** Testing a fuel sensor with a dummy ECU that sends commands."
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "Stubs vs Drivers",
+          "headers": ["Aspect", "Stub", "Driver"],
+          "rows": [
+            ["Direction", "Called by module under test", "Calls module under test"],
+            ["Integration Approach", "Top-down", "Bottom-up"],
+            ["Role", "Simulates lower modules", "Simulates upper modules"],
+            ["When Used", "Testing high-level modules", "Testing low-level modules"],
+            ["Complexity", "Simple responses", "More complex control logic"]
+          ]
+        }
+      ],
+      "codeBlocks": [
+        {
+          "title": "Stub Example (Java)",
+          "language": "java",
+          "code": "// Stub for PaymentService when testing OrderService\npublic class PaymentServiceStub implements PaymentService {\n    @Override\n    public PaymentResult processPayment(PaymentRequest request) {\n        // Return fixed response regardless of input\n        PaymentResult result = new PaymentResult();\n        result.setStatus(\"SUCCESS\");\n        result.setTransactionId(\"STUB-TXN-123\");\n        result.setMessage(\"Payment processed (stub response)\");\n        return result;\n    }\n}\n\n// Driver for testing InventoryService\npublic class InventoryServiceDriver {\n    public static void main(String[] args) {\n        InventoryService service = new InventoryService();\n        \n        // Simulate various calls from upper modules\n        boolean result1 = service.checkStock(\"PROD-123\", 5);\n        System.out.println(\"Check stock: \" + result1);\n        \n        boolean result2 = service.reserveStock(\"PROD-123\", 5);\n        System.out.println(\"Reserve stock: \" + result2);\n        \n        boolean result3 = service.releaseStock(\"PROD-123\", 5);\n        System.out.println(\"Release stock: \" + result3);\n    }\n}"
+        }
+      ]
+    },
+    "category": "Testing Types",
+    "difficulty": "Advanced",
+    "tags": ["stub", "driver", "integration-testing", "test-doubles"]
+  },
+  {
+    "id": 24,
+    "question": "What is the difference between Defect Leakage and Defect Release?",
+    "answer": {
+      "content": [
+        "Defect Leakage and Defect Release are two metrics that measure the effectiveness of the testing process at different stages. Both are undesirable, but they represent different failures.",
+        "",
+        "**Defect Leakage**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** Defect found by end-user in production that **should have been caught** by the testing team.",
+            "**When:** After release to customers.",
+            "**What it indicates:** Failure in testing process (inadequate test cases, poor coverage, environment mismatch).",
+            "**Metric:** Defect Leakage Ratio = (Defects found in production) / (Total defects)",
+            "**Goal:** Minimize to zero."
+          ]
+        },
+        "**Defect Release**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** Conscious, strategic decision to release software even though known, low-priority defects are present.",
+            "**When:** At time of release.",
+            "**What it indicates:** Business decision based on risk, time-to-market, and resources.",
+            "**Also known as:** 'Known bugs' or 'deferred defects'.",
+            "**Goal:** Manage risk by ensuring only low-severity defects are released."
+          ]
+        },
+        "**Key Difference:** Defect Leakage is an **unintentional failure** of the testing process. Defect Release is an **intentional management decision**."
+      ],
+      "tables": [
+        {
+          "title": "Defect Leakage vs Defect Release",
+          "headers": ["Aspect", "Defect Leakage", "Defect Release"],
+          "rows": [
+            ["Nature", "Unintentional", "Intentional"],
+            ["Timing", "Found after release", "Known before release"],
+            ["Cause", "Testing missed the defect", "Business decision"],
+            ["Severity", "Can be critical", "Only low severity"],
+            ["Action", "Fix and improve process", "Document and accept risk"],
+            ["Metric", "Leakage percentage", "Number of known issues"]
+          ]
+        }
+      ]
+    },
+    "category": "Metrics and Measurement",
+    "difficulty": "Advanced",
+    "tags": ["defect-leakage", "defect-release", "metrics", "quality-metrics"]
+  },
+  {
+    "id": 25,
+    "question": "What is a Test Strategy and how does it differ from a Test Plan?",
+    "answer": {
+      "content": [
+        "A Test Strategy and a Test Plan are both high-level documents that guide testing, but they operate at different levels of scope and detail.",
+        "",
+        "**Test Strategy**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Scope:** Organization-wide or project-wide.",
+            "**What it is:** Defines 'big picture' approach to testing.",
+            "**Content:** Testing principles, methodologies, standard tools, roles.",
+            "**Questions answered:**",
+            "  - What are our core testing principles?",
+            "  - What testing levels and types will we use?",
+            "  - What are standard tools and metrics?",
+            "  - How will we manage test environments?",
+            "**Change Frequency:** Static, changes rarely."
+          ]
+        },
+        "**Test Plan**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Scope:** Project-specific or release-specific.",
+            "**What it is:** Detailed execution guide for specific project.",
+            "**Content:** Features to test, schedule, resources, pass/fail criteria.",
+            "**Questions answered:**",
+            "  - What specific features are in scope?",
+            "  - What is the precise schedule?",
+            "  - Who is assigned to each task?",
+            "  - What are the pass/fail criteria?",
+            "**Change Frequency:** Dynamic, updates frequently."
+          ]
+        },
+        "**Analogy:** Test Strategy is the **constitution**, Test Plan is the **annual budget**."
+      ],
+      "tables": [
+        {
+          "title": "Test Strategy vs Test Plan",
+          "headers": ["Aspect", "Test Strategy", "Test Plan"],
+          "rows": [
+            ["Level", "Organization/Program", "Project/Release"],
+            ["Scope", "Broad, all projects", "Specific project"],
+            ["Detail", "High-level", "Detailed"],
+            ["Content", "Principles, approaches", "Features, schedule, resources"],
+            ["Change Frequency", "Rare", "Often"],
+            ["Derived From", "Organizational goals", "Test Strategy"],
+            ["Audience", "All stakeholders", "Project team"]
+          ]
+        }
+      ]
+    },
+    "category": "Test Management",
+    "difficulty": "Advanced",
+    "tags": ["test-strategy", "test-plan", "test-management"]
+  },
+  {
+    "id": 26,
+    "question": "What is Positive and Negative Testing? Provide examples.",
+    "answer": {
+      "content": [
+        "Positive and Negative testing are two fundamental approaches to validating software behavior, especially when dealing with user inputs.",
+        "",
+        "**Positive Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** Testing by providing **valid and expected input data**.",
+            "**Goal:** Verify system does what it's supposed to under normal conditions.",
+            "**Mindset:** \"If I do the right thing, does the system respond correctly?\"",
+            "**Example - Login form:**",
+            "  - **Action:** Enter registered username and correct password",
+            "  - **Expected:** Successful login to dashboard"
+          ]
+        },
+        "**Negative Testing**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** Testing by providing **invalid, unexpected, or unapproved input data**.",
+            "**Goal:** Verify system handles errors gracefully and doesn't crash.",
+            "**Mindset:** \"If I do the wrong thing, does the system respond appropriately?\"",
+            "**Example - Login form:**",
+            "  - **Action 1:** Enter correct username with wrong password",
+            "  - **Expected 1:** Error message, no login",
+            "  - **Action 2:** Leave fields blank and submit",
+            "  - **Expected 2:** Validation messages",
+            "  - **Action 3:** SQL injection attempt",
+            "  - **Expected 3:** Rejection, no unauthorized access"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "Positive vs Negative Testing Examples",
+          "headers": ["Feature", "Positive Test", "Negative Test"],
+          "rows": [
+            ["Age field (18-65)", "Enter 30", "Enter 15, 70, 'ABC', -5"],
+            ["Email field", "user@example.com", "user@, @domain, user, blank"],
+            ["Login", "Valid credentials", "Wrong password, empty fields, SQL injection"],
+            ["File upload", "Valid PDF file", "EXE file, too large file, no file"],
+            ["Search", "Common keyword", "Special chars, SQL injection, XSS attack"]
+          ]
+        }
+      ]
+    },
+    "category": "Test Design",
+    "difficulty": "Beginner",
+    "tags": ["positive-testing", "negative-testing", "test-design"]
+  },
+  {
+    "id": 27,
+    "question": "What is the difference between a Defect, a Bug, and an Error?",
+    "answer": {
+      "content": [
+        "In everyday conversation, these terms are often used interchangeably, but in software testing, they have distinct meanings that describe different stages in the fault-failure chain.",
+        "",
+        "**Error (Mistake)**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** A human mistake made by a developer, designer, or analyst.",
+            "**Where it occurs:** In the mind of the person, resulting in incorrect action.",
+            "**Example:** Developer mistakenly writes `if (x = y)` (assignment) instead of `if (x == y)` (comparison)."
+          ]
+        },
+        "**Defect (Bug, Fault)**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** The result of an error - an anomaly or flaw in the software artifact.",
+            "**Where it occurs:** In the software artifact (code, design document).",
+            "**Example:** The incorrect `if (x = y)` code now resides in the source code."
+          ]
+        },
+        "**Failure**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** Observable, incorrect behavior when the defect is executed.",
+            "**Where it occurs:** During software execution.",
+            "**Example:** When the program runs, the faulty code causes wrong output."
+          ]
+        },
+        "**Analogy - Baking a Cake:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Error:** Baker reads '1 cup salt' instead of '1 teaspoon' (human mistake).",
+            "**Defect:** Recipe incorrectly states '1 cup salt' (flaw in artifact).",
+            "**Failure:** Cake tastes extremely salty (observable incorrect behavior)."
+          ]
+        }
+      ],
+      "diagrams": [
+        {
+          "type": "flowchart",
+          "title": "Error → Defect → Failure Chain",
+          "steps": [
+            { "type": "process", "content": "Human Error (Mistake)" },
+            { "type": "process", "content": "Creates" },
+            { "type": "process", "content": "Defect in Code (Bug)" },
+            { "type": "decision", "content": "Defect Executed?" },
+            { "type": "process", "content": "No Failure (Latent)" },
+            { "type": "process", "content": "Failure Occurs (Observable)" }
+          ]
+        }
+      ]
+    },
+    "category": "Fundamentals",
+    "difficulty": "Beginner",
+    "tags": ["defect", "bug", "error", "failure", "terminology"]
+  },
+  {
+    "id": 28,
+    "question": "What is User Acceptance Testing (UAT) and why is it important?",
+    "answer": {
+      "content": [
+        "User Acceptance Testing (UAT) is the final and one of the most critical phases of the software testing lifecycle. It is performed **after system testing is complete** and just before the software is released to production.",
+        "",
+        "**Definition:** UAT is a type of testing where the **actual end-users or their representatives** test the software in an environment that closely mimics production. Their goal is not to find technical bugs, but to validate that the software meets their **business needs** and is ready for real-world use.",
+        "",
+        "**Key Characteristics:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Performed by:** Real users or business stakeholders (not QA team).",
+            "**Environment:** Staging or UAT environment mirroring production.",
+            "**Data:** Uses real or realistic business data.",
+            "**Focus:** Business workflows, real-world scenarios, contractual requirements.",
+            "**Goal:** Formal sign-off from users that software is acceptable."
+          ]
+        },
+        "**Why is UAT important?**",
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "**Validates Business Requirements:** Ensures software solves actual business problems.",
+            "**Confirms Real-World Usability:** Uncovers usability issues missed in technical testing.",
+            "**Reduces Production Risk:** User sign-off reduces chance of post-launch rejection.",
+            "**Provides Legal Sign-off:** Formal requirement for contract completion."
+          ]
+        },
+        "**Common Types of UAT:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Alpha Testing:** Internal users at developer's site.",
+            "**Beta Testing:** Limited external users in real environments.",
+            "**Contract Acceptance:** Verifies contractual specifications.",
+            "**Regulation Acceptance:** Verifies compliance with regulations."
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "UAT Success Criteria",
+          "headers": ["Criteria", "Description", "Acceptable Level"],
+          "rows": [
+            ["Business Process Completion", "All critical business flows work", "100%"],
+            ["Data Accuracy", "Reports and calculations correct", "100% for critical, >95% for others"],
+            ["Usability", "Users can complete tasks without assistance", ">90%"],
+            ["Performance", "System responsive under expected load", "Meets SLAs"],
+            ["Sign-off", "Formal approval from stakeholders", "Obtained"]
+          ]
+        }
+      ]
+    },
+    "category": "Testing Levels",
+    "difficulty": "Intermediate",
+    "tags": ["uat", "user-acceptance-testing", "alpha-testing", "beta-testing"]
+  },
+  {
+    "id": 29,
+    "question": "What is the difference between a Test Bed and a Test Environment?",
+    "answer": {
+      "content": [
+        "The terms Test Bed and Test Environment are often used synonymously, but there is a subtle and important distinction, especially when discussing detailed test setup.",
+        "",
+        "**Test Environment**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** The hardware and software infrastructure on which tests run.",
+            "**Components:** Servers, operating systems, databases, network, application.",
+            "**Focus:** The underlying technology and configuration.",
+            "**Example:** \"We have a dedicated QA test environment on Linux with MySQL.\""
+          ]
+        },
+        "**Test Bed**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Definition:** A broader concept - test environment **plus test data, tools, and configuration** for specific tests.",
+            "**Components:** Test Environment + Test Data + Configuration for specific purpose.",
+            "**Focus:** Readiness for specific test execution.",
+            "**Example:** \"Our performance test bed includes staging environment, 10GB sample data, and JMeter scripts for 5000 concurrent users.\""
+          ]
+        },
+        "**Analogy:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Test Environment:** Physical soundstage (walls, lighting rigs, infrastructure).",
+            "**Test Bed:** Fully dressed set with props, actors in costume, lighting set for a scene."
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "Test Bed vs Test Environment",
+          "headers": ["Aspect", "Test Environment", "Test Bed"],
+          "rows": [
+            ["Scope", "Infrastructure only", "Infrastructure + data + config"],
+            ["Components", "Hardware, software, network", "Environment + test data + tools"],
+            ["Reusability", "Used for multiple test types", "Configured for specific tests"],
+            ["Setup Time", "Once", "Per test campaign"],
+            ["Example", "Linux servers, MySQL, Tomcat", "Staging + customer data + load scripts"]
+          ]
+        }
+      ]
+    },
+    "category": "Test Management",
+    "difficulty": "Advanced",
+    "tags": ["test-bed", "test-environment", "test-infrastructure"]
+  },
+  {
+    "id": 30,
+    "question": "Explain the concept of 'Shift Left' in software testing.",
+    "answer": {
+      "content": [
+        "'Shift Left' is a popular principle in modern software development (especially in DevOps and Agile) that advocates for moving testing activities **earlier in the software development lifecycle** (to the 'left' on a project timeline diagram). The core idea is to perform testing as early as possible, rather than leaving it all to a separate, later phase.",
+        "",
+        "**The Traditional 'Right' Approach:**",
+        "In Waterfall, testing happens at the end. Bugs found late are expensive and time-consuming to fix.",
+        "",
+        "**The 'Shift Left' Approach:**",
+        "Pushes quality assurance activities to the beginning, building quality in from the start.",
+        "",
+        "**How to implement Shift Left:**",
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "**Involve Testers Early:** Testers participate in requirement gathering and design discussions.",
+            "**Test-Driven Development (TDD):** Write tests before writing code.",
+            "**Static Testing Early:** Conduct reviews of requirements and design documents.",
+            "**Integrate Testing into Development:** Test small pieces as they are built.",
+            "**Automate at Multiple Levels:** CI/CD pipeline with automated tests on commit."
+          ]
+        },
+        "**Benefits of Shift Left:**",
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Reduced Cost of Quality:** Defects are cheapest to fix when found earliest.",
+            "**Faster Time to Market:** Avoid long bug-fixing phase at the end.",
+            "**Higher Quality:** Building quality into the process from the start.",
+            "**Improved Collaboration:** Shared responsibility for quality across team."
+          ]
+        }
+      ],
+      "diagrams": [
+        {
+          "type": "flowchart",
+          "title": "Shift Left Concept",
+          "steps": [
+            { "type": "process", "content": "Requirements (Shift Left Here →)" },
+            { "type": "process", "content": "Design (Shift Left Here →)" },
+            { "type": "process", "content": "Development (Shift Left Here →)" },
+            { "type": "process", "content": "Testing (Traditional Starting Point)" },
+            { "type": "process", "content": "Deployment" },
+            { "type": "process", "content": "Production" }
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "title": "Cost of Fixing Bugs by Phase (Reinforcing Shift Left)",
+          "headers": ["Phase Found", "Relative Cost", "Shift Left Impact"],
+          "rows": [
+            ["Requirements", "1x", "Testers review requirements"],
+            ["Design", "3-6x", "Testers review design"],
+            ["Development", "10x", "TDD, unit testing"],
+            ["Testing (QA)", "15-40x", "Traditional testing"],
+            ["Production", "30-100x", "Critical to avoid"]
+          ]
+        }
+      ]
+    },
+    "category": "Process",
+    "difficulty": "Advanced",
+    "tags": ["shift-left", "devops", "agile", "quality", "early-testing"]
+  },
+  [
+    {
+      "id": 31,
+      "question": "What is Test-Driven Development (TDD) and how does it work?",
+      "answer": {
+        "content": [
+          "Test-Driven Development (TDD) is a software development approach where tests are written before the code that makes them pass. It follows a simple cycle often called **Red-Green-Refactor**.",
+          "",
+          "**The TDD Cycle:**",
+          {
+            "type": "list",
+            "ordered": true,
+            "items": [
+              "**🔴 Red Phase:** Write a failing test that defines a desired improvement or new function. The test should fail because the functionality doesn't exist yet.",
+              "**🟢 Green Phase:** Write the minimum amount of code necessary to make the test pass. Don't worry about code quality at this stage.",
+              "**🔵 Refactor Phase:** Clean up the code while keeping all tests passing. Improve design, remove duplication, and optimize."
+            ]
+          },
+          "**Benefits of TDD:**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Better Design:** Forces developers to think about interfaces and design before implementation.",
+              "**Comprehensive Test Coverage:** Every feature has corresponding tests.",
+              "**Living Documentation:** Tests serve as executable documentation of expected behavior.",
+              "**Confidence in Refactoring:** Test suite catches regressions when code is changed.",
+              "**Fewer Bugs:** Studies show TDD can reduce defect density by 40-80%."
+            ]
+          },
+          "**Common TDD Mistakes:**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Writing too many tests at once:** Tests should be small and incremental.",
+              "**Skipping the refactor phase:** Leads to technical debt accumulation.",
+              "**Testing implementation details:** Tests should verify behavior, not internal mechanics.",
+              "**Writing tests after code:** This defeats the purpose of TDD."
+            ]
+          }
+        ],
+        "codeBlocks": [
+          {
+            "title": "TDD Example: FizzBuzz",
+            "language": "java",
+            "code": "// Step 1: 🔴 Write a failing test\nimport org.junit.jupiter.api.Test;\nimport static org.junit.jupiter.api.Assertions.*;\n\npublic class FizzBuzzTest {\n    @Test\n    public void shouldReturnFizzForMultiplesOfThree() {\n        assertEquals(\"Fizz\", FizzBuzz.generate(3));\n    }\n}\n\n// Step 2: 🟢 Write minimal code to pass\npublic class FizzBuzz {\n    public static String generate(int number) {\n        if (number == 3) return \"Fizz\";\n        return String.valueOf(number);\n    }\n}\n\n// Step 3: 🔵 Add more tests and refactor\n@Test\npublic void shouldReturnBuzzForMultiplesOfFive() {\n    assertEquals(\"Buzz\", FizzBuzz.generate(5));\n}\n\n@Test\npublic void shouldReturnFizzBuzzForMultiplesOfFifteen() {\n    assertEquals(\"FizzBuzz\", FizzBuzz.generate(15));\n}\n\n@Test\npublic void shouldReturnNumberForNonMultiples() {\n    assertEquals(\"1\", FizzBuzz.generate(1));\n    assertEquals(\"2\", FizzBuzz.generate(2));\n}\n\n// Final refactored implementation\npublic class FizzBuzz {\n    public static String generate(int number) {\n        if (number % 15 == 0) return \"FizzBuzz\";\n        if (number % 3 == 0) return \"Fizz\";\n        if (number % 5 == 0) return \"Buzz\";\n        return String.valueOf(number);\n    }\n}"
+          },
+          {
+            "title": "TDD Cycle Visualization in Code",
+            "language": "javascript",
+            "code": "// 🔴 RED: Write a failing test\n// calculator.test.js\ntest('adds 2 + 3 to equal 5', () => {\n  expect(calculator.add(2, 3)).toBe(5); // Fails: calculator doesn't exist\n});\n\n// 🟢 GREEN: Make it pass\n// calculator.js\nexports.add = (a, b) => a + b; // Minimal implementation\n\n// 🔵 REFACTOR: Improve without breaking tests\n// calculator.js\nexports.add = (a, b) => {\n  // Add input validation\n  if (typeof a !== 'number' || typeof b !== 'number') {\n    throw new Error('Invalid input');\n  }\n  return a + b;\n};\n\n// Add more tests\n// calculator.test.js\ntest('handles negative numbers', () => {\n  expect(calculator.add(-1, -2)).toBe(-3);\n});\n\ntest('throws error on invalid input', () => {\n  expect(() => calculator.add('2', 3)).toThrow();\n});"
+          }
+        ],
+        "diagrams": [
+          {
+            "type": "flowchart",
+            "title": "TDD Red-Green-Refactor Cycle",
+            "steps": [
+              { "type": "start-end", "content": "Start: Write a Test" },
+              { "type": "process", "content": "🔴 Run Test → Fails (Red)" },
+              { "type": "process", "content": "🟢 Write Minimal Code" },
+              { "type": "process", "content": "🟢 Run Test → Passes (Green)" },
+              { "type": "decision", "content": "Code Clean?" },
+              { "type": "process", "content": "🔵 Refactor Code" },
+              { "type": "process", "content": "Run Tests → All Pass" },
+              { "type": "start-end", "content": "Next Feature" }
+            ]
+          }
+        ],
+        "tables": [
+          {
+            "title": "TDD vs Traditional Development",
+            "headers": ["Aspect", "Traditional Development", "TDD"],
+            "rows": [
+              ["Test Timing", "After code is written", "Before code is written"],
+              ["Test Purpose", "Verify correctness", "Drive design and verify"],
+              ["Coverage", "Often incomplete", "Comprehensive by design"],
+              ["Refactoring", "Risky without tests", "Safe with test suite"],
+              ["Documentation", "Separate documents", "Tests as documentation"],
+              ["Initial Speed", "Faster initially", "Slower initially, faster later"]
+            ]
+          }
+        ]
+      },
+      "category": "Development Practices",
+      "difficulty": "Intermediate",
+      "tags": ["tdd", "test-driven-development", "agile", "development-practices"]
+    },
+    {
+      "id": 32,
+      "question": "What are the different types of test automation frameworks? Explain with examples.",
+      "answer": {
+        "content": [
+          "Test automation frameworks provide guidelines, rules, and structures for creating and organizing automated tests. There are several types of frameworks, each with its own approach and benefits.",
+          "",
+          "**1. Linear Scripting Framework (Record & Playback)**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Description:** Tests are created by recording user actions and playing them back.",
+              "**Pros:** Easy to create, minimal programming knowledge required.",
+              "**Cons:** Difficult to maintain, no reusability, brittle tests.",
+              "**Tools:** Selenium IDE, Katalon Recorder, QTP."
+            ]
+          },
+          "**2. Modular Testing Framework**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Description:** Application is divided into modules, with separate test scripts for each.",
+              "**Pros:** Reusable modules, easier maintenance, better organization.",
+              "**Cons:** Requires programming knowledge, initial setup time.",
+              "**Tools:** TestNG with Java, PyTest with Python."
+            ]
+          },
+          "**3. Data-Driven Framework**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Description:** Test logic separated from test data. Same test runs with multiple data sets.",
+              "**Pros:** Tests multiple scenarios, easy to add new data, no code changes for new data.",
+              "**Cons:** Complex setup, requires data management strategy.",
+              "**Tools:** Apache POI (Excel), CSV readers, JSON parsers."
+            ]
+          },
+          "**4. Keyword-Driven Framework**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Description:** Tests use keywords representing actions, stored in tables.",
+              "**Pros:** Non-technical users can create tests, high reusability.",
+              "**Cons:** Complex framework development, requires keyword documentation.",
+              "**Tools:** Robot Framework, Katalon Studio."
+            ]
+          },
+          "**5. Hybrid Framework**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Description:** Combines two or more frameworks (e.g., data-driven + keyword-driven).",
+              "**Pros:** Best of multiple approaches, highly flexible.",
+              "**Cons:** Complex to design and maintain.",
+              "**Tools:** Custom implementations combining multiple approaches."
+            ]
+          },
+          "**6. Behavior-Driven Development (BDD) Framework**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Description:** Tests written in natural language using Given-When-Then format.",
+              "**Pros:** Collaboration between technical and non-technical stakeholders, living documentation.",
+              "**Cons:** Additional layer of abstraction, learning curve.",
+              "**Tools:** Cucumber, SpecFlow, Behave."
+            ]
+          }
+        ],
+        "codeBlocks": [
+          {
+            "title": "Data-Driven Framework Example (TestNG)",
+            "language": "java",
+            "code": "import org.testng.annotations.DataProvider;\nimport org.testng.annotations.Test;\nimport static org.testng.Assert.assertEquals;\n\npublic class LoginDataDrivenTest {\n    \n    @DataProvider(name = \"loginData\")\n    public Object[][] provideLoginData() {\n        return new Object[][] {\n            {\"validUser\", \"validPass\", true},\n            {\"validUser\", \"wrongPass\", false},\n            {\"invalidUser\", \"validPass\", false},\n            {\"\", \"\", false},\n            {\"admin\", \"admin123\", true}\n        };\n    }\n    \n    @Test(dataProvider = \"loginData\")\n    public void testLogin(String username, String password, boolean expectedSuccess) {\n        LoginPage loginPage = new LoginPage(driver);\n        boolean actualSuccess = loginPage.login(username, password);\n        assertEquals(actualSuccess, expectedSuccess);\n    }\n}"
+          },
+          {
+            "title": "BDD Framework Example (Cucumber)",
+            "language": "gherkin",
+            "code": "# Feature: Login Functionality\nFeature: User Login\n  As a registered user\n  I want to log in to the application\n  So that I can access my account\n\n  Scenario: Successful login with valid credentials\n    Given I am on the login page\n    When I enter username \"john.doe\" and password \"Pass123\"\n    And I click the login button\n    Then I should be redirected to the dashboard\n    And I should see a welcome message \"Welcome, John!\"\n\n  Scenario: Failed login with invalid credentials\n    Given I am on the login page\n    When I enter username \"john.doe\" and password \"wrongpass\"\n    And I click the login button\n    Then I should remain on the login page\n    And I should see an error message \"Invalid credentials\"\n\n  Scenario: Login with empty fields\n    Given I am on the login page\n    When I leave username and password empty\n    And I click the login button\n    Then I should see validation messages \"Username is required\" and \"Password is required\""
+          },
+          {
+            "title": "Keyword-Driven Framework Example",
+            "language": "python",
+            "code": "# keyword_driven_framework.py\n\nclass KeywordLibrary:\n    def __init__(self, driver):\n        self.driver = driver\n    \n    def open_browser(self, browser):\n        if browser.lower() == 'chrome':\n            self.driver = webdriver.Chrome()\n        elif browser.lower() == 'firefox':\n            self.driver = webdriver.Firefox()\n    \n    def navigate_to(self, url):\n        self.driver.get(url)\n    \n    def input_text(self, locator, text):\n        element = self.driver.find_element(*locator)\n        element.clear()\n        element.send_keys(text)\n    \n    def click_element(self, locator):\n        self.driver.find_element(*locator).click()\n    \n    def verify_text(self, locator, expected_text):\n        actual = self.driver.find_element(*locator).text\n        assert actual == expected_text, f\"Expected '{expected_text}', got '{actual}'\"\n\n# Test data from Excel/CSV\n# test_scenarios.csv:\n# keyword,param1,param2,param3\n# open_browser,chrome,,\n# navigate_to,https://example.com,,\n# input_text,id=username,john.doe,\n# input_text,id=password,Pass123,\n# click_element,id=login,,\n# verify_text,id=welcome,Welcome!,\n\ndef execute_test_from_csv(csv_file):\n    import csv\n    library = KeywordLibrary()\n    with open(csv_file, 'r') as file:\n        reader = csv.reader(file)\n        next(reader)  # Skip header\n        for row in reader:\n            keyword = row[0]\n            params = row[1:]\n            getattr(library, keyword)(*params)"
+          }
+        ],
+        "tables": [
+          {
+            "title": "Comparison of Test Automation Frameworks",
+            "headers": ["Framework Type", "Skill Level Required", "Reusability", "Maintenance Ease", "Best For"],
+            "rows": [
+              ["Linear Scripting", "Low", "Very Low", "Difficult", "Simple, one-time tests"],
+              ["Modular", "Medium", "High", "Easy", "Well-structured applications"],
+              ["Data-Driven", "Medium-High", "High", "Easy", "Testing with multiple data sets"],
+              ["Keyword-Driven", "Medium", "Very High", "Easy", "Non-technical testers"],
+              ["BDD", "Medium", "High", "Easy", "Collaboration with business"],
+              ["Hybrid", "High", "Very High", "Moderate", "Complex enterprise applications"]
+            ]
+          }
+        ],
+        "diagrams": [
+          {
+            "type": "flowchart",
+            "title": "Hybrid Framework Architecture",
+            "steps": [
+              { "type": "process", "content": "Test Scripts" },
+              { "type": "process", "content": "↓" },
+              { "type": "process", "content": "Function Library" },
+              { "type": "process", "content": "↙ ↓ ↘" },
+              { "type": "process", "content": "Data Files (Excel/CSV/JSON)" },
+              { "type": "process", "content": "Object Repository" },
+              { "type": "process", "content": "Keyword Library" },
+              { "type": "process", "content": "↓" },
+              { "type": "process", "content": "Test Execution Engine" },
+              { "type": "process", "content": "↓" },
+              { "type": "process", "content": "Reports & Logs" }
+            ]
+          }
+        ]
+      },
+      "category": "Test Automation",
+      "difficulty": "Advanced",
+      "tags": ["automation-frameworks", "test-automation", "bdd", "data-driven", "keyword-driven"]
+    },
+    {
+      "id": 33,
+      "question": "Explain the concept of Continuous Integration and Continuous Delivery (CI/CD) from a testing perspective.",
+      "answer": {
+        "content": [
+          "CI/CD is a software development practice where code changes are automatically built, tested, and prepared for release. From a testing perspective, it transforms quality assurance from a separate phase into an integral part of the development pipeline.",
+          "",
+          "**Continuous Integration (CI)**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Definition:** Developers frequently merge code changes into a shared repository, triggering automated builds and tests.",
+              "**Goal:** Detect integration issues early and ensure code quality.",
+              "**Frequency:** Multiple times per day."
+            ]
+          },
+          "**Continuous Delivery (CD)**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Definition:** Extends CI by automatically deploying all code changes to a testing/staging environment after the build stage.",
+              "**Goal:** Keep software always ready for production deployment.",
+              "**Manual Approval:** Requires manual approval before production release."
+            ]
+          },
+          "**Continuous Deployment**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Definition:** Every change that passes all stages of the pipeline is automatically released to production.",
+              "**Goal:** Fully automated releases with no manual intervention.",
+              "**Requires:** High confidence in automated tests and monitoring."
+            ]
+          },
+          "**Testing in CI/CD Pipeline - The Test Pyramid**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Unit Tests (70-80%)** - Fast, isolated, run on every commit",
+              "**Integration Tests (15-20%)** - Test component interactions, run after successful unit tests",
+              "**End-to-End Tests (5-10%)** - Critical user journeys, run less frequently",
+              "**Performance Tests** - Run on schedule or before major releases",
+              "**Security Tests** - Run on schedule or before releases"
+            ]
+          },
+          "**Key Testing Stages in CI/CD:**",
+          {
+            "type": "list",
+            "ordered": true,
+            "items": [
+              "**Commit Stage:** Linting, static analysis, unit tests",
+              "**Build Stage:** Compilation, packaging, smoke tests",
+              "**Integration Stage:** API tests, integration tests, contract tests",
+              "**Staging Stage:** End-to-end tests, performance tests, security scans",
+              "**Production Stage:** Smoke tests, health checks, monitoring validation"
+            ]
+          }
+        ],
+        "codeBlocks": [
+          {
+            "title": "GitLab CI Pipeline Configuration",
+            "language": "yaml",
+            "code": "# .gitlab-ci.yml\n\nstages:\n  - build\n  - test\n  - quality\n  - integration\n  - staging\n  - production\n\nvariables:\n  MAVEN_OPTS: \"-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository\"\n\ncache:\n  paths:\n    - .m2/repository/\n    - node_modules/\n\n# Stage 1: Build\nbuild-job:\n  stage: build\n  script:\n    - mvn clean compile\n    - npm ci\n  artifacts:\n    paths:\n      - target/*.jar\n      - dist/\n\n# Stage 2: Unit Tests (Fast feedback)\nunit-tests:\n  stage: test\n  script:\n    - mvn test\n    - npm run test:unit\n  artifacts:\n    reports:\n      junit:\n        - target/surefire-reports/TEST-*.xml\n        - junit.xml\n  coverage: '/Code coverage: \\d+\\.\\d+%/'\n\n# Stage 3: Code Quality\nsonarqube-check:\n  stage: quality\n  script:\n    - mvn sonar:sonar\n  only:\n    - merge_requests\n    - main\n\n# Stage 4: Integration Tests\nintegration-tests:\n  stage: integration\n  services:\n    - postgres:13\n    - redis:6\n  script:\n    - mvn verify -Pintegration-tests\n    - npm run test:integration\n  needs:\n    - unit-tests\n\n# Stage 5: End-to-End Tests (Staging)\ne2e-tests:\n  stage: staging\n  script:\n    - npm run test:e2e:headless\n  artifacts:\n    paths:\n      - cypress/screenshots/\n      - cypress/videos/\n  when: always\n  only:\n    - main\n    - release/*\n\n# Stage 6: Performance Tests\nperformance-test:\n  stage: staging\n  script:\n    - k6 run load-test.js\n  only:\n    - schedules\n    - main\n\n# Stage 7: Security Scan\nsecurity-scan:\n  stage: staging\n  script:\n    - npm run audit\n    - mvn verify -Powasp-check\n  only:\n    - schedules\n    - main\n\n# Stage 8: Deploy to Staging\ndeploy-staging:\n  stage: staging\n  script:\n    - ./deploy-to-staging.sh\n  environment:\n    name: staging\n  only:\n    - main\n\n# Stage 9: Production Deployment\ndeploy-production:\n  stage: production\n  script:\n    - ./deploy-to-production.sh\n  environment:\n    name: production\n  when: manual  # Requires manual approval\n  only:\n    - main"
+          },
+          {
+            "title": "Jenkins Pipeline Script",
+            "language": "groovy",
+            "code": "// Jenkinsfile\npipeline {\n    agent any\n    \n    tools {\n        maven 'Maven 3.8'\n        jdk 'JDK 11'\n    }\n    \n    stages {\n        stage('Checkout') {\n            steps {\n                checkout scm\n            }\n        }\n        \n        stage('Build') {\n            steps {\n                sh 'mvn clean compile'\n            }\n        }\n        \n        stage('Unit Tests') {\n            steps {\n                sh 'mvn test'\n            }\n            post {\n                always {\n                    junit 'target/surefire-reports/*.xml'\n                }\n            }\n        }\n        \n        stage('Static Analysis') {\n            steps {\n                sh 'mvn sonar:sonar'\n            }\n        }\n        \n        stage('Integration Tests') {\n            steps {\n                sh 'mvn verify -Pintegration'\n            }\n        }\n        \n        stage('Deploy to Staging') {\n            when {\n                branch 'main'\n            }\n            steps {\n                sh './deploy-staging.sh'\n            }\n        }\n        \n        stage('End-to-End Tests') {\n            steps {\n                sh 'npm run test:e2e'\n            }\n        }\n        \n        stage('Deploy to Production') {\n            when {\n                branch 'main'\n            }\n            input {\n                message \"Deploy to production?\"\n                ok \"Yes, deploy\"\n            }\n            steps {\n                sh './deploy-production.sh'\n            }\n            post {\n                success {\n                    sh './smoke-tests.sh'\n                }\n            }\n        }\n    }\n    \n    post {\n        always {\n            cleanWs()\n        }\n        failure {\n            emailext(\n                to: 'team@example.com',\n                subject: \"Pipeline failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}\",\n                body: \"The pipeline failed. Check logs at ${env.BUILD_URL}\"\n            )\n        }\n    }\n}"
+          }
+        ],
+        "tables": [
+          {
+            "title": "CI/CD Pipeline Stages and Testing",
+            "headers": ["Stage", "Tests Run", "Duration", "Frequency", "Failure Impact"],
+            "rows": [
+              ["Commit", "Linting, Unit Tests", "< 5 min", "Every commit", "Blocks commit"],
+              ["Build", "Compilation, Smoke Tests", "5-10 min", "Every commit", "Blocks further stages"],
+              ["Integration", "API Tests, Integration Tests", "10-20 min", "Every commit", "Requires fixes"],
+              ["Staging", "E2E Tests, Performance", "20-60 min", "Nightly/releases", "Delays release"],
+              ["Production", "Smoke Tests, Monitoring", "< 5 min", "Every deployment", "May trigger rollback"]
+            ]
+          },
+          {
+            "title": "CI/CD Benefits for Testing",
+            "headers": ["Benefit", "Description", "Impact"],
+            "rows": [
+              ["Fast Feedback", "Tests run immediately after commit", "Bugs found hours instead of days"],
+              ["Consistent Environment", "Tests run in identical environments", "Eliminates 'works on my machine'"],
+              ["Parallel Execution", "Multiple test suites run concurrently", "Faster execution time"],
+              ["Test Artifacts", "Screenshots, logs, reports preserved", "Easier debugging"],
+              ["Quality Gates", "Tests must pass to proceed", "Enforces quality standards"],
+              ["Deployment Confidence", "Comprehensive testing before release", "Fewer production incidents"]
+            ]
+          }
+        ],
+        "diagrams": [
+          {
+            "type": "flowchart",
+            "title": "CI/CD Pipeline with Test Stages",
+            "steps": [
+              { "type": "start-end", "content": "Developer Commit" },
+              { "type": "process", "content": "Version Control (Git)" },
+              { "type": "process", "content": "CI Server Triggers Build" },
+              { "type": "process", "content": "Compile & Build" },
+              { "type": "decision", "content": "Unit Tests Pass?" },
+              { "type": "process", "content": "Static Analysis" },
+              { "type": "decision", "content": "Integration Tests Pass?" },
+              { "type": "process", "content": "Deploy to Staging" },
+              { "type": "process", "content": "E2E Tests" },
+              { "type": "process", "content": "Performance Tests" },
+              { "type": "process", "content": "Security Scans" },
+              { "type": "decision", "content": "All Tests Pass?" },
+              { "type": "process", "content": "Manual Approval" },
+              { "type": "process", "content": "Deploy to Production" },
+              { "type": "process", "content": "Smoke Tests" },
+              { "type": "start-end", "content": "Deployment Complete" },
+              { "type": "process", "content": "Notify Team of Failure" },
+              { "type": "process", "content": "Fix and Recommit" }
+            ]
+          }
+        ]
+      },
+      "category": "CI/CD",
+      "difficulty": "Advanced",
+      "tags": ["ci-cd", "continuous-integration", "continuous-delivery", "devops", "pipeline"]
+    },
+    {
+      "id": 34,
+      "question": "What is API Testing and how is it different from UI Testing? Provide examples.",
+      "answer": {
+        "content": [
+          "API Testing involves testing application programming interfaces (APIs) directly to verify functionality, reliability, performance, and security. Unlike UI testing which tests through the user interface, API testing works at the message layer without a graphical interface.",
+          "",
+          "**What is API Testing?**",
+          "API testing validates the business logic layer of an application. It sends requests to API endpoints and verifies responses, status codes, data formats, and performance characteristics.",
+          "",
+          "**Key Differences from UI Testing:**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Layer Tested:** API testing targets business logic; UI testing targets presentation layer.",
+              "**Speed:** API tests run much faster (milliseconds) compared to UI tests (seconds).",
+              "**Stability:** APIs change less frequently than UI, making tests more reliable.",
+              "**Scope:** API tests cover backend functionality; UI tests cover user experience.",
+              "**Maintenance:** API tests are easier to maintain due to stable interfaces.",
+              "**Early Testing:** APIs can be tested before UI is developed."
+            ]
+          },
+          "**Types of API Testing:**",
+          {
+            "type": "list",
+            "ordered": true,
+            "items": [
+              "**Functional Testing:** Verify API works as expected with valid inputs.",
+              "**Validation Testing:** Check response structure, data types, and formats.",
+              "**Error Testing:** Test API behavior with invalid inputs and edge cases.",
+              "**Security Testing:** Authentication, authorization, data encryption.",
+              "**Load Testing:** Performance under expected load.",
+              "**Stress Testing:** Behavior under extreme conditions.",
+              "**Security Testing:** Injection attacks, broken authentication, data exposure."
+            ]
+          },
+          "**Common API Testing Scenarios:**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Positive Tests:** Valid requests return expected responses with 200 OK.",
+              "**Negative Tests:** Invalid requests return appropriate error codes (400, 401, 404).",
+              "**Boundary Tests:** Extreme values, large payloads, long strings.",
+              "**Data Validation:** Response format (JSON/XML), data types, field presence.",
+              "**CRUD Operations:** Create, Read, Update, Delete functionality.",
+              "**Authentication/Authorization:** Valid/invalid tokens, role-based access."
+            ]
+          }
+        ],
+        "codeBlocks": [
+          {
+            "title": "REST API Testing with RestAssured (Java)",
+            "language": "java",
+            "code": "import io.restassured.RestAssured;\nimport io.restassured.http.ContentType;\nimport io.restassured.response.Response;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport static io.restassured.RestAssured.*;\nimport static org.hamcrest.Matchers.*;\n\npublic class UserAPITest {\n    \n    @BeforeEach\n    public void setup() {\n        RestAssured.baseURI = \"https://api.example.com\";\n        RestAssured.basePath = \"/v1\";\n    }\n    \n    @Test\n    public void testGetUserById_Success() {\n        given()\n            .header(\"Authorization\", \"Bearer \" + getAuthToken())\n            .pathParam(\"userId\", 123)\n        .when()\n            .get(\"/users/{userId}\")\n        .then()\n            .statusCode(200)\n            .contentType(ContentType.JSON)\n            .body(\"id\", equalTo(123))\n            .body(\"name\", notNullValue())\n            .body(\"email\", containsString(\"@\"))\n            .time(lessThan(2000L));\n    }\n    \n    @Test\n    public void testCreateUser_Success() {\n        User newUser = new User(\"John Doe\", \"john@example.com\");\n        \n        given()\n            .header(\"Authorization\", \"Bearer \" + getAuthToken())\n            .contentType(ContentType.JSON)\n            .body(newUser)\n        .when()\n            .post(\"/users\")\n        .then()\n            .statusCode(201)\n            .body(\"id\", notNullValue())\n            .body(\"name\", equalTo(\"John Doe\"))\n            .body(\"email\", equalTo(\"john@example.com\"))\n            .body(\"createdAt\", notNullValue());\n    }\n    \n    @Test\n    public void testGetUser_NotFound() {\n        given()\n            .header(\"Authorization\", \"Bearer \" + getAuthToken())\n            .pathParam(\"userId\", 999999)\n        .when()\n            .get(\"/users/{userId}\")\n        .then()\n            .statusCode(404)\n            .body(\"error\", equalTo(\"User not found\"));\n    }\n    \n    @Test\n    public void testCreateUser_ValidationError() {\n        User invalidUser = new User(\"\", \"invalid-email\");\n        \n        given()\n            .header(\"Authorization\", \"Bearer \" + getAuthToken())\n            .contentType(ContentType.JSON)\n            .body(invalidUser)\n        .when()\n            .post(\"/users\")\n        .then()\n            .statusCode(400)\n            .body(\"errors\", hasKey(\"name\"))\n            .body(\"errors\", hasKey(\"email\"));\n    }\n    \n    @Test\n    public void testUnauthorizedAccess() {\n        given()\n            .pathParam(\"userId\", 123)\n        .when()\n            .get(\"/users/{userId}\")\n        .then()\n            .statusCode(401);\n    }\n    \n    private String getAuthToken() {\n        // Implementation to get auth token\n        return \"test-token-123\";\n    }\n}\n\n// User POJO class\nclass User {\n    private String name;\n    private String email;\n    \n    public User(String name, String email) {\n        this.name = name;\n        this.email = email;\n    }\n    \n    // Getters and setters\n}"
+          },
+          {
+            "title": "API Testing with Python (requests + pytest)",
+            "language": "python",
+            "code": "import pytest\nimport requests\nimport json\nfrom datetime import datetime\n\nBASE_URL = \"https://api.example.com/v1\"\nHEADERS = {\n    \"Authorization\": \"Bearer test-token-123\",\n    \"Content-Type\": \"application/json\"\n}\n\n@pytest.fixture\ndef auth_headers():\n    return HEADERS.copy()\n\ndef test_get_user_success(auth_headers):\n    response = requests.get(\n        f\"{BASE_URL}/users/123\",\n        headers=auth_headers\n    )\n    \n    assert response.status_code == 200\n    data = response.json()\n    assert data[\"id\"] == 123\n    assert \"name\" in data\n    assert \"@\" in data[\"email\"]\n    assert response.elapsed.total_seconds() < 2\n\ndef test_create_user_success(auth_headers):\n    payload = {\n        \"name\": \"Jane Smith\",\n        \"email\": \"jane@example.com\",\n        \"role\": \"admin\"\n    }\n    \n    response = requests.post(\n        f\"{BASE_URL}/users\",\n        headers=auth_headers,\n        json=payload\n    )\n    \n    assert response.status_code == 201\n    data = response.json()\n    assert data[\"id\"] is not None\n    assert data[\"name\"] == payload[\"name\"]\n    assert data[\"email\"] == payload[\"email\"]\n    assert \"createdAt\" in data\n\ndef test_update_user_success(auth_headers):\n    payload = {\n        \"name\": \"Updated Name\",\n        \"email\": \"updated@example.com\"\n    }\n    \n    response = requests.put(\n        f\"{BASE_URL}/users/123\",\n        headers=auth_headers,\n        json=payload\n    )\n    \n    assert response.status_code == 200\n    data = response.json()\n    assert data[\"name\"] == payload[\"name\"]\n    assert data[\"email\"] == payload[\"email\"]\n    assert \"updatedAt\" in data\n\ndef test_delete_user_success(auth_headers):\n    response = requests.delete(\n        f\"{BASE_URL}/users/123\",\n        headers=auth_headers\n    )\n    \n    assert response.status_code == 204\n\ndef test_user_not_found(auth_headers):\n    response = requests.get(\n        f\"{BASE_URL}/users/999999\",\n        headers=auth_headers\n    )\n    \n    assert response.status_code == 404\n    data = response.json()\n    assert data[\"error\"] == \"User not found\"\n\n@pytest.mark.parametrize(\"payload,expected_field\", [\n    ({\"email\": \"test@example.com\"}, \"name\"),\n    ({\"name\": \"Test\"}, \"email\"),\n    ({\"name\": \"\", \"email\": \"test@example.com\"}, \"name\"),\n    ({\"name\": \"Test\", \"email\": \"invalid\"}, \"email\"),\n])\ndef test_create_user_validation(auth_headers, payload, expected_field):\n    response = requests.post(\n        f\"{BASE_URL}/users\",\n        headers=auth_headers,\n        json=payload\n    )\n    \n    assert response.status_code == 400\n    data = response.json()\n    assert expected_field in data[\"errors\"]\n\ndef test_rate_limiting(auth_headers):\n    for i in range(10):\n        response = requests.get(\n            f\"{BASE_URL}/users/{i}\",\n            headers=auth_headers\n        )\n        \n    response = requests.get(\n        f\"{BASE_URL}/users/100\",\n        headers=auth_headers\n    )\n    assert response.status_code == 429  # Too Many Requests\n    assert \"Retry-After\" in response.headers"
+          },
+          {
+            "title": "Postman Collection Example",
+            "language": "json",
+            "code": "{\n  \"info\": {\n    \"name\": \"User API Tests\",\n    \"schema\": \"https://schema.getpostman.com/json/collection/v2.1.0/collection.json\"\n  },\n  \"item\": [\n    {\n      \"name\": \"Create User\",\n      \"event\": [\n        {\n          \"listen\": \"test\",\n          \"script\": {\n            \"exec\": [\n              \"pm.test('Status code is 201', function() {\",\n              \"    pm.response.to.have.status(201);\",\n              \"});\",\n              \"\",\n              \"pm.test('Response has user ID', function() {\",\n              \"    var jsonData = pm.response.json();\",\n              \"    pm.expect(jsonData).to.have.property('id');\",\n              \"    pm.expect(jsonData.id).to.not.be.null;\",\n              \"});\",\n              \"\",\n              \"pm.test('User data matches request', function() {\",\n              \"    var jsonData = pm.response.json();\",\n              \"    pm.expect(jsonData.name).to.eql(pm.request.body.name);\",\n              \"    pm.expect(jsonData.email).to.eql(pm.request.body.email);\",\n              \"});\",\n              \"\",\n              \"pm.test('Response time < 2000ms', function() {\",\n              \"    pm.expect(pm.response.responseTime).to.be.below(2000);\",\n              \"});\"\n            ],\n            \"type\": \"text/javascript\"\n          }\n        },\n        {\n          \"listen\": \"prerequest\",\n          \"script\": {\n            \"exec\": [\n              \"// Generate unique email\",\n              \"const timestamp = Date.now();\",\n              \"pm.variables.set('uniqueEmail', `user${timestamp}@example.com`);\"\n            ],\n            \"type\": \"text/javascript\"\n          }\n        }\n      ],\n      \"request\": {\n        \"method\": \"POST\",\n        \"header\": [\n          {\n            \"key\": \"Authorization\",\n            \"value\": \"Bearer {{authToken}}\"\n          },\n          {\n            \"key\": \"Content-Type\",\n            \"value\": \"application/json\"\n          }\n        ],\n        \"body\": {\n          \"mode\": \"raw\",\n          \"raw\": \"{\\n    \\\"name\\\": \\\"Test User\\\",\\n    \\\"email\\\": \\\"{{uniqueEmail}}\\\",\\n    \\\"role\\\": \\\"user\\\"\\n}\"\n        },\n        \"url\": {\n          \"raw\": \"{{baseUrl}}/users\",\n          \"host\": [\"{{baseUrl}}\"],\n          \"path\": [\"users\"]\n        }\n      }\n    },\n    {\n      \"name\": \"Get User\",\n      \"event\": [\n        {\n          \"listen\": \"test\",\n          \"script\": {\n            \"exec\": [\n              \"pm.test('Status code is 200', function() {\",\n              \"    pm.response.to.have.status(200);\",\n              \"});\",\n              \"\",\n              \"pm.test('User data is valid', function() {\",\n              \"    var jsonData = pm.response.json();\",\n              \"    pm.expect(jsonData).to.have.property('id');\",\n              \"    pm.expect(jsonData).to.have.property('name');\",\n              \"    pm.expect(jsonData).to.have.property('email');\",\n              \"    pm.expect(jsonData.email).to.match(/^[^@]+@[^@]+$/);\",\n              \"});\"\n            ],\n            \"type\": \"text/javascript\"\n          }\n        }\n      ],\n      \"request\": {\n        \"method\": \"GET\",\n        \"header\": [\n          {\n            \"key\": \"Authorization\",\n            \"value\": \"Bearer {{authToken}}\"\n          }\n        ],\n        \"url\": {\n          \"raw\": \"{{baseUrl}}/users/{{userId}}\",\n          \"host\": [\"{{baseUrl}}\"],\n          \"path\": [\"users\", \"{{userId}}\"]\n        }\n      }\n    }\n  ]\n}"
+          }
+        ],
+        "tables": [
+          {
+            "title": "API Testing vs UI Testing Comparison",
+            "headers": ["Aspect", "API Testing", "UI Testing"],
+            "rows": [
+              ["Speed", "Very Fast (ms)", "Slow (seconds)"],
+              ["Stability", "High - APIs change less", "Low - UI changes frequently"],
+              ["Maintenance", "Low maintenance", "High maintenance"],
+              ["Test Coverage", "Business logic, integration", "User experience, visual"],
+              ["Parallel Execution", "Yes, easily", "Limited"],
+              ["Setup Complexity", "Simple", "Complex (browsers, drivers)"],
+              ["Early Testing", "Can test before UI ready", "Requires complete UI"],
+              ["Debugging", "Easy with logs", "Harder, requires screenshots"],
+              ["Cost", "Lower", "Higher"]
+            ]
+          },
+          {
+            "title": "Common HTTP Status Codes in API Testing",
+            "headers": ["Status Code", "Meaning", "Testing Scenario"],
+            "rows": [
+              ["200", "OK", "Successful GET/PUT/PATCH request"],
+              ["201", "Created", "Successful POST request (resource created)"],
+              ["204", "No Content", "Successful DELETE request"],
+              ["400", "Bad Request", "Invalid input, validation errors"],
+              ["401", "Unauthorized", "Missing or invalid authentication"],
+              ["403", "Forbidden", "Authenticated but not authorized"],
+              ["404", "Not Found", "Resource doesn't exist"],
+              ["405", "Method Not Allowed", "Wrong HTTP method used"],
+              ["409", "Conflict", "Resource already exists (duplicate)"],
+              ["422", "Unprocessable Entity", "Validation errors"],
+              ["429", "Too Many Requests", "Rate limiting triggered"],
+              ["500", "Internal Server Error", "Server-side error"],
+              ["503", "Service Unavailable", "Service down or overloaded"]
+            ]
+          }
+        ],
+        "diagrams": [
+          {
+            "type": "flowchart",
+            "title": "API Test Architecture",
+            "steps": [
+              { "type": "process", "content": "Test Script/Test Runner" },
+              { "type": "process", "content": "Test Data (JSON/CSV/Excel)" },
+              { "type": "process", "content": "↓" },
+              { "type": "process", "content": "API Request Builder" },
+              { "type": "process", "content": "↓" },
+              { "type": "process", "content": "HTTP Client" },
+              { "type": "process", "content": "↓" },
+              { "type": "process", "content": "API Endpoint" },
+              { "type": "process", "content": "↓" },
+              { "type": "process", "content": "Response Parser" },
+              { "type": "process", "content": "↓" },
+              { "type": "process", "content": "Assertion Engine" },
+              { "type": "process", "content": "↓" },
+              { "type": "process", "content": "Test Reports" }
+            ]
+          }
+        ]
+      },
+      "category": "API Testing",
+      "difficulty": "Intermediate",
+      "tags": ["api-testing", "rest-assured", "postman", "integration-testing", "backend-testing"]
+    },
+    {
+      "id": 35,
+      "question": "What is Performance Testing and what are its different types?",
+      "answer": {
+        "content": [
+          "Performance Testing is a non-functional testing technique used to determine how a system performs in terms of responsiveness, stability, scalability, and resource usage under a particular workload. It helps identify performance bottlenecks and ensures the application meets speed and stability requirements.",
+          "",
+          "**Why Performance Testing is Important:**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**User Experience:** Slow applications frustrate users and lead to abandonment.",
+              "**Business Impact:** Every second of delay can cost millions in lost revenue.",
+              "**Scalability:** Ensures system can handle growth in users and data.",
+              "**Reliability:** Identifies issues before they impact production users.",
+              "**Infrastructure Planning:** Helps determine server capacity requirements.",
+              "**SLA Compliance:** Verifies performance meets service level agreements."
+            ]
+          },
+          "**Types of Performance Testing:**",
+          "",
+          "**1. Load Testing**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Purpose:** Simulate expected real-world user load to verify performance.",
+              "**Question:** \"Can the system handle the expected number of concurrent users?\"",
+              "**Example:** Testing with 1000 concurrent users during normal business hours."
+            ]
+          },
+          "**2. Stress Testing**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Purpose:** Push system beyond normal capacity to find breaking point.",
+              "**Question:** \"What happens when we exceed expected load? Does it recover?\"",
+              "**Example:** Gradually increasing load from 1000 to 5000 users until failure."
+            ]
+          },
+          "**3. Spike Testing**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Purpose:** Test system behavior under sudden, sharp increases in load.",
+              "**Question:** \"How does the system handle sudden traffic spikes?\"",
+              "**Example:** Jumping from 100 to 2000 users in 10 seconds."
+            ]
+          },
+          "**4. Endurance (Soak) Testing**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Purpose:** Test system performance over an extended period.",
+              "**Question:** \"Are there memory leaks or performance degradation over time?\"",
+              "**Example:** Running at 80% capacity for 24-48 hours."
+            ]
+          },
+          "**5. Volume Testing**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Purpose:** Test system performance with large volumes of data.",
+              "**Question:** \"How does the system handle millions of records in the database?\"",
+              "**Example:** Testing search with 10 million products in the catalog."
+            ]
+          },
+          "**6. Scalability Testing**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Purpose:** Determine how well the system scales with additional resources.",
+              "**Question:** \"Does adding more servers improve performance linearly?\"",
+              "**Example:** Testing with 1, 2, and 4 servers to measure improvement."
+            ]
+          },
+          "**Key Performance Metrics:**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Response Time:** Time to complete a request (p95, p99).",
+              "**Throughput:** Requests per second (RPS) or transactions per second (TPS).",
+              "**Error Rate:** Percentage of failed requests.",
+              "**Concurrent Users:** Number of active users at once.",
+              "**CPU Usage:** Percentage of CPU utilization.",
+              "**Memory Usage:** RAM consumption.",
+              "**Network I/O:** Bytes sent/received.",
+              "**Disk I/O:** Read/write operations."
+            ]
+          }
+        ],
+        "codeBlocks": [
+          {
+            "title": "JMeter Load Test Script",
+            "language": "xml",
+            "code": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<jmeterTestPlan version=\"1.2\" properties=\"5.0\" jmeter=\"5.5\">\n  <hashTree>\n    <TestPlan guiclass=\"TestPlanGui\" testclass=\"TestPlan\" testname=\"E-commerce Load Test\" enabled=\"true\">\n      <stringProp name=\"TestPlan.comments\">Simulate Black Friday traffic</stringProp>\n      <boolProp name=\"TestPlan.functional_mode\">false</boolProp>\n      <boolProp name=\"TestPlan.tearDown_on_shutdown\">true</boolProp>\n    </TestPlan>\n    <hashTree>\n      <ThreadGroup guiclass=\"ThreadGroupGui\" testclass=\"ThreadGroup\" testname=\"User Simulation\" enabled=\"true\">\n        <stringProp name=\"ThreadGroup.on_sample_error\">continue</stringProp>\n        <elementProp name=\"ThreadGroup.main_controller\" elementType=\"LoopController\" guiclass=\"LoopControlPanel\" testclass=\"LoopController\">\n          <boolProp name=\"LoopController.continue_forever\">false</boolProp>\n          <stringProp name=\"LoopController.loops\">10</stringProp>\n        </elementProp>\n        <stringProp name=\"ThreadGroup.num_threads\">100</stringProp>\n        <stringProp name=\"ThreadGroup.ramp_time\">60</stringProp>\n        <stringProp name=\"ThreadGroup.start_time\">1739203200000</stringProp>\n        <stringProp name=\"ThreadGroup.end_time\">1739206800000</stringProp>\n        <boolProp name=\"ThreadGroup.scheduler\">true</boolProp>\n        <stringProp name=\"ThreadGroup.duration\">600</stringProp>\n        <stringProp name=\"ThreadGroup.delay\">0</stringProp>\n      </ThreadGroup>\n      <hashTree>\n        <ConfigTestElement guiclass=\"HttpDefaultsGui\" testclass=\"ConfigTestElement\" testname=\"HTTP Request Defaults\" enabled=\"true\">\n          <elementProp name=\"HTTPsampler.Arguments\" elementType=\"Arguments\">\n            <collectionProp name=\"Arguments.arguments\"/>\n          </elementProp>\n          <stringProp name=\"HTTPSampler.domain\">api.example.com</stringProp>\n          <stringProp name=\"HTTPSampler.port\">443</stringProp>\n          <stringProp name=\"HTTPSampler.protocol\">https</stringProp>\n          <stringProp name=\"HTTPSampler.contentEncoding\"></stringProp>\n          <stringProp name=\"HTTPSampler.path\"></stringProp>\n          <stringProp name=\"HTTPSampler.concurrentPool\">4</stringProp>\n        </ConfigTestElement>\n        <hashTree/>\n        \n        <!-- User Login Request -->\n        <HTTPSamplerProxy guiclass=\"HttpTestSampleGui\" testclass=\"HTTPSamplerProxy\" testname=\"Login API\" enabled=\"true\">\n          <elementProp name=\"HTTPsampler.Arguments\" elementType=\"Arguments\">\n            <collectionProp name=\"Arguments.arguments\">\n              <elementProp name=\"username\" elementType=\"HTTPArgument\">\n                <boolProp name=\"HTTPArgument.always_encode\">false</boolProp>\n                <stringProp name=\"Argument.value\">${username}</stringProp>\n                <stringProp name=\"Argument.metadata\">=</stringProp>\n              </elementProp>\n              <elementProp name=\"password\" elementType=\"HTTPArgument\">\n                <boolProp name=\"HTTPArgument.always_encode\">false</boolProp>\n                <stringProp name=\"Argument.value\">${password}</stringProp>\n                <stringProp name=\"Argument.metadata\">=</stringProp>\n              </elementProp>\n            </collectionProp>\n          </elementProp>\n          <stringProp name=\"HTTPSampler.domain\"></stringProp>\n          <stringProp name=\"HTTPSampler.port\"></stringProp>\n          <stringProp name=\"HTTPSampler.protocol\"></stringProp>\n          <stringProp name=\"HTTPSampler.contentEncoding\"></stringProp>\n          <stringProp name=\"HTTPSampler.path\">/api/auth/login</stringProp>\n          <stringProp name=\"HTTPSampler.method\">POST</stringProp>\n          <boolProp name=\"HTTPSampler.follow_redirects\">true</boolProp>\n          <boolProp name=\"HTTPSampler.auto_redirects\">false</boolProp>\n          <boolProp name=\"HTTPSampler.use_keepalive\">true</boolProp>\n          <boolProp name=\"HTTPSampler.DO_MULTIPART_POST\">false</boolProp>\n          <stringProp name=\"HTTPSampler.embedded_url_re\"></stringProp>\n          <stringProp name=\"HTTPSampler.connect_timeout\">5000</stringProp>\n          <stringProp name=\"HTTPSampler.response_timeout\">10000</stringProp>\n        </HTTPSamplerProxy>\n        <hashTree>\n          <HeaderManager guiclass=\"HeaderPanel\" testclass=\"HeaderManager\" testname=\"HTTP Header Manager\" enabled=\"true\">\n            <collectionProp name=\"HeaderManager.headers\">\n              <elementProp name=\"Content-Type\" elementType=\"Header\">\n                <stringProp name=\"Header.name\">Content-Type</stringProp>\n                <stringProp name=\"Header.value\">application/json</stringProp>\n              </elementProp>\n            </collectionProp>\n          </HeaderManager>\n          <hashTree/>\n          <ResponseAssertion guiclass=\"AssertionGui\" testclass=\"ResponseAssertion\" testname=\"Assert Status Code\" enabled=\"true\">\n            <collectionProp name=\"Asserion.test_strings\">\n              <stringProp name=\"49586\">200</stringProp>\n            </collectionProp>\n            <stringProp name=\"Assertion.test_field\">Assertion.response_code</stringProp>\n            <boolProp name=\"Assertion.assume_success\">false</boolProp>\n            <intProp name=\"Assertion.test_type\">8</intProp>\n          </ResponseAssertion>\n          <hashTree/>\n        </hashTree>\n        \n        <!-- Search Products Request -->\n        <HTTPSamplerProxy guiclass=\"HttpTestSampleGui\" testclass=\"HTTPSamplerProxy\" testname=\"Search Products\" enabled=\"true\">\n          <elementProp name=\"HTTPsampler.Arguments\" elementType=\"Arguments\">\n            <collectionProp name=\"Arguments.arguments\">\n              <elementProp name=\"q\" elementType=\"HTTPArgument\">\n                <boolProp name=\"HTTPArgument.always_encode\">false</boolProp>\n                <stringProp name=\"Argument.value\">${searchTerm}</stringProp>\n                <stringProp name=\"Argument.metadata\">=</stringProp>\n              </elementProp>\n            </collectionProp>\n          </elementProp>\n          <stringProp name=\"HTTPSampler.path\">/api/products/search</stringProp>\n          <stringProp name=\"HTTPSampler.method\">GET</stringProp>\n        </HTTPSamplerProxy>\n        <hashTree>\n          <ResponseAssertion guiclass=\"AssertionGui\" testclass=\"ResponseAssertion\" testname=\"Assert Response Time\" enabled=\"true\">\n            <stringProp name=\"Assertion.custom_message\">Response time exceeded 2 seconds</stringProp>\n            <stringProp name=\"Assertion.test_field\">Assertion.response_time</stringProp>\n            <boolProp name=\"Assertion.assume_success\">false</boolProp>\n            <intProp name=\"Assertion.test_type\">3</intProp>\n          </ResponseAssertion>\n          <hashTree/>\n        </hashTree>\n        \n        <!-- View Results Tree Listener -->\n        <ResultCollector guiclass=\"ViewResultsFullVisualizer\" testclass=\"ResultCollector\" testname=\"View Results Tree\" enabled=\"true\">\n          <boolProp name=\"ResultCollector.error_logging\">false</boolProp>\n          <objProp>\n            <name>saveConfig</name>\n            <value class=\"SampleSaveConfiguration\">\n              <time>true</time>\n              <latency>true</latency>\n              <timestamp>true</timestamp>\n              <success>true</success>\n              <label>true</label>\n              <code>true</code>\n              <message>true</message>\n              <threadName>true</threadName>\n              <dataType>true</dataType>\n              <encoding>false</encoding>\n              <assertions>true</assertions>\n              <subresults>true</subresults>\n              <responseData>false</responseData>\n              <samplerData>false</samplerData>\n              <xml>false</xml>\n              <fieldNames>false</fieldNames>\n              <responseHeaders>false</responseHeaders>\n              <requestHeaders>false</requestHeaders>\n              <responseDataOnError>true</responseDataOnError>\n              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>\n              <assertionsResultsToSave>0</assertionsResultsToSave>\n              <bytes>true</bytes>\n              <sentBytes>true</sentBytes>\n              <url>true</url>\n              <threadCounts>true</threadCounts>\n              <idleTime>true</idleTime>\n              <connectTime>true</connectTime>\n            </value>\n          </objProp>\n          <stringProp name=\"filename\"></stringProp>\n        </ResultCollector>\n        <hashTree/>\n        \n        <!-- Summary Report -->\n        <ResultCollector guiclass=\"SummaryReport\" testclass=\"ResultCollector\" testname=\"Summary Report\" enabled=\"true\">\n          <boolProp name=\"ResultCollector.error_logging\">false</boolProp>\n          <objProp>\n            <name>saveConfig</name>\n            <value class=\"SampleSaveConfiguration\">\n              <time>true</time>\n              <latency>true</latency>\n              <timestamp>true</timestamp>\n              <success>true</success>\n              <label>true</label>\n              <code>true</code>\n              <message>true</message>\n              <threadName>true</threadName>\n              <dataType>true</dataType>\n              <encoding>false</encoding>\n              <assertions>true</assertions>\n              <subresults>true</subresults>\n              <responseData>false</responseData>\n              <samplerData>false</samplerData>\n              <xml>false</xml>\n              <fieldNames>false</fieldNames>\n              <responseHeaders>false</responseHeaders>\n              <requestHeaders>false</requestHeaders>\n              <responseDataOnError>false</responseDataOnError>\n              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>\n              <assertionsResultsToSave>0</assertionsResultsToSave>\n              <bytes>true</bytes>\n              <sentBytes>true</sentBytes>\n              <url>true</url>\n              <threadCounts>true</threadCounts>\n              <idleTime>true</idleTime>\n              <connectTime>true</connectTime>\n            </value>\n          </objProp>\n          <stringProp name=\"filename\"></stringProp>\n        </ResultCollector>\n        <hashTree/>\n      </hashTree>\n    </hashTree>\n  </hashTree>\n</jmeterTestPlan>"
+          },
+          {
+            "title": "k6 Load Test Script (JavaScript)",
+            "language": "javascript",
+            "code": "import http from 'k6/http';\nimport { check, sleep } from 'k6';\nimport { Rate, Trend } from 'k6/metrics';\n\nexport let errorRate = new Rate('errors');\nexport let responseTimeTrend = new Trend('response_time');\n\nexport let options = {\n  stages: [\n    { duration: '1m', target: 50 },   // Ramp-up to 50 users\n    { duration: '3m', target: 50 },   // Stay at 50 users\n    { duration: '1m', target: 100 },  // Ramp-up to 100 users\n    { duration: '3m', target: 100 },  // Stay at 100 users\n    { duration: '1m', target: 200 },  // Ramp-up to 200 users\n    { duration: '3m', target: 200 },  // Stay at 200 users\n    { duration: '1m', target: 0 },    // Ramp-down to 0\n  ],\n  thresholds: {\n    http_req_duration: ['p95<500'],   // 95% of requests must complete below 500ms\n    http_req_failed: ['rate<0.01'],   // Less than 1% of requests can fail\n    'response_time': ['avg<300'],      // Average response time < 300ms\n  },\n};\n\nexport default function() {\n  let baseURL = 'https://api.example.com/v1';\n  \n  // Login request\n  let loginPayload = JSON.stringify({\n    username: `user${__VU}@example.com`,  // Virtual user ID\n    password: 'testpass123'\n  });\n  \n  let loginParams = {\n    headers: {\n      'Content-Type': 'application/json',\n    },\n  };\n  \n  let loginRes = http.post(`${baseURL}/auth/login`, loginPayload, loginParams);\n  \n  check(loginRes, {\n    'login status is 200': (r) => r.status === 200,\n    'login has token': (r) => r.json('token') !== undefined,\n  }) || errorRate.add(1);\n  \n  responseTimeTrend.add(loginRes.timings.duration);\n  \n  // Extract token\n  let authToken = loginRes.json('token');\n  \n  // Search products\n  let searchParams = {\n    headers: {\n      'Authorization': `Bearer ${authToken}`,\n    },\n  };\n  \n  let searchRes = http.get(\n    `${baseURL}/products/search?q=laptop&page=1&limit=20`,\n    searchParams\n  );\n  \n  check(searchRes, {\n    'search status is 200': (r) => r.status === 200,\n    'search has results': (r) => r.json('products').length > 0,\n  }) || errorRate.add(1);\n  \n  // Add to cart\n  let cartPayload = JSON.stringify({\n    productId: 'prod-123',\n    quantity: 1\n  });\n  \n  let cartRes = http.post(\n    `${baseURL}/cart/items`,\n    cartPayload,\n    { headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' } }\n  );\n  \n  check(cartRes, {\n    'add to cart status is 200': (r) => r.status === 200,\n    'cart updated': (r) => r.json('items').length > 0,\n  }) || errorRate.add(1);\n  \n  // Think time - simulate user reading\n  sleep(Math.random() * 3 + 1); // 1-4 seconds\n}\n\nexport function handleSummary(data) {\n  return {\n    'summary.json': JSON.stringify(data),\n    'thresholds.txt': Object.entries(data.metrics)\n      .filter(([_, metric]) => metric.thresholds)\n      .map(([name, metric]) => `${name}: ${JSON.stringify(metric.thresholds)}`)\n      .join('\\n'),\n  };\n}"
+          }
+        ],
+        "tables": [
+          {
+            "title": "Performance Testing Types and Objectives",
+            "headers": ["Test Type", "Objective", "Load Pattern", "Key Metrics", "Duration"],
+            "rows": [
+              ["Load Testing", "Verify expected performance", "Gradual increase to target", "Response time, Throughput", "30-60 min"],
+              ["Stress Testing", "Find breaking point", "Increase until failure", "Breaking point, Recovery time", "1-2 hours"],
+              ["Spike Testing", "Sudden traffic surges", "Sharp, immediate increase", "Error rate, Recovery", "15-30 min"],
+              ["Endurance Testing", "Long-term stability", "Sustained load (70-80%)", "Memory leak, Degradation", "12-48 hours"],
+              ["Volume Testing", "Large data volumes", "Constant with large data", "Query time, Storage", "1-2 hours"],
+              ["Scalability Testing", "Resource scaling", "Step increases with resources", "Performance per resource", "2-4 hours"]
+            ]
+          },
+          {
+            "title": "Performance Testing Tools Comparison",
+            "headers": ["Tool", "Language", "Protocols", "GUI", "Learning Curve", "Best For"],
+            "rows": [
+              ["JMeter", "Java/XML", "HTTP, JDBC, FTP, JMS", "Yes", "Medium", "Enterprise, complex scenarios"],
+              ["k6", "JavaScript", "HTTP, WebSocket, gRPC", "No", "Low", "Developers, CI/CD integration"],
+              ["Gatling", "Scala", "HTTP, JMS, MQTT", "Yes", "Medium-High", "High-performance testing"],
+              ["LoadRunner", "C/Java", "Wide range", "Yes", "High", "Enterprise, legacy systems"],
+              ["Locust", "Python", "HTTP", "Yes (web)", "Low", "Python developers"],
+              ["Artillery", "Node.js", "HTTP, WebSocket, Socket.io", "No", "Low", "Node.js applications"]
+            ]
+          }
+        ],
+        "diagrams": [
+          {
+            "type": "flowchart",
+            "title": "Performance Testing Process",
+            "steps": [
+              { "type": "start-end", "content": "Define Performance Requirements" },
+              { "type": "process", "content": "Identify Critical Scenarios" },
+              { "type": "process", "content": "Design Test Scripts" },
+              { "type": "process", "content": "Setup Test Environment" },
+              { "type": "process", "content": "Execute Baseline Tests" },
+              { "type": "decision", "content": "Baseline Met?" },
+              { "type": "process", "content": "Execute Full Performance Tests" },
+              { "type": "process", "content": "Analyze Results" },
+              { "type": "decision", "content": "Bottlenecks Found?" },
+              { "type": "process", "content": "Optimize Application" },
+              { "type": "process", "content": "Generate Report" },
+              { "type": "start-end", "content": "Sign-off" }
+            ]
+          }
+        ]
+      },
+      "category": "Performance Testing",
+      "difficulty": "Advanced",
+      "tags": ["performance-testing", "load-testing", "stress-testing", "jmeter", "k6", "non-functional"]
+    },
+    {
+      "id": 36,
+      "question": "What is Mobile Testing and what are its unique challenges compared to web testing?",
+      "answer": {
+        "content": [
+          "Mobile testing is the process of testing mobile applications for functionality, usability, consistency, and performance across different mobile devices, operating systems, and network conditions. It presents unique challenges compared to traditional web testing due to the fragmented ecosystem and mobile-specific constraints.",
+          "",
+          "**Types of Mobile Apps:**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Native Apps:** Built for specific platforms (iOS/Android) using platform-specific languages (Swift/Kotlin).",
+              "**Web Apps:** Mobile-optimized web applications accessed through browsers.",
+              "**Hybrid Apps:** Web apps wrapped in a native container (Cordova, Ionic).",
+              "**Progressive Web Apps (PWA):** Web apps with native-like features."
+            ]
+          },
+          "**Mobile Testing Categories:**",
+          {
+            "type": "list",
+            "ordered": true,
+            "items": [
+              "**Functional Testing:** Verify app features work as expected.",
+              "**UI/UX Testing:** Check layout, design, touch interactions, gestures.",
+              "**Compatibility Testing:** Test across devices, OS versions, screen sizes.",
+              "**Performance Testing:** App speed, memory usage, battery consumption.",
+              "**Network Testing:** Behavior on different networks (3G, 4G, 5G, WiFi, offline).",
+              "**Interruption Testing:** Calls, SMS, notifications, low battery during app use.",
+              "**Installation Testing:** Install, update, uninstall processes.",
+              "**Security Testing:** Data storage, transmission, authentication.",
+              "**Localization Testing:** Language, date formats, currency."
+            ]
+          },
+          "**Unique Mobile Testing Challenges:**",
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "**Device Fragmentation:** Thousands of devices with different screen sizes, resolutions, hardware specs.",
+              "**OS Versions:** Multiple versions of iOS and Android still in use.",
+              "**Network Variability:** 2G, 3G, 4G, 5G, WiFi, offline modes.",
+              "**Battery Consumption:** Apps shouldn't drain battery excessively.",
+              "**Memory Limitations:** Mobile devices have limited RAM.",
+              "**Interruptions:** Calls, messages, notifications during app use.",
+              "**Gestures and Touch:** Pinch, swipe, tap, long press, multi-touch.",
+              "**Sensors:** GPS, accelerometer, gyroscope, fingerprint scanner.",
+              "**App Store Guidelines:** Different requirements for App Store and Google Play.",
+              "**Background Behavior:** App behavior when in background or closed."
+            ]
+          }
+        ],
+        "codeBlocks": [
+          {
+            "title": "Appium Mobile Test (Java)",
+            "language": "java",
+            "code": "import io.appium.java_client.AppiumDriver;\nimport io.appium.java_client.MobileElement;\nimport io.appium.java_client.android.AndroidDriver;\nimport io.appium.java_client.remote.MobileCapabilityType;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.openqa.selenium.remote.DesiredCapabilities;\nimport java.net.URL;\nimport java.util.concurrent.TimeUnit;\nimport static org.junit.jupiter.api.Assertions.assertTrue;\n\npublic class AndroidAppTest {\n    private AppiumDriver<MobileElement> driver;\n    \n    @BeforeEach\n    public void setUp() throws Exception {\n        DesiredCapabilities capabilities = new DesiredCapabilities();\n        \n        // Platform capabilities\n        capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, \"Android\");\n        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, \"12.0\");\n        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, \"Pixel 4\");\n        capabilities.setCapability(MobileCapabilityType.UDID, \"emulator-5554\");\n        \n        // App capabilities\n        capabilities.setCapability(\"appPackage\", \"com.example.myapp\");\n        capabilities.setCapability(\"appActivity\", \"com.example.myapp.MainActivity\");\n        capabilities.setCapability(\"noReset\", false);\n        \n        // Network capabilities\n        capabilities.setCapability(\"networkSpeed\", \"full\");\n        \n        driver = new AndroidDriver<>(new URL(\"http://127.0.0.1:4723/wd/hub\"), capabilities);\n        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);\n    }\n    \n    @Test\n    public void testLoginFlow() {\n        // Find and interact with elements\n        MobileElement usernameField = driver.findElementById(\"com.example.myapp:id/username\");\n        MobileElement passwordField = driver.findElementById(\"com.example.myapp:id/password\");\n        MobileElement loginButton = driver.findElementById(\"com.example.myapp:id/login\");\n        \n        usernameField.sendKeys(\"testuser\");\n        passwordField.sendKeys(\"Test@123\");\n        loginButton.click();\n        \n        // Verify successful login\n        MobileElement dashboardElement = driver.findElementById(\"com.example.myapp:id/dashboard\");\n        assertTrue(dashboardElement.isDisplayed());\n        \n        // Handle native gestures\n        driver.findElementById(\"com.example.myapp:id/menu\").click();\n        \n        // Swipe gesture\n        MobileElement scrollView = driver.findElementById(\"com.example.myapp:id/scrollView\");\n        driver.swipe(100, 500, 100, 100, 1000);\n        \n        // Handle alerts\n        driver.switchTo().alert().accept();\n    }\n    \n    @Test\n    public void testInterruptionHandling() throws InterruptedException {\n        // Test during incoming call\n        driver.findElementById(\"com.example.myapp:id/startVideo\").click();\n        \n        // Simulate incoming call (using ADB)\n        Runtime.getRuntime().exec(\"adb shell am start -a android.intent.action.CALL -d tel:5551234\");\n        Thread.sleep(5000);\n        \n        // Verify app state after call ends\n        Runtime.getRuntime().exec(\"adb shell input keyevent KEYCODE_ENDCALL\");\n        Thread.sleep(2000);\n        \n        MobileElement videoScreen = driver.findElementById(\"com.example.myapp:id/videoView\");\n        assertTrue(videoScreen.isDisplayed());\n    }\n    \n    @Test\n    public void testNetworkConditions() {\n        // Test on different network speeds\n        setNetworkSpeed(\"edge\"); // 2G\n        long startTime = System.currentTimeMillis();\n        driver.findElementById(\"com.example.myapp:id/loadData\").click();\n        long endTime = System.currentTimeMillis();\n        assertTrue((endTime - startTime) < 10000, \"Load time exceeded 10s on 2G\");\n        \n        setNetworkSpeed(\"lte\"); // 4G\n        startTime = System.currentTimeMillis();\n        driver.findElementById(\"com.example.myapp:id/loadData\").click();\n        endTime = System.currentTimeMillis();\n        assertTrue((endTime - startTime) < 2000, \"Load time exceeded 2s on 4G\");\n        \n        // Test offline mode\n        setNetworkSpeed(\"gsm\"); // Disconnect\n        driver.findElementById(\"com.example.myapp:id/loadData\").click();\n        MobileElement errorMessage = driver.findElementById(\"com.example.myapp:id/errorMessage\");\n        assertTrue(errorMessage.getText().contains(\"No network connection\"));\n    }\n    \n    private void setNetworkSpeed(String speed) {\n        // Implementation to set network speed in emulator\n    }\n    \n    @Test\n    public void testBatteryImpact() {\n        // Measure battery usage before test\n        double batteryBefore = getBatteryLevel();\n        \n        // Perform intensive operations\n        for (int i = 0; i < 10; i++) {\n            driver.findElementById(\"com.example.myapp:id/performIntensiveTask\").click();\n            driver.wait(5000);\n        }\n        \n        // Measure battery after test\n        double batteryAfter = getBatteryLevel();\n        double batteryDrop = batteryBefore - batteryAfter;\n        \n        assertTrue(batteryDrop < 5, \"Battery drop too high: \" + batteryDrop + \"%\");\n    }\n    \n    private double getBatteryLevel() {\n        // Implementation to get battery level via ADB\n        return 0.0;\n    }\n    \n    @Test\n    public void testOrientationChanges() {\n        // Test portrait mode\n        driver.rotate(ScreenOrientation.PORTRAIT);\n        MobileElement element1 = driver.findElementById(\"com.example.myapp:id/mainContent\");\n        \n        // Test landscape mode\n        driver.rotate(ScreenOrientation.LANDSCAPE);\n        MobileElement element2 = driver.findElementById(\"com.example.myapp:id/mainContent\");\n        \n        // Verify UI adapts correctly\n        assertTrue(element2.isDisplayed());\n        assertNotEquals(element1.getSize(), element2.getSize());\n    }\n}"
+          },
+          {
+            "title": "Detox Mobile Test (React Native)",
+            "language": "javascript",
+            "code": "// e2e/firstTest.spec.js\ndescribe('Shopping App', () => {\n  beforeEach(async () => {\n    await device.reloadReactNative();\n  });\n\n  it('should login successfully', async () => {\n    await expect(element(by.id('loginScreen'))).toBeVisible();\n    \n    await element(by.id('usernameInput')).typeText('testuser');\n    await element(by.id('passwordInput')).typeText('Test@123');\n    await element(by.id('loginButton')).tap();\n    \n    await expect(element(by.id('dashboard'))).toBeVisible();\n    await expect(element(by.text('Welcome, testuser!'))).toBeVisible();\n  });\n\n  it('should handle network interruptions', async () => {\n    await element(by.id('loginButton')).tap();\n    \n    // Simulate network loss\n    await device.setURLBlacklist(['.*']);\n    \n    await element(by.id('loadData')).tap();\n    await expect(element(by.id('errorMessage'))).toBeVisible();\n    await expect(element(by.text('Network error'))).toBeVisible();\n    \n    // Restore network\n    await device.setURLBlacklist([]);\n    await element(by.id('retryButton')).tap();\n    await expect(element(by.id('dataLoaded'))).toBeVisible();\n  });\n\n  it('should handle interruption during checkout', async () => {\n    await element(by.id('addToCart')).tap();\n    await element(by.id('checkout')).tap();\n    \n    // Simulate incoming call\n    await device.sendToHome();\n    await device.launchApp({ newInstance: false });\n    \n    // Verify app state preserved\n    await expect(element(by.id('checkoutScreen'))).toBeVisible();\n    await expect(element(by.id('cartItems'))).toHaveLength(1);\n  });\n\n  it('should work offline', async () => {\n    await device.setStatusBar({ network: 'none' });\n    \n    await element(by.id('viewOfflineContent')).tap();\n    await expect(element(by.id('cachedContent'))).toBeVisible();\n    \n    await device.setStatusBar({ network: 'wifi' });\n  });\n\n  it('should handle orientation changes', async () => {\n    await element(by.id('viewProduct')).tap();\n    \n    await device.setOrientation('landscape');\n    await expect(element(by.id('productImage'))).toBeVisible();\n    \n    await device.setOrientation('portrait');\n    await expect(element(by.id('productImage'))).toBeVisible();\n  });\n\n  it('should respect memory limits', async () => {\n    // Load many images\n    for (let i = 0; i < 50; i++) {\n      await element(by.id('loadMore')).tap();\n    }\n    \n    // Check memory warning\n    const memoryWarning = await device.getMemoryWarningLevel();\n    expect(memoryWarning).not.toBe('CRITICAL');\n  });\n});"
+          }
+        ],
+        "tables": [
+          {
+            "title": "Mobile Testing Challenges vs Web Testing",
+            "headers": ["Challenge", "Mobile Testing", "Web Testing"],
+            "rows": [
+              ["Device Fragmentation", "Thousands of devices", "Limited to browsers"],
+              ["OS Versions", "Multiple iOS/Android versions", "Fewer browser versions"],
+              ["Network Conditions", "Cellular, WiFi, offline", "Usually stable internet"],
+              ["Input Methods", "Touch, gestures, sensors", "Mouse, keyboard"],
+              ["Interruptions", "Calls, SMS, notifications", "Rare (browser tabs)"],
+              ["Hardware Access", "GPS, camera, fingerprint", "Limited"],
+              ["Battery Impact", "Critical concern", "Not applicable"],
+              ["Memory Constraints", "Limited", "Usually abundant"],
+              ["App Stores", "Approval process", "Instant deployment"],
+              ["Testing Tools", "Appium, XCUITest, Espresso", "Selenium, Cypress, Playwright"]
+            ]
+          },
+          {
+            "title": "Mobile Testing Tools Comparison",
+            "headers": ["Tool", "Platforms", "Language", "Real Devices", "Cloud Support", "Best For"],
+            "rows": [
+              ["Appium", "iOS/Android", "Multiple", "Yes", "Yes (AWS, SauceLabs)", "Cross-platform automation"],
+              ["Espresso", "Android", "Java/Kotlin", "Yes", "Limited", "Android native testing"],
+              ["XCUITest", "iOS", "Swift/ObjC", "Yes", "Limited", "iOS native testing"],
+              ["Detox", "iOS/Android", "JavaScript", "Yes", "Limited", "React Native apps"],
+              ["Flutter Driver", "Flutter", "Dart", "Yes", "Limited", "Flutter apps"],
+              ["BrowserStack", "iOS/Android", "Multiple", "Yes (real)", "Yes", "Cloud testing"]
+            ]
+          }
+        ],
+        "diagrams": [
+          {
+            "type": "flowchart",
+            "title": "Mobile Testing Strategy",
+            "steps": [
+              { "type": "start-end", "content": "Define Target Devices" },
+              { "type": "process", "content": "Select Device Matrix" },
+              { "type": "process", "content": "↙                   ↘" },
+              { "type": "process", "content": "Emulator/Simulator Tests" },
+              { "type": "process", "content": "Real Device Tests" },
+              { "type": "process", "content": "↓                    ↓" },
+              { "type": "process", "content": "Functional Testing" },
+              { "type": "process", "content": "Performance Testing" },
+              { "type": "process", "content": "↓                    ↓" },
+              { "type": "process", "content": "Network Testing" },
+              { "type": "process", "content": "Interruption Testing" },
+              { "type": "process", "content": "↓                    ↓" },
+              { "type": "process", "content": "Compatibility Testing" },
+              { "type": "process", "content": "Security Testing" },
+              { "type": "process", "content": "↓                    ↓" },
+              { "type": "process", "content": "App Store Submission" },
+              { "type": "start-end", "content": "Release" }
+            ]
+          }
+        ]
+      },
+      "category": "Mobile Testing",
+      "difficulty": "Advanced",
+      "tags": ["mobile-testing", "appium", "ios-testing", "android-testing", "mobile-automation"]
+    }
+  ]
+]

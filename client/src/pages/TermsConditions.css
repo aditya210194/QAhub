@@ -1,0 +1,574 @@
+/* TermsConditions.css */
+
+/* ==================== GLOBAL STYLES ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.terms-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+
+    padding: 2rem 0;
+}
+
+.terms-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+    animation: rotate 20s linear infinite;
+    z-index: 0;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.terms-page::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+    animation: rotateReverse 25s linear infinite;
+    z-index: 0;
+}
+
+@keyframes rotateReverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+/* ==================== HEADER SECTION ==================== */
+.terms-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    z-index: 1;
+}
+
+.terms-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+    animation: pulseRotate 15s linear infinite;
+}
+
+@keyframes pulseRotate {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+.header-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.terms-header h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    animation: fadeInDown 0.8s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.terms-header .effective-date {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: fadeInUp 0.8s ease 0.2s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== MAIN CONTAINER ==================== */
+.terms-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* ==================== TERMS CARD ==================== */
+.terms-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 3rem;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    animation: fadeInUp 1s ease;
+}
+
+.terms-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 40px 80px rgba(102, 126, 234, 0.3);
+}
+
+/* Introduction */
+.terms-intro {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #4a5568;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+    border-radius: 15px;
+    border-left: 4px solid #667eea;
+}
+
+/* ==================== TERMS SECTIONS ==================== */
+.terms-section {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.terms-section:hover {
+    transform: translateX(10px);
+    background: white;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.section-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.terms-section:hover .section-icon {
+    transform: rotate(360deg);
+}
+
+.terms-section h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0;
+    position: relative;
+    display: inline-block;
+}
+
+.terms-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.terms-section:hover h2::after {
+    width: 60px;
+}
+
+.terms-section p {
+    color: #4a5568;
+    line-height: 1.8;
+    margin-bottom: 0;
+    font-size: 1rem;
+}
+
+/* ==================== LISTS ==================== */
+.terms-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.terms-list li {
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.5rem;
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.terms-list li:hover {
+    transform: translateX(10px);
+    border-color: #667eea;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+.list-bullet {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.terms-list li span {
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+/* ==================== CONTACT SECTION ==================== */
+.contact-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-top: 3rem;
+    color: white;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.contact-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+}
+
+.contact-section h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.contact-section p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.95;
+}
+
+.contact-btn {
+    background: white;
+    color: #667eea;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contact-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.contact-btn svg {
+    transition: transform 0.3s ease;
+}
+
+.contact-btn:hover svg {
+    transform: translateX(5px);
+}
+
+/* ==================== BACK TO TOP ==================== */
+.back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.back-to-top:hover {
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 992px) {
+    .terms-header h1 {
+        font-size: 3rem;
+    }
+
+    .terms-card {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .terms-header {
+        padding: 3rem 1rem;
+    }
+
+    .terms-header h1 {
+        font-size: 2.5rem;
+    }
+
+    .terms-container {
+        padding: 2rem 1rem;
+    }
+
+    .terms-card {
+        padding: 1.5rem;
+    }
+
+    .terms-section {
+        padding: 1rem;
+    }
+
+    .terms-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .terms-intro {
+        font-size: 1rem;
+        padding: 1rem;
+    }
+
+    .contact-section {
+        padding: 1.5rem;
+    }
+
+    .contact-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .contact-section p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .terms-header h1 {
+        font-size: 2rem;
+    }
+
+    .terms-header .effective-date {
+        font-size: 0.9rem;
+    }
+
+    .terms-card {
+        padding: 1rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .section-icon {
+        margin: 0 auto;
+    }
+
+    .terms-section h2::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .terms-list li {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .terms-list li:hover {
+        transform: translateY(-5px);
+    }
+
+    .list-bullet {
+        margin: 0 auto;
+    }
+
+    .back-to-top {
+        bottom: 1rem;
+        right: 1rem;
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* ==================== CUSTOM SCROLLBAR ==================== */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+    .terms-page {
+        background: white;
+    }
+
+    .terms-header {
+        background: white;
+        color: black;
+        padding: 2rem 0;
+    }
+
+    .terms-header h1,
+    .terms-header .effective-date {
+        color: black;
+    }
+
+    .terms-header::before,
+    .terms-header::after,
+    .terms-page::before,
+    .terms-page::after,
+    .back-to-top,
+    .contact-btn {
+        display: none !important;
+    }
+
+    .terms-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    .terms-section {
+        break-inside: avoid;
+    }
+}
+
+/* ==================== FOCUS STATES ==================== */
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
