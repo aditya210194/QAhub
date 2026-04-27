@@ -1,4 +1,6 @@
-require('dotenv').config();
+require('dotenv').config({
+  path: `.env.${process.env.NODE_ENV || 'development'}`
+});
 const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -18,6 +20,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const mentorshipRoutes = require("./routes/mentorshipRoutes");
 //const { setSocketIO } = require('./controllers/mentorshipController');
 const aiMentorRoutes = require("./routes/aiMentorRoutes");
+const userRoutes = require('./routes/userRoutes');
 const cookieParser = require('cookie-parser');
 const cron = require('node-cron');
 const calculateTrendingScore = require('./cron/trendingScore');
@@ -32,7 +35,7 @@ const server = http.createServer(app);
 //setSocketIO(io);
 const io = socketIo(server, {
     cors: {
-        origin: ['https://qahub.tech', 'https://www.qahub.tech', 'http://localhost:3000', 'https://api.qahub.tech'],
+        origin: ['https://qahub.co.in', 'https://www.qahub.co.in', 'http://localhost:3000', 'https://api.qahub.co.in'],
         methods: ['GET', 'POST'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true
@@ -76,7 +79,7 @@ app.use(cookieParser()); // Required for accessing cookies
 // ✅ Apply CORS **before** defining routes
 app.use(cors({
     origin: function (origin, callback) {
-        const allowedOrigins = ['https://qahub.tech', 'https://www.qahub.tech', 'http://localhost:3000', 'https://api.qahub.tech'];
+        const allowedOrigins = ['https://qahub.co.in', 'https://www.qahub.co.in', 'http://localhost:3000', 'https://api.qahub.co.in'];
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, origin);
         } else {
@@ -100,7 +103,7 @@ app.options("*", (req, res) => {
 
 const questionLimiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
-    max: 100, // Limit each IP to 5 requests per windowMs
+   max: process.env.NODE_ENV === 'production' ? 200 : 1000, // Limit each IP to 5 requests per windowMs
     message: 'Too many questions from this IP, please try again later.',
     handler: (req, res, next) => {
         console.log(`Rate limit exceeded for IP: ${req.ip}. Requests made: ${req.rateLimit.current}.`);
@@ -129,6 +132,7 @@ app.get("/", (req, res) => {
     res.send("API is working!");
 });
 app.use("/api/admin", adminRoutes);
+app.use('/api/users', userRoutes);
 app.use("/api/mentorship", mentorshipRoutes);
 app.use("/api/ai-mentor", aiMentorRoutes);
 // Serve static files from the "uploads" directory

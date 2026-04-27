@@ -35,16 +35,36 @@ const UserQAProfile = () => {
         fetchProfile();
         fetchQAActivity();
     }, [username]);
+    const getProfileImageUrl = (profilePicture) => {
+        if (!profilePicture) return '/default-profile-pic.jpg';
+
+        if (profilePicture.startsWith('http')) {
+            return profilePicture;
+        }
+
+        const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+        let imagePath = profilePicture.replace(/\\/g, '/');
+
+        if (imagePath.includes('uploads/')) {
+            return `${baseUrl}/${imagePath}`;
+        }
+
+        return `${baseUrl}/uploads/profile_pictures/${imagePath.split('/').pop()}`;
+    };
 
     return (
         <div className="container mt-4">
             <div className="card">
                 <div className="card-body text-center">
                     <img
-                        src={profile.profilePicture || '/default-profile-pic.jpg'}
-                        alt="Profile"
-                        width={100}
-                        className="rounded-circle mb-3"
+                      src={getProfileImageUrl(profile.profilePicture)}
+                      alt="Profile"
+                      width={100}
+                      className="rounded-circle mb-3"
+                      onError={(e) => {
+                        e.target.src = '/default-profile-pic.jpg';
+                      }}
                     />
                     <h4>{profile.username}</h4>
                     <p><strong>Reputation:</strong> {profile.reputation || 0}</p>

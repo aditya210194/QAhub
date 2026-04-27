@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
+import { CookieConsentProvider, CookieService, ConsentMode } from '@vantezzen/react-cookie-banner'; // ADD THIS
 import Header from './components/Header';
 import Footer from './components/Footer';
 import TermsConditions from "./pages/TermsConditions";
@@ -40,17 +41,9 @@ import ConsentBanner from "./components/ConsentBanner";
 import ErrorBoundary from './components/ErrorBoundary';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import ReactGA from 'react-ga';
 
-// ❌ REMOVE ALL ADMIN IMPORTS - They are now in AdminApp.js
-// import AdminLayout from './components/AdminLayout';
-// import AdminDashboard from './components/AdminDashboard';
-// import UserManagement from './admin/UserManagement';
-// import AdminAnalytics from './admin/Analytics';
-// import PostManagement from './admin/PostManagement';
-
-// Initialize Google Analytics
-ReactGA.initialize('G-SDZDRH5VQ9');
+// ❌ REMOVE ReactGA initialization from here - it will be handled by CookieService
+// ReactGA.initialize('G-SDZDRH5VQ9'); // DELETE THIS LINE
 
 // ErrorBoundary wrapper component for routes
 const ErrorBoundaryRoute = ({ element: Element }) => (
@@ -63,14 +56,55 @@ const App = () => {
     const location = useLocation();
     const [token, setToken] = useState(sessionStorage.getItem('token'));
 
-    useEffect(() => {
-        ReactGA.pageview(location.pathname + location.search);
-    }, [location]);
+    // ❌ REMOVE ReactGA.pageview from here - it will be handled by CookieService
+    // useEffect(() => {
+    //     ReactGA.pageview(location.pathname + location.search);
+    // }, [location]);
 
     const shouldShowSecondHeader = !["/", "/login", "/register", "/forgot-password", "/reset-password"].includes(location.pathname);
 
     return (
-        <>
+        <CookieConsentProvider>  {/* ✅ WRAP EVERYTHING */}
+            {/* ✅ Add ConsentMode for Google Consent Mode v2 */}
+            <ConsentMode />
+
+            {/* ✅ Move Google Analytics to CookieService */}
+            <CookieService
+                id="google-analytics"
+                category="analytics"
+                name="Google Analytics"
+                consentMode
+            >
+                <script
+                    async
+                    src="https://www.googletagmanager.com/gtag/js?id=G-SDZDRH5VQ9"
+                />
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                            window.dataLayer = window.dataLayer || [];
+                            function gtag(){dataLayer.push(arguments);}
+                            gtag('js', new Date());
+                            gtag('config', 'G-SDZDRH5VQ9');
+                        `,
+                    }}
+                />
+            </CookieService>
+
+            {/* ✅ Move AdSense to CookieService */}
+            <CookieService
+                id="google-adsense"
+                category="marketing"
+                name="Google AdSense"
+                consentMode
+            >
+                <script
+                    async
+                    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5486373988162570"
+                    crossOrigin="anonymous"
+                />
+            </CookieService>
+
             <ConsentBanner />
             <Header />
             {shouldShowSecondHeader && <SecondHeader />}
@@ -126,7 +160,7 @@ const App = () => {
             <Footer />
             <Analytics />
             <SpeedInsights />
-        </>
+        </CookieConsentProvider>
     );
 };
 

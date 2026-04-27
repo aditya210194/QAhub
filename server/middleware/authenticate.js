@@ -33,7 +33,7 @@ const authenticate = async (req, res, next) => {
 
 // 🔹 Middleware to Check Admin Role
 const isAdmin = (req, res, next) => {
-    if (req.user && req.user.role === 'admin') {
+    if (req.user && req.user.role === 'Admin') {  // Changed to 'Admin'
         next();
     } else {
         return res.status(403).json({ message: 'Access Denied. Admins Only.' });

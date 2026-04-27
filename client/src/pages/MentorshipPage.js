@@ -1,4 +1,4 @@
-// MentorshipPage.js - Complete Working Version with All Modules
+// MentorshipPage.js - Complete Working Version with AI Chat
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -47,7 +47,10 @@ import {
     FaQuoteRight,
     FaLink,
     FaRegTrashAlt,
-    FaShareAlt
+    FaShareAlt,
+    FaHourglassHalf,
+    FaBan,
+    FaSyncAlt
 } from 'react-icons/fa';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -98,7 +101,7 @@ const MarkdownComponents = {
     li: ({ children }) => <li className="markdown-li">{children}</li>,
     blockquote: ({ children }) => <blockquote className="markdown-blockquote">{children}</blockquote>,
     a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="markdown-link">{children}</a>,
-    table: ({ children }) => <table className="markdown-table">{children}   </table>,
+    table: ({ children }) => <table className="markdown-table">{children}</table>,
     th: ({ children }) => <th className="markdown-th">{children}</th>,
     td: ({ children }) => <td className="markdown-td">{children}</td>,
 };
@@ -137,6 +140,18 @@ const MentorshipPage = () => {
     const [showShareModal, setShowShareModal] = useState(false);
     const [selectedMessage, setSelectedMessage] = useState(null);
 
+    // Application status states
+    const [applicationStatus, setApplicationStatus] = useState({
+        mentor: null,
+        mentee: null,
+        mentorDetails: null,
+        menteeDetails: null,
+        loading: true,
+        error: null
+    });
+    const [showStatusPage, setShowStatusPage] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
     // Refs
     const fileInputRef = useRef(null);
     const imageInputRef = useRef(null);
@@ -144,6 +159,114 @@ const MentorshipPage = () => {
     const chatMessagesRef = useRef(null);
     const textareaRef = useRef(null);
     const navigate = useNavigate();
+
+    // Check existing applications on component mount and after submission
+    const checkApplicationStatus = useCallback(async (showLoading = true) => {
+        try {
+            if (showLoading) {
+                setIsRefreshing(true);
+            }
+
+            const token = sessionStorage.getItem('token');
+            if (!token) {
+                setApplicationStatus(prev => ({
+                    ...prev,
+                    loading: false,
+                    error: null
+                }));
+                return;
+            }
+
+            // Fetch both mentor and mentee application status in parallel
+            const [mentorResponse, menteeResponse] = await Promise.all([
+                axios.get(`${process.env.REACT_APP_API_URL}/api/mentorship/mentor-application-status`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }).catch(err => ({
+                    data: { status: null, error: err.response?.data?.error || 'Failed to fetch' }
+                })),
+                axios.get(`${process.env.REACT_APP_API_URL}/api/mentorship/mentee-application-status`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }).catch(err => ({
+                    data: { status: null, error: err.response?.data?.error || 'Failed to fetch' }
+                }))
+            ]);
+
+            // Save to localStorage for persistence
+            const statusData = {
+                mentor: mentorResponse.data?.status || null,
+                mentee: menteeResponse.data?.status || null,
+                mentorDetails: mentorResponse.data,
+                menteeDetails: menteeResponse.data,
+                lastChecked: new Date().toISOString()
+            };
+
+            localStorage.setItem('mentorshipApplicationStatus', JSON.stringify(statusData));
+
+            setApplicationStatus({
+                mentor: mentorResponse.data?.status || null,
+                mentee: menteeResponse.data?.status || null,
+                mentorDetails: mentorResponse.data,
+                menteeDetails: menteeResponse.data,
+                loading: false,
+                error: null
+            });
+        } catch (err) {
+            console.error('Error checking application status:', err);
+
+            // Try to load from localStorage as fallback
+            const cachedStatus = localStorage.getItem('mentorshipApplicationStatus');
+            if (cachedStatus) {
+                const parsed = JSON.parse(cachedStatus);
+                setApplicationStatus({
+                    mentor: parsed.mentor,
+                    mentee: parsed.mentee,
+                    mentorDetails: parsed.mentorDetails,
+                    menteeDetails: parsed.menteeDetails,
+                    loading: false,
+                    error: 'Using cached data. Please refresh.'
+                });
+            } else {
+                setApplicationStatus(prev => ({
+                    ...prev,
+                    loading: false,
+                    error: err.response?.data?.message || 'Failed to load application status'
+                }));
+            }
+        } finally {
+            if (showLoading) {
+                setIsRefreshing(false);
+            }
+        }
+    }, []);
+
+    // Load status on component mount
+    useEffect(() => {
+        // First try to load from localStorage for immediate display
+        const cachedStatus = localStorage.getItem('mentorshipApplicationStatus');
+        if (cachedStatus) {
+            const parsed = JSON.parse(cachedStatus);
+            setApplicationStatus({
+                mentor: parsed.mentor,
+                mentee: parsed.mentee,
+                mentorDetails: parsed.mentorDetails,
+                menteeDetails: parsed.menteeDetails,
+                loading: false,
+                error: null
+            });
+        }
+
+        // Then fetch fresh data from server
+        checkApplicationStatus(true);
+
+        // Set up interval to check status every 30 seconds (for real-time updates)
+        const interval = setInterval(() => {
+            if (!showStatusPage) {
+                checkApplicationStatus(false);
+            }
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [checkApplicationStatus, showStatusPage]);
 
     // Auto-scroll to bottom
     useEffect(() => {
@@ -180,12 +303,25 @@ const MentorshipPage = () => {
         }
     }, [chatHistory, activeTab]);
 
-    // Role selection handler
+    // Role selection handler with application check
     const handleRoleSelection = useCallback((role) => {
+        // Check if user already has an application for this role
+        if (role === 'mentor' && applicationStatus.mentor && applicationStatus.mentor !== 'rejected') {
+            setShowStatusPage(true);
+            setError(`You have already submitted a mentor application (Status: ${applicationStatus.mentor}). View your status below.`);
+            return;
+        }
+        if (role === 'mentee' && applicationStatus.mentee && applicationStatus.mentee !== 'rejected') {
+            setShowStatusPage(true);
+            setError(`You have already submitted a mentee application (Status: ${applicationStatus.mentee}). View your status below.`);
+            return;
+        }
+
         setSelectedRole(role);
         setError('');
         setActiveTab(role);
-    }, []);
+        setShowStatusPage(false);
+    }, [applicationStatus]);
 
     // Form handlers
     const handleMentorChange = useCallback((e) => {
@@ -196,9 +332,17 @@ const MentorshipPage = () => {
         setMenteeForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
     }, []);
 
-    // Form submissions
+    // Form submissions with duplicate check and persistence
     const handleMentorSubmit = async (e) => {
         e.preventDefault();
+
+        // Double-check for existing application
+        if (applicationStatus.mentor && applicationStatus.mentor !== 'rejected') {
+            setError(`You have already submitted a mentor application (Status: ${applicationStatus.mentor}). Only one application is allowed.`);
+            setShowStatusPage(true);
+            return;
+        }
+
         setIsLoading(true);
         try {
             const token = sessionStorage.getItem('token');
@@ -206,16 +350,47 @@ const MentorshipPage = () => {
                 navigate('/login');
                 return;
             }
-            await axios.post(`${process.env.REACT_APP_API_URL}/api/mentorship/apply-mentor`, mentorForm, {
+
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/mentorship/apply-mentor`, mentorForm, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+
+            // Immediately update local status
+            const newStatus = {
+                mentor: 'pending',
+                mentee: applicationStatus.mentee,
+                mentorDetails: { status: 'pending', ...response.data },
+                menteeDetails: applicationStatus.menteeDetails,
+                lastChecked: new Date().toISOString()
+            };
+
+            localStorage.setItem('mentorshipApplicationStatus', JSON.stringify(newStatus));
+
+            setApplicationStatus(prev => ({
+                ...prev,
+                mentor: 'pending',
+                mentorDetails: { status: 'pending', ...response.data },
+                loading: false
+            }));
+
             setShowSuccess(true);
             setTimeout(() => {
                 setShowSuccess(false);
-                navigate('/community');
+                setShowStatusPage(true);
+                setSelectedRole('');
+                setActiveTab('selection');
             }, 3000);
         } catch (err) {
-            setError(err.response?.data?.message || 'Error submitting mentor application');
+            if (err.response?.status === 409) {
+                setError('You have already submitted an application. Please check your status.');
+                setShowStatusPage(true);
+                setSelectedRole('');
+                setActiveTab('selection');
+                // Refresh status from server
+                checkApplicationStatus(true);
+            } else {
+                setError(err.response?.data?.message || 'Error submitting mentor application');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -223,6 +398,14 @@ const MentorshipPage = () => {
 
     const handleMenteeSubmit = async (e) => {
         e.preventDefault();
+
+        // Double-check for existing application
+        if (applicationStatus.mentee && applicationStatus.mentee !== 'rejected') {
+            setError(`You have already submitted a mentee application (Status: ${applicationStatus.mentee}). Only one application is allowed.`);
+            setShowStatusPage(true);
+            return;
+        }
+
         setIsLoading(true);
         try {
             const token = sessionStorage.getItem('token');
@@ -230,16 +413,48 @@ const MentorshipPage = () => {
                 navigate('/login');
                 return;
             }
-            await axios.post(`${process.env.REACT_APP_API_URL}/api/mentees`, menteeForm, {
+
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/mentorship/apply-mentee`, menteeForm, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+
+            // Immediately update local status
+            const newStatus = {
+                mentor: applicationStatus.mentor,
+                mentee: 'pending',
+                mentorDetails: applicationStatus.mentorDetails,
+                menteeDetails: { status: 'pending', ...response.data },
+                lastChecked: new Date().toISOString()
+            };
+
+            localStorage.setItem('mentorshipApplicationStatus', JSON.stringify(newStatus));
+
+            setApplicationStatus(prev => ({
+                ...prev,
+                mentee: 'pending',
+                menteeDetails: { status: 'pending', ...response.data },
+                loading: false
+            }));
+
             setShowSuccess(true);
             setTimeout(() => {
                 setShowSuccess(false);
-                navigate('/community');
+                setShowStatusPage(true);
+                setSelectedRole('');
+                setActiveTab('selection');
             }, 3000);
         } catch (err) {
-            setError(err.response?.data?.message || 'Error submitting mentee registration');
+            console.error('Mentee submission error:', err);
+            if (err.response?.status === 409) {
+                setError('You have already submitted an application. Please check your status.');
+                setShowStatusPage(true);
+                setSelectedRole('');
+                setActiveTab('selection');
+                // Refresh status from server
+                checkApplicationStatus(true);
+            } else {
+                setError(err.response?.data?.message || 'Error submitting mentee application');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -295,7 +510,6 @@ const MentorshipPage = () => {
 
     const addMessageFeedback = useCallback((messageId, feedback) => {
         console.log(`Feedback for message ${messageId}: ${feedback}`);
-        // Here you can send feedback to your analytics or backend
     }, []);
 
     const deleteMessage = useCallback((messageId) => {
@@ -489,7 +703,22 @@ const MentorshipPage = () => {
         setChatHistory([]);
         setAttachedFiles([]);
         setConversationId(null);
+        setShowStatusPage(false);
     }, []);
+
+    // Get status color and icon
+    const getStatusInfo = (status) => {
+        switch(status) {
+            case 'pending':
+                return { color: '#f59e0b', icon: <FaHourglassHalf />, text: 'Pending Review', bgColor: '#fef3c7' };
+            case 'approved':
+                return { color: '#10b981', icon: <FaCheckCircle />, text: 'Approved', bgColor: '#d1fae5' };
+            case 'rejected':
+                return { color: '#ef4444', icon: <FaBan />, text: 'Not Approved', bgColor: '#fee2e2' };
+            default:
+                return { color: '#6b7280', icon: null, text: 'Not Applied', bgColor: '#f3f4f6' };
+        }
+    };
 
     // Memoized values
     const suggestedQuestions = useMemo(() => [
@@ -500,6 +729,145 @@ const MentorshipPage = () => {
         { text: "What are the latest trends in QA?", icon: <FaChartLine />, color: "#f56565" },
         { text: "How to transition from manual to automation?", icon: <FaArrowRight />, color: "#4299e1" }
     ], []);
+
+    // Status Page Component
+    const StatusPage = () => (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="status-page"
+        >
+            <div className="status-header">
+                <FaHandsHelping className="status-header-icon" />
+                <h2>Your Application Status</h2>
+                <p>Track the progress of your mentorship applications</p>
+                <button
+                    className="refresh-status-btn"
+                    onClick={() => checkApplicationStatus(true)}
+                    disabled={isRefreshing}
+                >
+                    <FaSyncAlt className={isRefreshing ? 'spinning' : ''} />
+                    {isRefreshing ? 'Refreshing...' : 'Refresh Status'}
+                </button>
+            </div>
+
+            <div className="status-cards">
+                {/* Mentor Status Card */}
+                <div className="status-card">
+                    <div className="status-card-header">
+                        <FaChalkboardTeacher className="status-role-icon mentor-icon" />
+                        <h3>Mentor Application</h3>
+                    </div>
+                    <div className="status-content">
+                        <div className="status-badge" style={{ backgroundColor: getStatusInfo(applicationStatus.mentor).bgColor, color: getStatusInfo(applicationStatus.mentor).color }}>
+                            {getStatusInfo(applicationStatus.mentor).icon}
+                            <span>{getStatusInfo(applicationStatus.mentor).text}</span>
+                        </div>
+                        {applicationStatus.mentor === 'pending' && (
+                            <div className="status-message">
+                                <FaClock />
+                                <p>Your application is being reviewed by our team. We'll notify you once a decision is made.</p>
+                                <small>Applied on: {new Date(applicationStatus.mentorDetails?.appliedAt).toLocaleDateString()}</small>
+                            </div>
+                        )}
+                        {applicationStatus.mentor === 'approved' && (
+                            <div className="status-message success">
+                                <FaCheckCircle />
+                                <p>Congratulations! Your mentor application has been approved. You can now start mentoring.</p>
+                            </div>
+                        )}
+                        {applicationStatus.mentor === 'rejected' && (
+                            <div className="status-message error">
+                                <FaExclamationTriangle />
+                                <p>Your application was not approved at this time. You can submit a new application.</p>
+                                <button className="apply-btn mentor-btn" onClick={() => handleRoleSelection('mentor')}>
+                                    Apply Again <FaArrowRight />
+                                </button>
+                            </div>
+                        )}
+                        {!applicationStatus.mentor && (
+                            <div className="status-message">
+                                <FaRegSmile />
+                                <p>You haven't applied as a mentor yet. Click below to start your journey!</p>
+                                <button className="apply-btn mentor-btn" onClick={() => handleRoleSelection('mentor')}>
+                                    Apply as Mentor <FaArrowRight />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Mentee Status Card */}
+                <div className="status-card">
+                    <div className="status-card-header">
+                        <FaUserGraduate className="status-role-icon mentee-icon" />
+                        <h3>Mentee Application</h3>
+                    </div>
+                    <div className="status-content">
+                        <div className="status-badge" style={{ backgroundColor: getStatusInfo(applicationStatus.mentee).bgColor, color: getStatusInfo(applicationStatus.mentee).color }}>
+                            {getStatusInfo(applicationStatus.mentee).icon}
+                            <span>{getStatusInfo(applicationStatus.mentee).text}</span>
+                        </div>
+                        {applicationStatus.mentee === 'pending' && (
+                            <div className="status-message">
+                                <FaClock />
+                                <p>Your application is being reviewed. We'll match you with a mentor soon!</p>
+                                <small>Applied on: {new Date(applicationStatus.menteeDetails?.appliedAt).toLocaleDateString()}</small>
+                            </div>
+                        )}
+                        {applicationStatus.mentee === 'approved' && (
+                            <div className="status-message success">
+                                <FaCheckCircle />
+                                <p>Great news! Your mentee application has been approved. You'll be matched with a mentor shortly.</p>
+                            </div>
+                        )}
+                        {applicationStatus.mentee === 'rejected' && (
+                            <div className="status-message error">
+                                <FaExclamationTriangle />
+                                <p>Your application was not approved. You can submit a new application.</p>
+                                <button className="apply-btn mentee-btn" onClick={() => handleRoleSelection('mentee')}>
+                                    Apply Again <FaArrowRight />
+                                </button>
+                            </div>
+                        )}
+                        {!applicationStatus.mentee && (
+                            <div className="status-message">
+                                <FaRegSmile />
+                                <p>Ready to grow your skills? Apply as a mentee today!</p>
+                                <button className="apply-btn mentee-btn" onClick={() => handleRoleSelection('mentee')}>
+                                    Apply as Mentee <FaArrowRight />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            <div className="status-actions">
+                <button className="btn-secondary" onClick={() => {
+                    setShowStatusPage(false);
+                    setActiveTab('selection');
+                }}>
+                    Back to Selection
+                </button>
+                <button className="btn-primary" onClick={() => {
+                    setShowStatusPage(false);
+                    handleRoleSelection('ai');
+                }}>
+                    Chat with AI Mentor <FaRobot />
+                </button>
+            </div>
+        </motion.div>
+    );
+
+    if (applicationStatus.loading) {
+        return (
+            <div className="loading-container">
+                <div className="loading-spinner"></div>
+                <p>Loading your application status...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="mentorship-page">
@@ -533,682 +901,717 @@ const MentorshipPage = () => {
                             <div className="success-card">
                                 <FaCheck className="success-icon" />
                                 <h3>Application Submitted!</h3>
-                                <p>Redirecting you back to community...</p>
+                                <p>Your application is being reviewed. Check your status on the status page.</p>
                             </div>
                         </motion.div>
                     )}
 
-                    <motion.div
-                        className="mentorship-card"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                    >
-                        {/* Selection Cards */}
-                        {activeTab === 'selection' && !selectedRole && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="selection-section"
-                            >
-                                <h2 className="section-title">Choose Your Path</h2>
-                                <div className="role-cards">
-                                    {/* Mentor Card */}
-                                    <motion.div
-                                        className="role-card mentor-card"
-                                        whileHover={{ scale: 1.05, y: -5 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => handleRoleSelection('mentor')}
-                                    >
-                                        <div className="role-icon-wrapper">
-                                            <FaChalkboardTeacher className="role-icon" />
-                                        </div>
-                                        <h3>Become a Mentor</h3>
-                                        <p>Share your expertise and guide the next generation of QA professionals</p>
-                                        <ul className="role-features">
-                                            <li><FaStar /> 100+ active mentees</li>
-                                            <li><FaUsers /> Join expert community</li>
-                                            <li><FaChartLine /> Build leadership skills</li>
-                                        </ul>
-                                        <button className="role-btn mentor-btn">
-                                            Apply as Mentor <FaArrowRight />
-                                        </button>
-                                    </motion.div>
-
-                                    {/* Mentee Card */}
-                                    <motion.div
-                                        className="role-card mentee-card"
-                                        whileHover={{ scale: 1.05, y: -5 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => handleRoleSelection('mentee')}
-                                    >
-                                        <div className="role-icon-wrapper">
-                                            <FaUserGraduate className="role-icon" />
-                                        </div>
-                                        <h3>Become a Mentee</h3>
-                                        <p>Get personalized guidance from experienced industry professionals</p>
-                                        <ul className="role-features">
-                                            <li><FaStar /> 1-on-1 mentorship</li>
-                                            <li><FaRocket /> Accelerate your career</li>
-                                            <li><FaBullseye /> Achieve your goals</li>
-                                        </ul>
-                                        <button className="role-btn mentee-btn">
-                                            Register as Mentee <FaArrowRight />
-                                        </button>
-                                    </motion.div>
-
-                                    {/* AI Card */}
-                                    <motion.div
-                                        className="role-card ai-card"
-                                        whileHover={{ scale: 1.05, y: -5 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => handleRoleSelection('ai')}
-                                    >
-                                        <div className="role-icon-wrapper">
-                                            <FaRobot className="role-icon" />
-                                        </div>
-                                        <h3>AI Mentorship</h3>
-                                        <p>Get instant answers from our AI mentor, available 24/7</p>
-                                        <ul className="role-features">
-                                            <li><FaComments /> Instant responses</li>
-                                            <li><FaClock /> 24/7 availability</li>
-                                            <li><FaRegSmile /> No scheduling needed</li>
-                                        </ul>
-                                        <button className="role-btn ai-btn">
-                                            Chat with AI <FaArrowRight />
-                                        </button>
-                                    </motion.div>
-                                </div>
-                            </motion.div>
-                        )}
-
-                        {/* Mentor Form Section */}
-                        {selectedRole === 'mentor' && (
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                className="form-section"
-                            >
-                                <div className="form-header">
-                                    <button className="back-btn" onClick={handleBack}>
-                                        <FaArrowLeft /> Back
-                                    </button>
-                                    <h3><FaChalkboardTeacher /> Mentor Application</h3>
-                                </div>
-
-                                <form onSubmit={handleMentorSubmit} className="mentorship-form">
-                                    <div className="form-grid">
-                                        <div className="form-group">
-                                            <label><FaStar /> Area of Expertise *</label>
-                                            <select
-                                                name="expertise"
-                                                value={mentorForm.expertise}
-                                                onChange={handleMentorChange}
-                                                required
-                                            >
-                                                <option value="">Select your expertise</option>
-                                                <option value="automation">Automation Testing</option>
-                                                <option value="manual">Manual Testing</option>
-                                                <option value="performance">Performance Testing</option>
-                                                <option value="security">Security Testing</option>
-                                                <option value="api">API Testing</option>
-                                                <option value="mobile">Mobile Testing</option>
-                                            </select>
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label><FaChartLine /> Years of Experience *</label>
-                                            <input
-                                                type="number"
-                                                name="experience"
-                                                value={mentorForm.experience}
-                                                onChange={handleMentorChange}
-                                                min="0"
-                                                max="50"
-                                                required
-                                                placeholder="e.g., 5"
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label><FaClock /> Availability (hours/week) *</label>
-                                            <input
-                                                type="number"
-                                                name="availability"
-                                                value={mentorForm.availability}
-                                                onChange={handleMentorChange}
-                                                min="1"
-                                                max="40"
-                                                required
-                                                placeholder="e.g., 5"
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label><FaLinkedin /> LinkedIn Profile URL *</label>
-                                            <input
-                                                type="url"
-                                                name="linkedIn"
-                                                value={mentorForm.linkedIn}
-                                                onChange={handleMentorChange}
-                                                required
-                                                placeholder="https://linkedin.com/in/username"
-                                            />
-                                        </div>
-
-                                        <div className="form-group full-width">
-                                            <label><FaUserTie /> Professional Bio *</label>
-                                            <textarea
-                                                name="bio"
-                                                value={mentorForm.bio}
-                                                onChange={handleMentorChange}
-                                                required
-                                                rows="4"
-                                                placeholder="Tell us about your experience and what you can offer as a mentor..."
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label><FaGraduationCap /> Certifications</label>
-                                            <input
-                                                type="text"
-                                                name="certifications"
-                                                value={mentorForm.certifications}
-                                                onChange={handleMentorChange}
-                                                placeholder="e.g., ISTQB, CSTE, etc."
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label><FaRocket /> Hourly Rate ($/hour)</label>
-                                            <input
-                                                type="number"
-                                                name="hourlyRate"
-                                                value={mentorForm.hourlyRate}
-                                                onChange={handleMentorChange}
-                                                min="0"
-                                                placeholder="e.g., 50"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {error && <div className="error-message">{error}</div>}
-
-                                    <div className="form-actions">
-                                        <button type="button" className="btn-secondary" onClick={handleBack}>
-                                            Cancel
-                                        </button>
+                    {/* Show Status Page if enabled */}
+                    {showStatusPage ? (
+                        <StatusPage />
+                    ) : (
+                        <motion.div
+                            className="mentorship-card"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                        >
+                            {/* Selection Cards */}
+                            {activeTab === 'selection' && !selectedRole && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="selection-section"
+                                >
+                                    <div className="status-indicator">
                                         <button
-                                            type="submit"
-                                            className="btn-primary mentor-btn"
-                                            disabled={isLoading}
+                                            className="view-status-btn"
+                                            onClick={() => setShowStatusPage(true)}
                                         >
-                                            {isLoading ? (
-                                                <>Submitting <span className="spinner"></span></>
-                                            ) : (
-                                                <>Submit Application <FaPaperPlane /></>
+                                            <FaChartLine /> View My Application Status
+                                            {(applicationStatus.mentor || applicationStatus.mentee) && (
+                                                <span className="status-dot-indicator"></span>
                                             )}
                                         </button>
                                     </div>
-                                </form>
-                            </motion.div>
-                        )}
 
-                        {/* Mentee Form Section */}
-                        {selectedRole === 'mentee' && (
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                className="form-section"
-                            >
-                                <div className="form-header">
-                                    <button className="back-btn" onClick={handleBack}>
-                                        <FaArrowLeft /> Back
-                                    </button>
-                                    <h3><FaUserGraduate /> Mentee Registration</h3>
-                                </div>
-
-                                <form onSubmit={handleMenteeSubmit} className="mentorship-form">
-                                    <div className="form-grid">
-                                        <div className="form-group full-width">
-                                            <label><FaBullseye /> Learning Goals *</label>
-                                            <textarea
-                                                name="learningGoals"
-                                                value={menteeForm.learningGoals}
-                                                onChange={handleMenteeChange}
-                                                required
-                                                rows="3"
-                                                placeholder="What do you hope to achieve through mentorship?"
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label><FaCode /> Current Skills *</label>
-                                            <input
-                                                type="text"
-                                                name="currentSkills"
-                                                value={menteeForm.currentSkills}
-                                                onChange={handleMenteeChange}
-                                                required
-                                                placeholder="e.g., Manual Testing, Basic SQL"
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label><FaRocket /> Desired Skills *</label>
-                                            <input
-                                                type="text"
-                                                name="desiredSkills"
-                                                value={menteeForm.desiredSkills}
-                                                onChange={handleMenteeChange}
-                                                required
-                                                placeholder="e.g., Selenium, API Testing"
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label><FaClock /> Time Commitment (hours/week) *</label>
-                                            <select
-                                                name="timeCommitment"
-                                                value={menteeForm.timeCommitment}
-                                                onChange={handleMenteeChange}
-                                                required
-                                            >
-                                                <option value="">Select commitment</option>
-                                                <option value="1-2">1-2 hours/week</option>
-                                                <option value="3-5">3-5 hours/week</option>
-                                                <option value="5-10">5-10 hours/week</option>
-                                                <option value="10+">10+ hours/week</option>
-                                            </select>
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label><FaComments /> Preferred Language</label>
-                                            <input
-                                                type="text"
-                                                name="preferredLanguage"
-                                                value={menteeForm.preferredLanguage}
-                                                onChange={handleMenteeChange}
-                                                placeholder="e.g., English, Spanish"
-                                            />
-                                        </div>
-
-                                        <div className="form-group full-width">
-                                            <label><FaUserGraduate /> Professional Background</label>
-                                            <textarea
-                                                name="background"
-                                                value={menteeForm.background}
-                                                onChange={handleMenteeChange}
-                                                rows="3"
-                                                placeholder="Tell us about your professional background..."
-                                            />
-                                        </div>
-
-                                        <div className="form-group full-width">
-                                            <label><FaStar /> Expectations from Mentor</label>
-                                            <textarea
-                                                name="expectations"
-                                                value={menteeForm.expectations}
-                                                onChange={handleMenteeChange}
-                                                rows="3"
-                                                placeholder="What do you expect from your mentor?"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {error && <div className="error-message">{error}</div>}
-
-                                    <div className="form-actions">
-                                        <button type="button" className="btn-secondary" onClick={handleBack}>
-                                            Cancel
-                                        </button>
-                                        <button
-                                            type="submit"
-                                            className="btn-primary mentee-btn"
-                                            disabled={isLoading}
+                                    <h2 className="section-title">Choose Your Path</h2>
+                                    <div className="role-cards">
+                                        {/* Mentor Card */}
+                                        <motion.div
+                                            className={`role-card mentor-card ${applicationStatus.mentor && applicationStatus.mentor !== 'rejected' ? 'disabled' : ''}`}
+                                            whileHover={{ scale: applicationStatus.mentor && applicationStatus.mentor !== 'rejected' ? 1 : 1.05, y: applicationStatus.mentor && applicationStatus.mentor !== 'rejected' ? 0 : -5 }}
+                                            whileTap={{ scale: applicationStatus.mentor && applicationStatus.mentor !== 'rejected' ? 1 : 0.95 }}
+                                            onClick={() => (applicationStatus.mentor !== 'pending' && applicationStatus.mentor !== 'approved') && handleRoleSelection('mentor')}
                                         >
-                                            {isLoading ? (
-                                                <>Submitting <span className="spinner"></span></>
-                                            ) : (
-                                                <>Register as Mentee <FaPaperPlane /></>
+                                            <div className="role-icon-wrapper">
+                                                <FaChalkboardTeacher className="role-icon" />
+                                            </div>
+                                            <h3>Become a Mentor</h3>
+                                            <p>Share your expertise and guide the next generation of QA professionals</p>
+                                            {applicationStatus.mentor && applicationStatus.mentor !== 'rejected' && (
+                                                <div className="applied-badge">
+                                                    {getStatusInfo(applicationStatus.mentor).icon}
+                                                    <span>{getStatusInfo(applicationStatus.mentor).text}</span>
+                                                </div>
                                             )}
-                                        </button>
-                                    </div>
-                                </form>
-                            </motion.div>
-                        )}
+                                            <ul className="role-features">
+                                                <li><FaStar /> 100+ active mentees</li>
+                                                <li><FaUsers /> Join expert community</li>
+                                                <li><FaChartLine /> Build leadership skills</li>
+                                            </ul>
+                                            <button className="role-btn mentor-btn" disabled={!!(applicationStatus.mentor && applicationStatus.mentor !== 'rejected')}>
+                                                {(applicationStatus.mentor === 'pending' && 'Application Pending') ||
+                                                 (applicationStatus.mentor === 'approved' && 'Application Approved') ||
+                                                 (applicationStatus.mentor === 'rejected' && 'Apply as Mentor') ||
+                                                 'Apply as Mentor'} <FaArrowRight />
+                                            </button>
+                                        </motion.div>
 
-                        {/* AI Chat Section with Advanced Features */}
-                        {selectedRole === 'ai' && (
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                className="ai-chat-section"
-                            >
-                                <div className="chat-header">
-                                    <div className="chat-header-left">
+                                        {/* Mentee Card */}
+                                        <motion.div
+                                            className={`role-card mentee-card ${applicationStatus.mentee && applicationStatus.mentee !== 'rejected' ? 'disabled' : ''}`}
+                                            whileHover={{ scale: applicationStatus.mentee && applicationStatus.mentee !== 'rejected' ? 1 : 1.05, y: applicationStatus.mentee && applicationStatus.mentee !== 'rejected' ? 0 : -5 }}
+                                            whileTap={{ scale: applicationStatus.mentee && applicationStatus.mentee !== 'rejected' ? 1 : 0.95 }}
+                                            onClick={() => (applicationStatus.mentee !== 'pending' && applicationStatus.mentee !== 'approved') && handleRoleSelection('mentee')}
+                                        >
+                                            <div className="role-icon-wrapper">
+                                                <FaUserGraduate className="role-icon" />
+                                            </div>
+                                            <h3>Become a Mentee</h3>
+                                            <p>Get personalized guidance from experienced industry professionals</p>
+                                            {applicationStatus.mentee && applicationStatus.mentee !== 'rejected' && (
+                                                <div className="applied-badge">
+                                                    {getStatusInfo(applicationStatus.mentee).icon}
+                                                    <span>{getStatusInfo(applicationStatus.mentee).text}</span>
+                                                </div>
+                                            )}
+                                            <ul className="role-features">
+                                                <li><FaStar /> 1-on-1 mentorship</li>
+                                                <li><FaRocket /> Accelerate your career</li>
+                                                <li><FaBullseye /> Achieve your goals</li>
+                                            </ul>
+                                            <button className="role-btn mentee-btn" disabled={!!(applicationStatus.mentee && applicationStatus.mentee !== 'rejected')}>
+                                                {(applicationStatus.mentee === 'pending' && 'Application Pending') ||
+                                                 (applicationStatus.mentee === 'approved' && 'Application Approved') ||
+                                                 (applicationStatus.mentee === 'rejected' && 'Register as Mentee') ||
+                                                 'Register as Mentee'} <FaArrowRight />
+                                            </button>
+                                        </motion.div>
+
+                                        {/* AI Card - Always available */}
+                                        <motion.div
+                                            className="role-card ai-card"
+                                            whileHover={{ scale: 1.05, y: -5 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            onClick={() => handleRoleSelection('ai')}
+                                        >
+                                            <div className="role-icon-wrapper">
+                                                <FaRobot className="role-icon" />
+                                            </div>
+                                            <h3>AI Mentorship</h3>
+                                            <p>Get instant answers from our AI mentor, available 24/7</p>
+                                            <ul className="role-features">
+                                                <li><FaComments /> Instant responses</li>
+                                                <li><FaClock /> 24/7 availability</li>
+                                                <li><FaRegSmile /> No scheduling needed</li>
+                                            </ul>
+                                            <button className="role-btn ai-btn">
+                                                Chat with AI <FaArrowRight />
+                                            </button>
+                                        </motion.div>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* Mentor Form Section */}
+                            {selectedRole === 'mentor' && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    className="form-section"
+                                >
+                                    <div className="form-header">
                                         <button className="back-btn" onClick={handleBack}>
                                             <FaArrowLeft /> Back
                                         </button>
-                                        <h3><FaRobot /> AI Mentor - 24/7 Available</h3>
+                                        <h3><FaChalkboardTeacher /> Mentor Application</h3>
                                     </div>
-                                    <div className="chat-header-right">
-                                        <div className="chat-status">
-                                            <span className="status-dot"></span>
-                                            <span>Online</span>
-                                        </div>
-                                        <div className="chat-actions">
-                                            <button className="action-icon" onClick={clearConversation} title="Clear conversation">
-                                                <FaRegTrashAlt />
-                                            </button>
-                                            <button className="action-icon" onClick={() => setShowShareModal(true)} title="Share conversation">
-                                                <FaShareAlt />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div className="chat-container">
-                                    <div className="chat-messages" ref={chatMessagesRef}>
-                                        {error && (
-                                            <div className="error-message">
-                                                <FaExclamationTriangle />
-                                                <span>{error}</span>
+                                    <form onSubmit={handleMentorSubmit} className="mentorship-form">
+                                        <div className="form-grid">
+                                            <div className="form-group">
+                                                <label><FaStar /> Area of Expertise *</label>
+                                                <select
+                                                    name="expertise"
+                                                    value={mentorForm.expertise}
+                                                    onChange={handleMentorChange}
+                                                    required
+                                                >
+                                                    <option value="">Select your expertise</option>
+                                                    <option value="automation">Automation Testing</option>
+                                                    <option value="manual">Manual Testing</option>
+                                                    <option value="performance">Performance Testing</option>
+                                                    <option value="security">Security Testing</option>
+                                                    <option value="api">API Testing</option>
+                                                    <option value="mobile">Mobile Testing</option>
+                                                </select>
                                             </div>
-                                        )}
 
-                                        {chatHistory.length === 0 && (
-                                            <div className="welcome-message">
-                                                <FaRobot className="welcome-icon" />
-                                                <h4>Welcome to AI Mentorship!</h4>
-                                                <p>Ask me anything about software testing, career advice, or technical concepts.</p>
-                                                <p>You can also upload images, code files, or documents for better assistance!</p>
-                                                <div className="suggested-questions">
-                                                    {suggestedQuestions.map((q, idx) => (
-                                                        <button key={idx} onClick={() => handleSuggestedQuestion(q.text)}>
-                                                            {q.icon} {q.text}
-                                                        </button>
-                                                    ))}
-                                                </div>
+                                            <div className="form-group">
+                                                <label><FaChartLine /> Years of Experience *</label>
+                                                <input
+                                                    type="number"
+                                                    name="experience"
+                                                    value={mentorForm.experience}
+                                                    onChange={handleMentorChange}
+                                                    min="0"
+                                                    max="50"
+                                                    required
+                                                    placeholder="e.g., 5"
+                                                />
                                             </div>
-                                        )}
 
-                                        {chatHistory.map((msg, index) => (
-                                            <motion.div
-                                                key={msg.id || index}
-                                                className={`message ${msg.type} ${msg.isError ? 'error' : ''}`}
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                                onContextMenu={(e) => {
-                                                    e.preventDefault();
-                                                    setSelectedMessage(msg.id === selectedMessage ? null : msg.id);
-                                                }}
+                                            <div className="form-group">
+                                                <label><FaClock /> Availability (hours/week) *</label>
+                                                <input
+                                                    type="number"
+                                                    name="availability"
+                                                    value={mentorForm.availability}
+                                                    onChange={handleMentorChange}
+                                                    min="1"
+                                                    max="40"
+                                                    required
+                                                    placeholder="e.g., 5"
+                                                />
+                                            </div>
+
+                                            <div className="form-group">
+                                                <label><FaLinkedin /> LinkedIn Profile URL *</label>
+                                                <input
+                                                    type="url"
+                                                    name="linkedIn"
+                                                    value={mentorForm.linkedIn}
+                                                    onChange={handleMentorChange}
+                                                    required
+                                                    placeholder="https://linkedin.com/in/username"
+                                                />
+                                            </div>
+
+                                            <div className="form-group full-width">
+                                                <label><FaUserTie /> Professional Bio *</label>
+                                                <textarea
+                                                    name="bio"
+                                                    value={mentorForm.bio}
+                                                    onChange={handleMentorChange}
+                                                    required
+                                                    rows="4"
+                                                    placeholder="Tell us about your experience and what you can offer as a mentor..."
+                                                />
+                                            </div>
+
+                                            <div className="form-group">
+                                                <label><FaGraduationCap /> Certifications</label>
+                                                <input
+                                                    type="text"
+                                                    name="certifications"
+                                                    value={mentorForm.certifications}
+                                                    onChange={handleMentorChange}
+                                                    placeholder="e.g., ISTQB, CSTE, etc."
+                                                />
+                                            </div>
+
+                                            <div className="form-group">
+                                                <label><FaRocket /> Hourly Rate ($/hour)</label>
+                                                <input
+                                                    type="number"
+                                                    name="hourlyRate"
+                                                    value={mentorForm.hourlyRate}
+                                                    onChange={handleMentorChange}
+                                                    min="0"
+                                                    placeholder="e.g., 50"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {error && <div className="error-message">{error}</div>}
+
+                                        <div className="form-actions">
+                                            <button type="button" className="btn-secondary" onClick={handleBack}>
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                className="btn-primary mentor-btn"
+                                                disabled={isLoading || !!(applicationStatus.mentor && applicationStatus.mentor !== 'rejected')}
                                             >
-                                                <div className="message-avatar">
-                                                    {msg.type === 'ai' ? <FaRobot /> : <FaUserGraduate />}
-                                                </div>
-                                                <div className="message-content">
-                                                    <div className="message-header-info">
-                                                        <strong>{msg.type === 'ai' ? 'AI Mentor' : 'You'}</strong>
-                                                        <span className="message-time">{formatTime(msg.timestamp)}</span>
-                                                        {msg.edited && <span className="edited-badge">(edited)</span>}
-                                                    </div>
-
-                                                    {msg.type === 'ai' ? (
-                                                        <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
-                                                            {msg.content}
-                                                        </ReactMarkdown>
-                                                    ) : (
-                                                        <div className="user-message">
-                                                            {msg.content}
-                                                        </div>
-                                                    )}
-
-                                                    {msg.attachments && msg.attachments.length > 0 && (
-                                                        <div className="message-attachments">
-                                                            {msg.attachments.map((att, idx) => (
-                                                                <div key={idx} className="attachment-item">
-                                                                    {att.type === 'image' && att.preview && (
-                                                                        <img
-                                                                            src={att.preview}
-                                                                            alt={att.name}
-                                                                            className="attachment-image"
-                                                                            onClick={() => window.open(att.preview, '_blank')}
-                                                                        />
-                                                                    )}
-                                                                    {att.type === 'code' && (
-                                                                        <div className="attachment-code">
-                                                                            <FaFileCode />
-                                                                            <span>{att.name}</span>
-                                                                            <button onClick={() => copyToClipboard(att.content || '')}>
-                                                                                Copy code
-                                                                            </button>
-                                                                        </div>
-                                                                    )}
-                                                                    {att.type === 'file' && (
-                                                                        <div className="attachment-file">
-                                                                            <FaFileAlt />
-                                                                            <span>{att.name}</span>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    )}
-
-                                                    <div className="message-actions">
-                                                        <button onClick={() => copyToClipboard(msg.content)} title="Copy">
-                                                            <FaCopy />
-                                                        </button>
-                                                        {msg.type === 'ai' && (
-                                                            <>
-                                                                <button onClick={() => addMessageFeedback(msg.id, 'helpful')} title="Helpful">
-                                                                    <FaThumbsUp />
-                                                                </button>
-                                                                <button onClick={() => addMessageFeedback(msg.id, 'not-helpful')} title="Not helpful">
-                                                                    <FaThumbsDown />
-                                                                </button>
-                                                            </>
-                                                        )}
-                                                        <button onClick={() => setSelectedMessage(msg.id)} title="More options">
-                                                            <FaRegCommentDots />
-                                                        </button>
-                                                    </div>
-
-                                                    {selectedMessage === msg.id && (
-                                                        <div className="message-context-menu">
-                                                            <button onClick={() => copyToClipboard(msg.content)}>
-                                                                <FaCopy /> Copy
-                                                            </button>
-                                                            <button onClick={() => deleteMessage(msg.id)}>
-                                                                <FaRegTrashAlt /> Delete
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </motion.div>
-                                        ))}
-
-                                        {isLoading && (
-                                            <div className="message ai typing">
-                                                <div className="message-avatar">
-                                                    <FaRobot />
-                                                </div>
-                                                <div className="message-content">
-                                                    <strong>AI Mentor</strong>
-                                                    <div className="typing-indicator">
-                                                        <span></span>
-                                                        <span></span>
-                                                        <span></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Formatting Toolbar */}
-                                    {showFormattingBar && (
-                                        <div className="formatting-toolbar">
-                                            <button onClick={() => insertFormatting('**', '**')} title="Bold">
-                                                <FaBold />
-                                            </button>
-                                            <button onClick={() => insertFormatting('*', '*')} title="Italic">
-                                                <FaItalic />
-                                            </button>
-                                            <button onClick={() => insertFormatting('```\n', '\n```')} title="Code Block">
-                                                <FaCodeBlock />
-                                            </button>
-                                            <button onClick={() => insertFormatting('- ', '')} title="Bullet List">
-                                                <FaListUl />
-                                            </button>
-                                            <button onClick={() => insertFormatting('1. ', '')} title="Numbered List">
-                                                <FaListOl />
-                                            </button>
-                                            <button onClick={() => insertFormatting('> ', '')} title="Quote">
-                                                <FaQuoteRight />
-                                            </button>
-                                            <button onClick={() => insertFormatting('[', '](url)')} title="Link">
-                                                <FaLink />
-                                            </button>
-                                            <button onClick={() => insertFormatting('`', '`')} title="Code">
-                                                <FaCode />
+                                                {isLoading ? (
+                                                    <>Submitting <span className="spinner"></span></>
+                                                ) : (
+                                                    <>Submit Application <FaPaperPlane /></>
+                                                )}
                                             </button>
                                         </div>
-                                    )}
+                                    </form>
+                                </motion.div>
+                            )}
 
-                                    {/* Attached Files Preview */}
-                                    {attachedFiles.length > 0 && (
-                                        <div className="attached-files-preview">
-                                            {attachedFiles.map(file => (
-                                                <div key={file.id} className="file-preview-item">
-                                                    {file.type === 'image' && file.preview && (
-                                                        <img src={file.preview} alt={file.name} className="file-preview-image" />
-                                                    )}
-                                                    {file.type === 'code' && (
-                                                        <FaFileCode className="file-preview-icon" />
-                                                    )}
-                                                    {file.type === 'file' && (
-                                                        <FaFileAlt className="file-preview-icon" />
-                                                    )}
-                                                    <div className="file-preview-info">
-                                                        <span className="file-name">{file.name}</span>
-                                                        <span className="file-size">{(file.size / 1024).toFixed(1)} KB</span>
-                                                        {file.status === 'uploading' && (
-                                                            <div className="upload-progress">
-                                                                <div className="progress-bar" style={{ width: `${file.progress}%` }}></div>
+                            {/* Mentee Form Section */}
+                            {selectedRole === 'mentee' && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    className="form-section"
+                                >
+                                    <div className="form-header">
+                                        <button className="back-btn" onClick={handleBack}>
+                                            <FaArrowLeft /> Back
+                                        </button>
+                                        <h3><FaUserGraduate /> Mentee Registration</h3>
+                                    </div>
+
+                                    <form onSubmit={handleMenteeSubmit} className="mentorship-form">
+                                        <div className="form-grid">
+                                            <div className="form-group full-width">
+                                                <label><FaBullseye /> Learning Goals *</label>
+                                                <textarea
+                                                    name="learningGoals"
+                                                    value={menteeForm.learningGoals}
+                                                    onChange={handleMenteeChange}
+                                                    required
+                                                    rows="3"
+                                                    placeholder="What do you hope to achieve through mentorship?"
+                                                />
+                                            </div>
+
+                                            <div className="form-group">
+                                                <label><FaCode /> Current Skills *</label>
+                                                <input
+                                                    type="text"
+                                                    name="currentSkills"
+                                                    value={menteeForm.currentSkills}
+                                                    onChange={handleMenteeChange}
+                                                    required
+                                                    placeholder="e.g., Manual Testing, Basic SQL"
+                                                />
+                                            </div>
+
+                                            <div className="form-group">
+                                                <label><FaRocket /> Desired Skills *</label>
+                                                <input
+                                                    type="text"
+                                                    name="desiredSkills"
+                                                    value={menteeForm.desiredSkills}
+                                                    onChange={handleMenteeChange}
+                                                    required
+                                                    placeholder="e.g., Selenium, API Testing"
+                                                />
+                                            </div>
+
+                                            <div className="form-group">
+                                                <label><FaClock /> Time Commitment (hours/week) *</label>
+                                                <select
+                                                    name="timeCommitment"
+                                                    value={menteeForm.timeCommitment}
+                                                    onChange={handleMenteeChange}
+                                                    required
+                                                >
+                                                    <option value="">Select commitment</option>
+                                                    <option value="1-2">1-2 hours/week</option>
+                                                    <option value="3-5">3-5 hours/week</option>
+                                                    <option value="5-10">5-10 hours/week</option>
+                                                    <option value="10+">10+ hours/week</option>
+                                                </select>
+                                            </div>
+
+                                            <div className="form-group">
+                                                <label><FaComments /> Preferred Language</label>
+                                                <input
+                                                    type="text"
+                                                    name="preferredLanguage"
+                                                    value={menteeForm.preferredLanguage}
+                                                    onChange={handleMenteeChange}
+                                                    placeholder="e.g., English, Spanish"
+                                                />
+                                            </div>
+
+                                            <div className="form-group full-width">
+                                                <label><FaUserGraduate /> Professional Background</label>
+                                                <textarea
+                                                    name="background"
+                                                    value={menteeForm.background}
+                                                    onChange={handleMenteeChange}
+                                                    rows="3"
+                                                    placeholder="Tell us about your professional background..."
+                                                />
+                                            </div>
+
+                                            <div className="form-group full-width">
+                                                <label><FaStar /> Expectations from Mentor</label>
+                                                <textarea
+                                                    name="expectations"
+                                                    value={menteeForm.expectations}
+                                                    onChange={handleMenteeChange}
+                                                    rows="3"
+                                                    placeholder="What do you expect from your mentor?"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {error && <div className="error-message">{error}</div>}
+
+                                        <div className="form-actions">
+                                            <button type="button" className="btn-secondary" onClick={handleBack}>
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                className="btn-primary mentee-btn"
+                                                disabled={isLoading || !!(applicationStatus.mentee && applicationStatus.mentee !== 'rejected')}
+                                            >
+                                                {isLoading ? (
+                                                    <>Submitting <span className="spinner"></span></>
+                                                ) : (
+                                                    <>Register as Mentee <FaPaperPlane /></>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </motion.div>
+                            )}
+
+                            {/* AI Chat Section */}
+                            {selectedRole === 'ai' && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    className="ai-chat-section"
+                                >
+                                    <div className="chat-header">
+                                        <div className="chat-header-left">
+                                            <button className="back-btn" onClick={handleBack}>
+                                                <FaArrowLeft /> Back
+                                            </button>
+                                            <h3><FaRobot /> AI Mentor - 24/7 Available</h3>
+                                        </div>
+                                        <div className="chat-header-right">
+                                            <div className="chat-status">
+                                                <span className="status-dot"></span>
+                                                <span>Online</span>
+                                            </div>
+                                            <div className="chat-actions">
+                                                <button className="action-icon" onClick={clearConversation} title="Clear conversation">
+                                                    <FaRegTrashAlt />
+                                                </button>
+                                                <button className="action-icon" onClick={() => setShowShareModal(true)} title="Share conversation">
+                                                    <FaShareAlt />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="chat-container">
+                                        <div className="chat-messages" ref={chatMessagesRef}>
+                                            {error && (
+                                                <div className="error-message">
+                                                    <FaExclamationTriangle />
+                                                    <span>{error}</span>
+                                                </div>
+                                            )}
+
+                                            {chatHistory.length === 0 && (
+                                                <div className="welcome-message">
+                                                    <FaRobot className="welcome-icon" />
+                                                    <h4>Welcome to AI Mentorship!</h4>
+                                                    <p>Ask me anything about software testing, career advice, or technical concepts.</p>
+                                                    <p>You can also upload images, code files, or documents for better assistance!</p>
+                                                    <div className="suggested-questions">
+                                                        {suggestedQuestions.map((q, idx) => (
+                                                            <button key={idx} onClick={() => handleSuggestedQuestion(q.text)} style={{ backgroundColor: q.color }}>
+                                                                {q.icon} {q.text}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {chatHistory.map((msg, index) => (
+                                                <motion.div
+                                                    key={msg.id || index}
+                                                    className={`message ${msg.type} ${msg.isError ? 'error' : ''}`}
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ duration: 0.3 }}
+                                                    onContextMenu={(e) => {
+                                                        e.preventDefault();
+                                                        setSelectedMessage(msg.id === selectedMessage ? null : msg.id);
+                                                    }}
+                                                >
+                                                    <div className="message-avatar">
+                                                        {msg.type === 'ai' ? <FaRobot /> : <FaUserGraduate />}
+                                                    </div>
+                                                    <div className="message-content">
+                                                        <div className="message-header-info">
+                                                            <strong>{msg.type === 'ai' ? 'AI Mentor' : 'You'}</strong>
+                                                            <span className="message-time">{formatTime(msg.timestamp)}</span>
+                                                            {msg.edited && <span className="edited-badge">(edited)</span>}
+                                                        </div>
+
+                                                        {msg.type === 'ai' ? (
+                                                            <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
+                                                                {msg.content}
+                                                            </ReactMarkdown>
+                                                        ) : (
+                                                            <div className="user-message">
+                                                                {msg.content}
                                                             </div>
                                                         )}
-                                                        {file.status === 'uploaded' && (
-                                                            <FaCheckCircle className="upload-success" />
+
+                                                        {msg.attachments && msg.attachments.length > 0 && (
+                                                            <div className="message-attachments">
+                                                                {msg.attachments.map((att, idx) => (
+                                                                    <div key={idx} className="attachment-item">
+                                                                        {att.type === 'image' && att.preview && (
+                                                                            <img
+                                                                                src={att.preview}
+                                                                                alt={att.name}
+                                                                                className="attachment-image"
+                                                                                onClick={() => window.open(att.preview, '_blank')}
+                                                                            />
+                                                                        )}
+                                                                        {att.type === 'code' && (
+                                                                            <div className="attachment-code">
+                                                                                <FaFileCode />
+                                                                                <span>{att.name}</span>
+                                                                                <button onClick={() => copyToClipboard(att.content || '')}>
+                                                                                    Copy code
+                                                                                </button>
+                                                                            </div>
+                                                                        )}
+                                                                        {att.type === 'file' && (
+                                                                            <div className="attachment-file">
+                                                                                <FaFileAlt />
+                                                                                <span>{att.name}</span>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        )}
+
+                                                        <div className="message-actions">
+                                                            <button onClick={() => copyToClipboard(msg.content)} title="Copy">
+                                                                <FaCopy />
+                                                            </button>
+                                                            {msg.type === 'ai' && (
+                                                                <>
+                                                                    <button onClick={() => addMessageFeedback(msg.id, 'helpful')} title="Helpful">
+                                                                        <FaThumbsUp />
+                                                                    </button>
+                                                                    <button onClick={() => addMessageFeedback(msg.id, 'not-helpful')} title="Not helpful">
+                                                                        <FaThumbsDown />
+                                                                    </button>
+                                                                </>
+                                                            )}
+                                                            <button onClick={() => setSelectedMessage(msg.id)} title="More options">
+                                                                <FaRegCommentDots />
+                                                            </button>
+                                                        </div>
+
+                                                        {selectedMessage === msg.id && (
+                                                            <div className="message-context-menu">
+                                                                <button onClick={() => copyToClipboard(msg.content)}>
+                                                                    <FaCopy /> Copy
+                                                                </button>
+                                                                <button onClick={() => deleteMessage(msg.id)}>
+                                                                    <FaRegTrashAlt /> Delete
+                                                                </button>
+                                                            </div>
                                                         )}
                                                     </div>
-                                                    <button className="remove-file" onClick={() => removeFile(file.id)}>
-                                                        <FaTimes />
-                                                    </button>
-                                                </div>
+                                                </motion.div>
                                             ))}
-                                        </div>
-                                    )}
 
-                                    <form onSubmit={handleChatSubmit} className="chat-input-form">
-                                        <div className="input-actions">
-                                            <button
-                                                type="button"
-                                                className="action-btn"
-                                                onClick={() => fileInputRef.current.click()}
-                                                title="Upload file"
-                                            >
-                                                <FaPaperclip />
-                                            </button>
-                                            <input
-                                                type="file"
-                                                ref={fileInputRef}
-                                                style={{ display: 'none' }}
-                                                onChange={(e) => handleFileUpload(e, 'file')}
-                                                multiple
-                                            />
-                                            <button
-                                                type="button"
-                                                className="action-btn"
-                                                onClick={() => imageInputRef.current.click()}
-                                                title="Upload image"
-                                            >
-                                                <FaImage />
-                                            </button>
-                                            <input
-                                                type="file"
-                                                ref={imageInputRef}
-                                                style={{ display: 'none' }}
-                                                accept="image/*"
-                                                onChange={(e) => handleFileUpload(e, 'image')}
-                                                multiple
-                                            />
-                                            <button
-                                                type="button"
-                                                className="action-btn"
-                                                onClick={() => codeInputRef.current.click()}
-                                                title="Upload code file"
-                                            >
-                                                <FaFileCode />
-                                            </button>
-                                            <input
-                                                type="file"
-                                                ref={codeInputRef}
-                                                style={{ display: 'none' }}
-                                                accept=".js,.jsx,.ts,.tsx,.py,.java,.cpp,.c,.html,.css,.json,.txt"
-                                                onChange={(e) => handleFileUpload(e, 'code')}
-                                                multiple
-                                            />
-                                            <button
-                                                type="button"
-                                                className={`action-btn ${isRecording ? 'recording' : ''}`}
-                                                onClick={handleVoiceInput}
-                                                title="Voice input"
-                                            >
-                                                <FaMicrophone />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="action-btn"
-                                                onClick={() => setShowFormattingBar(!showFormattingBar)}
-                                                title="Formatting"
-                                            >
-                                                <FaPalette />
-                                            </button>
+                                            {isLoading && (
+                                                <div className="message ai typing">
+                                                    <div className="message-avatar">
+                                                        <FaRobot />
+                                                    </div>
+                                                    <div className="message-content">
+                                                        <strong>AI Mentor</strong>
+                                                        <div className="typing-indicator">
+                                                            <span></span>
+                                                            <span></span>
+                                                            <span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
 
-                                        <textarea
-                                            ref={textareaRef}
-                                            className="chat-input"
-                                            value={chatMessage}
-                                            onChange={(e) => setChatMessage(e.target.value)}
-                                            placeholder="Ask me anything about testing... You can also paste code or upload files!"
-                                            disabled={isLoading}
-                                            rows={1}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter' && !e.shiftKey) {
-                                                    e.preventDefault();
-                                                    handleChatSubmit(e);
-                                                }
-                                            }}
-                                        />
-                                        <button
-                                            type="submit"
-                                            className="send-btn"
-                                            disabled={isLoading || (!chatMessage.trim() && attachedFiles.length === 0)}
-                                        >
-                                            {isLoading ? <FaSpinner className="spinner-icon" /> : <FaPaperPlane />}
-                                        </button>
-                                    </form>
-                                </div>
-                            </motion.div>
-                        )}
-                    </motion.div>
+                                        {/* Formatting Toolbar */}
+                                        {showFormattingBar && (
+                                            <div className="formatting-toolbar">
+                                                <button onClick={() => insertFormatting('**', '**')} title="Bold">
+                                                    <FaBold />
+                                                </button>
+                                                <button onClick={() => insertFormatting('*', '*')} title="Italic">
+                                                    <FaItalic />
+                                                </button>
+                                                <button onClick={() => insertFormatting('```\n', '\n```')} title="Code Block">
+                                                    <FaCodeBlock />
+                                                </button>
+                                                <button onClick={() => insertFormatting('- ', '')} title="Bullet List">
+                                                    <FaListUl />
+                                                </button>
+                                                <button onClick={() => insertFormatting('1. ', '')} title="Numbered List">
+                                                    <FaListOl />
+                                                </button>
+                                                <button onClick={() => insertFormatting('> ', '')} title="Quote">
+                                                    <FaQuoteRight />
+                                                </button>
+                                                <button onClick={() => insertFormatting('[', '](url)')} title="Link">
+                                                    <FaLink />
+                                                </button>
+                                                <button onClick={() => insertFormatting('`', '`')} title="Code">
+                                                    <FaCode />
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {/* Attached Files Preview */}
+                                        {attachedFiles.length > 0 && (
+                                            <div className="attached-files-preview">
+                                                {attachedFiles.map(file => (
+                                                    <div key={file.id} className="file-preview-item">
+                                                        {file.type === 'image' && file.preview && (
+                                                            <img src={file.preview} alt={file.name} className="file-preview-image" />
+                                                        )}
+                                                        {file.type === 'code' && (
+                                                            <FaFileCode className="file-preview-icon" />
+                                                        )}
+                                                        {file.type === 'file' && (
+                                                            <FaFileAlt className="file-preview-icon" />
+                                                        )}
+                                                        <div className="file-preview-info">
+                                                            <span className="file-name">{file.name}</span>
+                                                            <span className="file-size">{(file.size / 1024).toFixed(1)} KB</span>
+                                                            {file.status === 'uploading' && (
+                                                                <div className="upload-progress">
+                                                                    <div className="progress-bar" style={{ width: `${file.progress}%` }}></div>
+                                                                </div>
+                                                            )}
+                                                            {file.status === 'uploaded' && (
+                                                                <FaCheckCircle className="upload-success" />
+                                                            )}
+                                                        </div>
+                                                        <button className="remove-file" onClick={() => removeFile(file.id)}>
+                                                            <FaTimes />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        <form onSubmit={handleChatSubmit} className="chat-input-form">
+                                            <div className="input-actions">
+                                                <button
+                                                    type="button"
+                                                    className="action-btn"
+                                                    onClick={() => fileInputRef.current.click()}
+                                                    title="Upload file"
+                                                >
+                                                    <FaPaperclip />
+                                                </button>
+                                                <input
+                                                    type="file"
+                                                    ref={fileInputRef}
+                                                    style={{ display: 'none' }}
+                                                    onChange={(e) => handleFileUpload(e, 'file')}
+                                                    multiple
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="action-btn"
+                                                    onClick={() => imageInputRef.current.click()}
+                                                    title="Upload image"
+                                                >
+                                                    <FaImage />
+                                                </button>
+                                                <input
+                                                    type="file"
+                                                    ref={imageInputRef}
+                                                    style={{ display: 'none' }}
+                                                    accept="image/*"
+                                                    onChange={(e) => handleFileUpload(e, 'image')}
+                                                    multiple
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="action-btn"
+                                                    onClick={() => codeInputRef.current.click()}
+                                                    title="Upload code file"
+                                                >
+                                                    <FaFileCode />
+                                                </button>
+                                                <input
+                                                    type="file"
+                                                    ref={codeInputRef}
+                                                    style={{ display: 'none' }}
+                                                    accept=".js,.jsx,.ts,.tsx,.py,.java,.cpp,.c,.html,.css,.json,.txt"
+                                                    onChange={(e) => handleFileUpload(e, 'code')}
+                                                    multiple
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className={`action-btn ${isRecording ? 'recording' : ''}`}
+                                                    onClick={handleVoiceInput}
+                                                    title="Voice input"
+                                                >
+                                                    <FaMicrophone />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="action-btn"
+                                                    onClick={() => setShowFormattingBar(!showFormattingBar)}
+                                                    title="Formatting"
+                                                >
+                                                    <FaPalette />
+                                                </button>
+                                            </div>
+
+                                            <textarea
+                                                ref={textareaRef}
+                                                className="chat-input"
+                                                value={chatMessage}
+                                                onChange={(e) => setChatMessage(e.target.value)}
+                                                placeholder="Ask me anything about testing... You can also paste code or upload files!"
+                                                disabled={isLoading}
+                                                rows={1}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' && !e.shiftKey) {
+                                                        e.preventDefault();
+                                                        handleChatSubmit(e);
+                                                    }
+                                                }}
+                                            />
+                                            <button
+                                                type="submit"
+                                                className="send-btn"
+                                                disabled={isLoading || (!chatMessage.trim() && attachedFiles.length === 0)}
+                                            >
+                                                {isLoading ? <FaSpinner className="spinner-icon" /> : <FaPaperPlane />}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </motion.div>
+                    )}
                 </AnimatePresence>
             </div>
 

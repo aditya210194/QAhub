@@ -9,7 +9,9 @@ const PostManagement = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/posts'); // Update with your API
+               const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/posts`, {
+                   headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
+               });
                 setPosts(response.data);
             } catch (error) {
                 console.error('Error fetching posts:', error);

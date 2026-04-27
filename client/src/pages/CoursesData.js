@@ -119,10 +119,10 @@ const CoursesData = [
                 content: "Practical examples helped me implement testing strategies at work immediately."
             }
         ],
-        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        price: 89.99,
+        videoUrl: "https://youtu.be/oOvURgHcd4w?si=7_STQFo5DmWlKxUu",
+        price: 0,
         originalPrice: 129.99,
-        discount: 30,
+        discount: 100,
         articles: 15,
         resources: 24
     },

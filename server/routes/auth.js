@@ -6,8 +6,7 @@ const registerValidator = require('../validators/registerValidator');
 const router = express.Router();
 const nodemailer = require('nodemailer');
 const { authenticate, isAdmin } = require('../middleware/authenticate');
-const crypto = require('crypto'); // Add this at the top of your file
-
+const crypto = require('crypto');
 
 // 🚀 ✅ Public Route - Register
 router.post('/register', async (req, res) => {
@@ -24,12 +23,25 @@ router.post('/register', async (req, res) => {
         fullName: req.body.fullName,
         email: req.body.email,
         password: hashedPassword,
+        role: 'User', // ✅ Add default role
     });
 
     try {
         await newUser.save();
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(201).json({ message: 'User registered successfully', token });
+
+        // ✅ Include user data with role in response
+        res.status(201).json({
+            message: 'User registered successfully',
+            token,
+            user: {
+                id: newUser._id,
+                email: newUser.email,
+                username: newUser.username,
+                fullName: newUser.fullName,
+                role: newUser.role  // ✅ Add role
+            }
+        });
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }
@@ -48,17 +60,24 @@ router.post("/login", async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        // ✅ Set token in HTTP-only cookie
+        // Set token in HTTP-only cookie
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: 'Strict'
         });
 
+        // ✅ FIX: Include the role in the response
         res.json({
             message: "Login successful",
             token,
-            user: { id: user._id, email: user.email, username: user.username, fullName: user.fullName }
+            user: {
+                id: user._id,
+                email: user.email,
+                username: user.username,
+                fullName: user.fullName,
+                role: user.role  // ✅ Add this line
+            }
         });
     } catch (error) {
         console.error("Login Error:", error);
@@ -78,12 +97,11 @@ router.post("/forgot-password", async (req, res) => {
     if (!user) return res.status(400).json({ message: "No user found with this email" });
 
     // Generate a random reset code
-    const resetCode = crypto.randomBytes(3).toString('hex').toUpperCase(); // 6-character code
+    const resetCode = crypto.randomBytes(3).toString('hex').toUpperCase();
     user.resetPasswordCode = resetCode;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour expiration
+    user.resetPasswordExpires = Date.now() + 3600000;
     await user.save();
 
-    // ✅ Send email with reset code
     const transporter = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
@@ -120,12 +138,11 @@ router.post('/reset-password', async (req, res) => {
         const user = await User.findOne({
             email,
             resetPasswordCode: code,
-            resetPasswordExpires: { $gt: Date.now() }, // Check if the code is still valid
+            resetPasswordExpires: { $gt: Date.now() },
         });
 
         if (!user) return res.status(400).json({ message: 'Invalid or expired reset code' });
 
-        // Update the password and clear the reset code
         user.password = await bcrypt.hash(newPassword, 10);
         user.resetPasswordCode = undefined;
         user.resetPasswordExpires = undefined;
@@ -144,7 +161,20 @@ router.get('/profile', authenticate, async (req, res) => {
         const user = await User.findById(req.user.id).select('-password');
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        res.json(user);
+        // ✅ Include role in profile response
+        res.json({
+            id: user._id,
+            username: user.username,
+            fullName: user.fullName,
+            email: user.email,
+            role: user.role,
+            bio: user.bio,
+            location: user.location,
+            experienceLevel: user.experienceLevel,
+            skills: user.skills,
+            reputation: user.reputation,
+            badges: user.badges
+        });
     } catch (error) {
         console.error("Profile Error:", error);
         res.status(500).json({ message: 'Server error' });

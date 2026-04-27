@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
     skills: { type: [String], default: [] },
     links: { type: Object, default: {} },
     profilePicture: { type: String, default: '' },
+    isActive: { type: Boolean, default: true },
     // 🔽 Add Q&A-specific fields
     reputation: { type: Number, default: 0 },
     badges: { type: [String], default: [] },

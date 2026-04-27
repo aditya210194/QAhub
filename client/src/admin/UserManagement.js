@@ -7,7 +7,9 @@ const UserManagement = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/users'); // Update with your API
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/users`, {
+                    headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
+                });
                 setUsers(response.data);
             } catch (error) {
                 console.error('Error fetching users:', error);

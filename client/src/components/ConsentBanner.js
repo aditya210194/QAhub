@@ -1,52 +1,61 @@
-// components/ConsentBanner.js
-import React, { useState, useEffect } from 'react';
+// src/components/ConsentBanner.jsx
+import { useCookieConsent } from '@vantezzen/react-cookie-banner';
 
 const ConsentBanner = () => {
-    const [showBanner, setShowBanner] = useState(false);
+  const { acceptAllCookies, declineAllCookies, visible } = useCookieConsent();
 
-    useEffect(() => {
-        const userConsent = localStorage.getItem('userConsent');
-        if (!userConsent) {
-            setShowBanner(true);
-        } else {
-            // Re-apply consent on reload
-            window.gtag?.('consent', 'update', {
-                ad_storage: userConsent === 'granted' ? 'granted' : 'denied',
-                analytics_storage: userConsent === 'granted' ? 'granted' : 'denied'
-            });
-        }
-    }, []);
+  if (!visible) return null;
 
-    const handleConsent = (choice) => {
-        localStorage.setItem('userConsent', choice ? 'granted' : 'denied');
-        window.gtag?.('consent', 'update', {
-            ad_storage: choice ? 'granted' : 'denied',
-            analytics_storage: choice ? 'granted' : 'denied'
-        });
-        setShowBanner(false);
-    };
-
-    if (!showBanner) return null;
-
-    return (
-        <div style={{
-            position: 'fixed',
-            bottom: 0,
-            width: '100%',
-            backgroundColor: '#000',
-            color: '#fff',
-            padding: '1rem',
-            zIndex: 9999,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '1rem',
-        }}>
-            We use cookies to improve your experience. Do you accept?
-            <button style={{ padding: '6px 12px' }} onClick={() => handleConsent(true)}>Accept</button>
-            <button style={{ padding: '6px 12px' }} onClick={() => handleConsent(false)}>Decline</button>
-        </div>
-    );
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      background: '#fff',
+      boxShadow: '0 -2px 10px rgba(0,0,0,0.2)',
+      padding: '1rem',
+      zIndex: 1000,
+      textAlign: 'center',
+      borderTop: '1px solid #ddd',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      <p style={{ marginBottom: '0.75rem', fontSize: '0.9rem' }}>
+        We use cookies to enhance your experience, analyze site traffic, and serve personalized ads.
+        By clicking "Accept All", you consent to our use of cookies.
+        <a href="/privacy-policy" style={{ marginLeft: '5px', color: '#667eea' }}>Learn more</a>
+      </p>
+      <div>
+        <button
+          onClick={declineAllCookies}
+          style={{
+            marginRight: '10px',
+            padding: '8px 20px',
+            backgroundColor: '#6c757d',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer'
+          }}
+        >
+          Decline
+        </button>
+        <button
+          onClick={acceptAllCookies}
+          style={{
+            padding: '8px 20px',
+            backgroundColor: '#667eea',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer'
+          }}
+        >
+          Accept All
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default ConsentBanner;

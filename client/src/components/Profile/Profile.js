@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { fetchUserProfile } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import './Profile.css';
-import { getProfileImageUrl } from '../../utils/imageUtils';
 import { FaUser, FaEnvelope, FaMapMarkerAlt, FaBriefcase, FaCode, FaSave, FaTimes, FaEdit, FaSignOutAlt, FaUpload } from 'react-icons/fa';
 
 const Profile = ({ setToken }) => {
@@ -15,11 +14,79 @@ const Profile = ({ setToken }) => {
     const [loading, setLoading] = useState(true);
     const [imageError, setImageError] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const navigate = useNavigate();
 
+    // FIX 1: Proper image URL construction
+    const getProfileImageUrl = useCallback(() => {
+        if (imageError) {
+            return '/default-profile-pic.jpg';
+        }
+
+        // Check if profilePicture exists
+        if (!profile.profilePicture) {
+            return '/default-profile-pic.jpg';
+        }
+
+        const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+        let imagePath = profile.profilePicture;
+
+        // If it's already a full URL
+        if (imagePath.startsWith('http')) {
+            return imagePath;
+        }
+
+        // Remove backslashes and clean up
+        imagePath = imagePath.replace(/\\/g, '/');
+
+        // Remove any duplicate uploads folders
+        if (imagePath.includes('uploads/uploads/')) {
+            imagePath = imagePath.replace('uploads/uploads/', 'uploads/');
+        }
+
+        // Construct the full URL
+        let fullUrl;
+        if (imagePath.startsWith('/')) {
+            fullUrl = `${baseUrl}${imagePath}`;
+        } else if (imagePath.startsWith('uploads/')) {
+            fullUrl = `${baseUrl}/${imagePath}`;
+        } else {
+            fullUrl = `${baseUrl}/uploads/profile_pictures/${imagePath.split('/').pop()}`;
+        }
+
+        console.log('Constructed image URL:', fullUrl);
+        return fullUrl;
+    }, [profile.profilePicture, imageError]);
+
+    // FIX 2: Prevent multiple API calls with AbortController
     useEffect(() => {
+        const abortController = new AbortController();
         const token = sessionStorage.getItem('token');
         const storedUser = sessionStorage.getItem('user');
+
+        // Check if profile already exists in session storage
+        const cachedProfile = sessionStorage.getItem('cachedProfile');
+        const cacheTime = sessionStorage.getItem('profileCacheTime');
+        const now = Date.now();
+
+        // Use cache if less than 5 minutes old
+        if (cachedProfile && cacheTime && (now - parseInt(cacheTime) < 300000)) {
+            try {
+                const parsedProfile = JSON.parse(cachedProfile);
+                console.log('Using cached profile');
+                setProfile(parsedProfile);
+                setUpdatedProfile({
+                    ...parsedProfile,
+                    experience: parsedProfile.experience || [],
+                    experienceLevel: parsedProfile.experienceLevel || "",
+                    skills: Array.isArray(parsedProfile.skills) ? parsedProfile.skills : [],
+                });
+                setLoading(false);
+                return;
+            } catch (err) {
+                console.error('Error parsing cached profile:', err);
+            }
+        }
 
         if (storedUser === 'undefined' || storedUser === 'null') {
             console.log('Cleaning up invalid user data');
@@ -29,8 +96,14 @@ const Profile = ({ setToken }) => {
         if (token) {
             const fetchProfile = async () => {
                 try {
-                    const response = await fetchUserProfile(token);
+                    console.log('Fetching profile from API...');
+                    const response = await fetchUserProfile(token, { signal: abortController.signal });
                     console.log('Profile data received:', response);
+
+                    // Cache the profile
+                    sessionStorage.setItem('cachedProfile', JSON.stringify(response));
+                    sessionStorage.setItem('profileCacheTime', Date.now().toString());
+
                     setProfile(response);
                     setUpdatedProfile({
                         ...response,
@@ -39,8 +112,10 @@ const Profile = ({ setToken }) => {
                         skills: Array.isArray(response.skills) ? response.skills : [],
                     });
                 } catch (err) {
-                    console.error('Error fetching profile:', err.response?.data || err.message);
-                    showAlert('error', 'Failed to load profile. Please try again.');
+                    if (err.name !== 'AbortError') {
+                        console.error('Error fetching profile:', err.response?.data || err.message);
+                        showAlert('error', 'Failed to load profile. Please try again.');
+                    }
                 } finally {
                     setLoading(false);
                 }
@@ -49,16 +124,23 @@ const Profile = ({ setToken }) => {
         } else {
             navigate('/login');
         }
+
+        return () => abortController.abort();
     }, [navigate]);
 
+    // FIX 3: Remove duplicate token change listener
     useEffect(() => {
         const handleTokenChange = () => {
-            setToken(sessionStorage.getItem('token'));
+            const newToken = sessionStorage.getItem('token');
+            setToken(newToken);
+            if (!newToken) {
+                navigate('/login');
+            }
         };
 
         window.addEventListener('storage', handleTokenChange);
         return () => window.removeEventListener('storage', handleTokenChange);
-    }, [setToken]);
+    }, [setToken, navigate]);
 
     const showAlert = (type, message) => {
         setAlert({ show: true, type, message });
@@ -83,12 +165,26 @@ const Profile = ({ setToken }) => {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        setProfilePic(file);
-        setImageError(false);
+        if (file) {
+            // Validate file type and size
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                showAlert('error', 'Please upload a valid image file (JPEG, PNG, GIF)');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                showAlert('error', 'Image size should be less than 5MB');
+                return;
+            }
+            setProfilePic(file);
+            setImageError(false);
+        }
     };
 
     const handleSaveChanges = async () => {
         try {
+            setUploading(true);
+
             if (!updatedProfile || typeof updatedProfile !== "object") {
                 showAlert('error', "Profile data is missing. Please refresh and try again.");
                 return;
@@ -129,29 +225,46 @@ const Profile = ({ setToken }) => {
             if (response.status === 200) {
                 showAlert('success', "Profile updated successfully!");
 
+                // Clear cache
+                sessionStorage.removeItem('cachedProfile');
+                sessionStorage.removeItem('profileCacheTime');
+
                 // Refresh the profile data
                 const refreshedProfile = await fetchUserProfile(token);
                 setProfile(refreshedProfile);
+                setUpdatedProfile({
+                    ...refreshedProfile,
+                    skills: Array.isArray(refreshedProfile.skills) ? refreshedProfile.skills : [],
+                });
                 setEditMode(false);
                 setProfilePic(null);
                 setImageError(false);
             }
         } catch (err) {
             console.error("Error saving changes:", err.response ? err.response.data : err.message);
-            showAlert('error', "Failed to update profile. Please try again.");
+            showAlert('error', err.response?.data?.message || "Failed to update profile. Please try again.");
+        } finally {
+            setUploading(false);
         }
     };
 
     const handleCancel = () => {
-        setUpdatedProfile(profile);
+        setUpdatedProfile({
+            ...profile,
+            skills: Array.isArray(profile.skills) ? profile.skills : [],
+        });
         setEditMode(false);
         setProfilePic(null);
         setImageError(false);
     };
 
     const handleLogout = () => {
+        // Clear all session storage
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('user');
+        sessionStorage.removeItem('cachedProfile');
+        sessionStorage.removeItem('profileCacheTime');
+
         setProfile({});
         setUpdatedProfile({});
         setToken(null);
@@ -161,7 +274,7 @@ const Profile = ({ setToken }) => {
     };
 
     const handleImageError = () => {
-        console.log('Image failed to load, using default');
+        console.log('Image failed to load');
         setImageError(true);
         setImageLoaded(false);
     };
@@ -171,53 +284,6 @@ const Profile = ({ setToken }) => {
         setImageLoaded(true);
         setImageError(false);
     };
-
-    // Get profile image URL - simplified version
-    const getProfileImageUrl = () => {
-        if (imageError) {
-            return '/default-profile-pic.jpg';
-        }
-
-        if (profile.profilePicture) {
-            // If it's already a full URL, use it directly
-            if (profile.profilePicture.startsWith('http')) {
-                return profile.profilePicture;
-            }
-
-            // Construct the URL
-            const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-
-            // Handle different path formats
-            let imagePath = profile.profilePicture;
-
-            // Remove any backslashes
-            imagePath = imagePath.replace(/\\/g, '/');
-
-            // If it already has uploads in the path, use it as is
-            if (imagePath.includes('uploads/')) {
-                return `${baseUrl}/${imagePath}`;
-            }
-
-            // If it's just a filename, add the uploads path
-            return `${baseUrl}/uploads/profile_pictures/${imagePath.split('/').pop()}`;
-        }
-
-        return '/default-profile-pic.jpg';
-    };
-
-    // Debug: Log the image URL whenever profile changes
-    useEffect(() => {
-        if (profile.profilePicture) {
-            const url = getProfileImageUrl();
-            console.log('Profile image URL:', url);
-
-            // Test if the image loads
-            const img = new Image();
-            img.onload = () => console.log('Image preload successful:', url);
-            img.onerror = () => console.log('Image preload failed:', url);
-            img.src = url;
-        }
-    }, [profile.profilePicture]);
 
     if (loading) {
         return (
@@ -243,129 +309,150 @@ const Profile = ({ setToken }) => {
             {profile ? (
                 <div className="profile-card">
                     {editMode ? (
-                        <>
+                        // Edit Mode - Full Implementation
+                        <div className="profile-card-body">
                             <div className="profile-card-header">
                                 <h5><FaEdit /> Edit Profile</h5>
                             </div>
-                            <div className="profile-card-body">
-                                <form className="edit-form">
-                                    <div className="form-group">
-                                        <label className="form-label">Username</label>
+
+                            <form onSubmit={(e) => e.preventDefault()} className="edit-form">
+                                <div className="form-group">
+                                    <label className="form-label">Username</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="username"
+                                        value={updatedProfile.username || ''}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Full Name</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="fullName"
+                                        value={updatedProfile.fullName || ''}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Email</label>
+                                    <input
+                                        type="email"
+                                        className="form-control"
+                                        name="email"
+                                        value={updatedProfile.email || ''}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Bio</label>
+                                    <textarea
+                                        className="form-control"
+                                        name="bio"
+                                        value={updatedProfile.bio || ''}
+                                        onChange={handleInputChange}
+                                        rows="3"
+                                        placeholder="Tell us about yourself..."
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Location</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="location"
+                                        value={updatedProfile.location || ''}
+                                        onChange={handleInputChange}
+                                        placeholder="City, Country"
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Experience Level</label>
+                                    <select
+                                        className="form-control"
+                                        name="experienceLevel"
+                                        value={updatedProfile.experienceLevel || ''}
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value="">Select experience level</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Skills (comma separated)</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="skills"
+                                        value={updatedProfile.skills?.join(', ') || ''}
+                                        onChange={handleInputChange}
+                                        placeholder="React, JavaScript, Node.js, Python"
+                                    />
+                                    <small className="form-text text-muted">
+                                        Enter your skills separated by commas
+                                    </small>
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Profile Picture</label>
+                                    <div className="file-input-wrapper">
                                         <input
-                                            type="text"
-                                            className="form-control"
-                                            name="username"
-                                            value={updatedProfile.username}
-                                            onChange={handleInputChange}
+                                            type="file"
+                                            id="profile-pic"
+                                            onChange={handleFileChange}
+                                            accept="image/*"
+                                            style={{ display: 'none' }}
                                         />
+                                        <label htmlFor="profile-pic" className="file-input-label">
+                                            <FaUpload /> Choose an image
+                                        </label>
                                     </div>
-
-                                    <div className="form-group">
-                                        <label className="form-label">Full Name</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            name="fullName"
-                                            value={updatedProfile.fullName}
-                                            onChange={handleInputChange}
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="form-label">Email</label>
-                                        <input
-                                            type="email"
-                                            className="form-control"
-                                            name="email"
-                                            value={updatedProfile.email}
-                                            onChange={handleInputChange}
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="form-label">Bio</label>
-                                        <textarea
-                                            className="form-control"
-                                            name="bio"
-                                            value={updatedProfile.bio || ''}
-                                            onChange={handleInputChange}
-                                            placeholder="Tell us about yourself..."
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="form-label">Location</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            name="location"
-                                            value={updatedProfile.location || ''}
-                                            onChange={handleInputChange}
-                                            placeholder="City, Country"
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="form-label">Experience Level</label>
-                                        <select
-                                            className="form-control"
-                                            name="experienceLevel"
-                                            value={updatedProfile.experienceLevel || ''}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value="Beginner">Beginner</option>
-                                            <option value="Intermediate">Intermediate</option>
-                                            <option value="Advanced">Advanced</option>
-                                        </select>
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="form-label">Skills (comma separated)</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            name="skills"
-                                            value={updatedProfile.skills?.join(', ') || ''}
-                                            onChange={handleInputChange}
-                                            placeholder="React, JavaScript, Node.js"
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="form-label">Profile Picture</label>
-                                        <div className="file-input-wrapper">
-                                            <input
-                                                type="file"
-                                                id="profile-pic"
-                                                onChange={handleFileChange}
-                                                accept="image/*"
+                                    {profilePic && (
+                                        <div className="profile-pic-preview">
+                                            <img
+                                                src={URL.createObjectURL(profilePic)}
+                                                alt="Preview"
+                                                style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', marginTop: '10px' }}
                                             />
-                                            <label htmlFor="profile-pic" className="file-input-label">
-                                                <FaUpload /> Choose an image
-                                            </label>
+                                            <p style={{ marginTop: '5px', fontSize: '12px', color: '#666' }}>New image selected</p>
                                         </div>
-                                        {profilePic && (
-                                            <div className="profile-pic-preview">
-                                                <img
-                                                    src={URL.createObjectURL(profilePic)}
-                                                    alt="Preview"
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
+                                    )}
+                                </div>
 
-                                    <div className="form-actions">
-                                        <button type="button" className="profile-btn profile-btn-primary" onClick={handleSaveChanges}>
-                                            <FaSave /> Save Changes
-                                        </button>
-                                        <button type="button" className="profile-btn profile-btn-secondary" onClick={handleCancel}>
-                                            <FaTimes /> Cancel
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </>
+                                <div className="form-actions">
+                                    <button
+                                        type="button"
+                                        className="profile-btn profile-btn-primary"
+                                        onClick={handleSaveChanges}
+                                        disabled={uploading}
+                                    >
+                                        <FaSave /> {uploading ? 'Saving...' : 'Save Changes'}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="profile-btn profile-btn-secondary"
+                                        onClick={handleCancel}
+                                        disabled={uploading}
+                                    >
+                                        <FaTimes /> Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     ) : (
+                        // View Mode - Your existing working code
                         <>
                             <div className="profile-card-body">
                                 <div className="profile-avatar-container">
@@ -374,15 +461,16 @@ const Profile = ({ setToken }) => {
                                             <div className="spinner-small"></div>
                                         </div>
                                     )}
-                                   <img
-                                       key={getProfileImageUrl(profile.profilePicture)}
-                                       src={getProfileImageUrl(profile.profilePicture)}
-                                       alt={profile.username || "User"}
-                                       className={`profile-avatar ${imageLoaded ? 'loaded' : 'loading'}`}
-                                       onError={handleImageError}
-                                       onLoad={handleImageLoad}
-                                       style={{ display: 'block' }}
-                                   />
+                                    <img
+                                        key={profile.profilePicture || 'default'}
+                                        src={getProfileImageUrl()}
+                                        alt={profile.username || "User"}
+                                        className={`profile-avatar ${imageLoaded ? 'loaded' : 'loading'}`}
+                                        onError={handleImageError}
+                                        onLoad={handleImageLoad}
+                                        style={{ display: 'block' }}
+                                        crossOrigin="anonymous"
+                                    />
                                 </div>
 
                                 <h3 className="profile-username">{profile.username}</h3>
@@ -409,12 +497,12 @@ const Profile = ({ setToken }) => {
                                     </div>
                                 </div>
 
-                                <div className="profile-info-item">
+                                <div className="profile-info-item full-width">
                                     <span className="profile-info-label">Bio</span>
                                     <span className="profile-info-value">{profile.bio || 'No bio provided'}</span>
                                 </div>
 
-                                <div className="profile-info-item">
+                                <div className="profile-info-item full-width">
                                     <span className="profile-info-label"><FaCode /> Skills</span>
                                     <div className="profile-skills">
                                         {profile.skills && profile.skills.length > 0 ? (
@@ -447,6 +535,5 @@ const Profile = ({ setToken }) => {
         </div>
     );
 };
- 
 
 export default Profile;
