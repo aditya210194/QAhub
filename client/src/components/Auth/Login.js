@@ -4,6 +4,7 @@ import { useNavigate,  useSearchParams } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaGoogle, FaGithub, FaUser, FaLock } from 'react-icons/fa';
 import './Login.css';
 import SecondHeader from "../../pages/SecondHeader";
+import loginHeroImg from '../../images/login-hero.jpg';
 
 const Login = () => {
     const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -44,11 +45,19 @@ const Login = () => {
 
            sessionStorage.setItem('token', data.token);
            sessionStorage.setItem('user', JSON.stringify(data.user));
+           // Also store in localStorage for persistence
+           localStorage.setItem('user', JSON.stringify(data.user));
            window.dispatchEvent(new Event("storage"));
 
-           // Validate and navigate only once
-           const safeRedirect = isValidRedirect(redirectTo) ? redirectTo : '/profile';
-           navigate(safeRedirect);
+           // Check if user is Admin and redirect accordingly
+           if (data.user && data.user.role === 'Admin') {
+               console.log('Admin user detected, redirecting to /admin');
+               navigate('/admin');
+           } else {
+               // Validate and navigate only once for non-admin users
+               const safeRedirect = isValidRedirect(redirectTo) ? redirectTo : '/profile';
+               navigate(safeRedirect);
+           }
        } catch (err) {
            setError(err.response?.data?.message || 'Invalid credentials');
        } finally {
@@ -182,7 +191,15 @@ const Login = () => {
                 </div>
             </div>
 
-            <div className="login-graphics">
+            <div
+                                className="login-graphics"
+                               style={{
+                                   backgroundImage: `url(${loginHeroImg})`,
+                                   backgroundSize: 'cover',
+                                   backgroundPosition: 'center',
+                                   backgroundRepeat: 'no-repeat'
+                               }}
+                            >
                 <div className="graphic-content">
                     <div className="graphic-text">
                         <h2>QA Learning Hub</h2>

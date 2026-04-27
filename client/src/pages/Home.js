@@ -5,6 +5,7 @@ import 'aos/dist/aos.css';
 import './Home.css';
 import SecondHeader from "./SecondHeader";
 import CoursesData from './CoursesData';
+import heroBg from '../images/heroBg.png';
 
 const Home = () => {
     useEffect(() => {
@@ -129,6 +130,7 @@ const Home = () => {
             {/* Hero Section */}
             <section className="hero-section">
                 <div className="hero-overlay"></div>
+                <div className="hero-bg-image" style={{ backgroundImage: `url(${heroBg})` }}></div>
                 <div className="container hero-content">
                     <div className="row">
                         <div className="col-lg-7">

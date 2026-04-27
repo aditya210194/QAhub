@@ -690,3 +690,60 @@ input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px white inset !important;
     -webkit-text-fill-color: #2d3748 !important;
 }
+/* ==================== RIGHT SIDE BACKGROUND IMAGE ==================== */
+.login-graphics {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+/* Dark overlay for better text readability */
+.login-graphics::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%);
+    z-index: 0;
+}
+
+/* Ensure content stays above overlay */
+.graphic-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* Animated grid overlay for extra effect */
+.login-graphics::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridMove 20s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes gridMove {
+    0% { transform: translateX(0) translateY(0); }
+    100% { transform: translateX(40px) translateY(40px); }
+}
+
+/* Optional: Add a subtle glow effect */
+.login-graphics .graphic-text h2 {
+    text-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+.login-graphics .graphic-text p {
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
