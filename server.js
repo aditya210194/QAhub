@@ -78,17 +78,10 @@ app.use(cookieParser()); // Required for accessing cookies
 // CORS setup
 // ✅ Apply CORS **before** defining routes
 app.use(cors({
-    origin: function (origin, callback) {
-        const allowedOrigins = ['https://qahub.co.in', 'https://www.qahub.co.in', 'http://localhost:3000', 'https://api.qahub.co.in'];
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, origin);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: true, // ✅ allow all valid origins dynamically
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // ✅ Explicitly set CORS headers for all OPTIONS requests
