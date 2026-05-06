@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.0b65297f.css",
-    "main.js": "/static/js/main.77b054c7.js",
+    "main.js": "/static/js/main.b9edcc8c.js",
     "static/js/213.4a1d497a.chunk.js": "/static/js/213.4a1d497a.chunk.js",
     "static/js/455.1548cb62.chunk.js": "/static/js/455.1548cb62.chunk.js",
     "static/media/register-hero.jpg": "/static/media/register-hero.06ba2a75fbd4a75ca434.jpg",
@@ -126,12 +126,12 @@
     "static/media/KaTeX_Size3-Regular.woff2": "/static/media/KaTeX_Size3-Regular.e1951519f6f0596f7356.woff2",
     "index.html": "/index.html",
     "main.0b65297f.css.map": "/static/css/main.0b65297f.css.map",
-    "main.77b054c7.js.map": "/static/js/main.77b054c7.js.map",
+    "main.b9edcc8c.js.map": "/static/js/main.b9edcc8c.js.map",
     "213.4a1d497a.chunk.js.map": "/static/js/213.4a1d497a.chunk.js.map",
     "455.1548cb62.chunk.js.map": "/static/js/455.1548cb62.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.0b65297f.css",
-    "static/js/main.77b054c7.js"
+    "static/js/main.b9edcc8c.js"
   ]
 }

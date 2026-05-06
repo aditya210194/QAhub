@@ -1,18 +1,18 @@
 import axios from 'axios';
 
 // Base URL for your BE API
-const API_URL = process.env.REACT_APP_API_URL + '/api/auth';
+const API_URL = `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/auth`;
 
 // Register User
 export const registerUser = async (userData) => {
-    const response = await axios.post(`${API_URL}/register`, userData);
+    const response = await axios.post(`${API_URL}/register`, userData,{ withCredentials: true });
     return response.data;
 };
 
 // Login User
 export const loginUser = async (credentials) => {
     try {
-        const response = await axios.post(`${API_URL}/login`, credentials);
+        const response = await axios.post(`${API_URL}/login`, credentials,{ withCredentials: true });
 
         console.log('=== LOGIN API RESPONSE ===');
         console.log('Full response:', response);
