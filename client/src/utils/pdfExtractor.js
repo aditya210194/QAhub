@@ -4,6 +4,33 @@ import * as pdfjsLib from 'pdfjs-dist';
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
+const KEYWORD_CATEGORIES = {
+  testing: [
+    'Selenium',
+    'Cypress',
+    'Playwright',
+    'Appium',
+    'JUnit',
+    'TestNG',
+    'Postman',
+    'JMeter'
+  ],
+  programming: [
+    'JavaScript',
+    'Java',
+    'Python',
+    'TypeScript',
+    'C#'
+  ],
+  tools: [
+    'Git',
+    'Jenkins',
+    'Docker',
+    'Jira',
+    'GitHub'
+  ]
+};
+
 // ==================== ADVANCED PDF TEXT EXTRACTION ====================
 export const extractTextFromPDF = async (arrayBuffer) => {
     try {
