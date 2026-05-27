@@ -29,19 +29,21 @@ const path = require('path');
 let requestCounts = {}; // Store request counts per IP
 const app = express();
 const port = process.env.PORT || 5000;
-
+app.set('trust proxy', 1);
 // Create HTTP server and integrate Socket.io
 const server = http.createServer(app);
 //setSocketIO(io);
 const io = socketIo(server, {
     cors: {
-        origin: ['https://qahub.co.in', 'https://www.qahub.co.in', 'http://localhost:3000', 'https://api.qahub.co.in'],
-        methods: ['GET', 'POST'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
+        origin: [
+            "https://qahub.co.in",
+            "https://www.qahub.co.in",
+            "http://localhost:3000"
+        ],
+        methods: ["GET", "POST"],
         credentials: true
     },
-    transports: ['websocket', 'polling'],
-    allowEIO3: true, // Ensure compatibility with older clients
+    transports: ["websocket", "polling"]
 });
 const { setSocketIO } = require('./controllers/mentorshipController');
 setSocketIO(io);
@@ -92,13 +94,7 @@ app.use(cors({
 }));
 
 // ✅ Explicitly set CORS headers for all OPTIONS requests
-app.options("*", (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.status(204).end();
-});
+
 
 
 const questionLimiter = rateLimit({
@@ -157,45 +153,61 @@ app.use((err, req, res, next) => {
 
 // Socket.io event listeners
 io.on('connection', (socket) => {
-    console.log('A user connected');
 
-    // Listen for new discussions
+    console.log('✅ Socket connected:', socket.id);
+
+    socket.join(socket.id);
+
+    // New Discussion
     socket.on('new-discussion', async (discussion) => {
+
         try {
-            // Save the discussion to the database
+
             const newDiscussion = new Discussion(discussion);
+
             await newDiscussion.save();
 
-            // Broadcast the new discussion to all connected clients
             io.emit('new-discussion', newDiscussion);
+
         } catch (error) {
+
             console.error('Error saving new discussion:', error);
+
         }
+
     });
 
-    // Listen for new messages
+    // Messages
     socket.on('sendMessage', async (messageData) => {
+
         try {
-            // Create a new message instance
+
             const newMessage = new Message({
                 discussionId: messageData.discussionId,
                 sender: messageData.sender,
                 text: messageData.text,
             });
 
-            // Save the message to the database
             await newMessage.save();
 
-            // Emit the message to other clients in the same discussion
-            socket.to(messageData.discussionId).emit('receiveMessage', newMessage);
+            socket
+                .to(messageData.discussionId)
+                .emit('receiveMessage', newMessage);
+
         } catch (error) {
+
             console.error('Error saving message:', error);
+
         }
+
     });
 
     socket.on('disconnect', () => {
-        console.log('A user disconnected');
+
+        console.log('❌ Socket disconnected:', socket.id);
+
     });
+
 });
 
 // Start server
