@@ -204,9 +204,9 @@ const CourseDetailPage = () => {
                             </div>
                             <Card.Body>
                                 <div className="price-container">
-                                    <span className="current-price">${course.price}</span>
+                                    <span className="current-price">₹{course.price}</span>
                                     {course.originalPrice && (
-                                        <span className="original-price">${course.originalPrice}</span>
+                                        <span className="original-price">₹{course.originalPrice}</span>
                                     )}
                                     <span className="discount-badge">
                                         {course.discount}% off
