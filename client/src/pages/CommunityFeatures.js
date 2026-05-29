@@ -16,31 +16,22 @@ const CommunityFeatures = () => {
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.2,
-                delayChildren: 0.3
+                staggerChildren: 0.1,
+                delayChildren: 0.2
             }
         }
     };
 
     const itemVariants = {
-        hidden: { y: 50, opacity: 0 },
+        hidden: { y: 30, opacity: 0 },
         visible: {
             y: 0,
             opacity: 1,
             transition: {
                 type: "spring",
-                stiffness: 100,
-                damping: 12
+                stiffness: 120,
+                damping: 14
             }
-        }
-    };
-
-    const floatingAnimation = {
-        y: [0, -10, 0],
-        transition: {
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut"
         }
     };
 
@@ -53,7 +44,7 @@ const CommunityFeatures = () => {
             image: forum,
             path: "/community-features/discussion-forums",
             color: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-            stats: "2.5k+ Active Discussions",
+            stats: "2.5k+ Discussions",
             delay: 0
         },
         {
@@ -64,8 +55,8 @@ const CommunityFeatures = () => {
             image: QA,
             path: "/community-features/qa",
             color: "linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)",
-            stats: "5k+ Questions Answered",
-            delay: 0.2
+            stats: "5k+ Answered",
+            delay: 0.1
         },
         {
             id: 3,
@@ -75,8 +66,8 @@ const CommunityFeatures = () => {
             image: Mentorship,
             path: "/community-features/qa/mentorship-program",
             color: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-            stats: "100+ Active Mentors",
-            delay: 0.4,
+            stats: "100+ Mentors",
+            delay: 0.2,
             comingSoon: false
         },
         {
@@ -89,109 +80,93 @@ const CommunityFeatures = () => {
             color: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
             stats: "Coming Soon",
             comingSoon: true,
-            delay: 0.6
+            delay: 0.3
         }
     ];
 
-   const handleNavigation = (path) => {
-       if (isLoggedIn) {
-           navigate(path);
-       } else {
-           // Encode the path to include it as a safe query parameter
-           navigate(`/login?next=${encodeURIComponent(path)}`);
-       }
-   };
+    const handleNavigation = (path) => {
+        if (isLoggedIn) {
+            navigate(path);
+        } else {
+            navigate(`/login?next=${encodeURIComponent(path)}`);
+        }
+    };
 
     return (
         <div className="community-features">
-            {/* Hero Section */}
+            {/* Hero Section - Reduced Height */}
             <motion.div
-                className="hero-section"
-                initial={{ opacity: 0, y: -50 }}
+                className="hero-section-compact"
+                initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.6 }}
             >
-                <motion.div
-                    className="hero-content"
-                    animate={floatingAnimation}
-                >
-                    <h1 className="hero-title">
+                <div className="hero-content-compact">
+                    <h1 className="hero-title-compact">
                         Welcome to the
                         <span className="gradient-text"> QA Community</span>
                     </h1>
-                    <p className="hero-subtitle">
+                    <p className="hero-subtitle-compact">
                         Connect, learn, and grow with thousands of QA professionals worldwide
                     </p>
-                    <div className="hero-stats">
-                        <motion.div
-                            className="stat-item"
-                            whileHover={{ scale: 1.1 }}
-                        >
-                            <span className="stat-number">10k+</span>
-                            <span className="stat-label">Members</span>
-                        </motion.div>
-                        <motion.div
-                            className="stat-item"
-                            whileHover={{ scale: 1.1 }}
-                        >
-                            <span className="stat-number">5k+</span>
-                            <span className="stat-label">Discussions</span>
-                        </motion.div>
-                        <motion.div
-                            className="stat-item"
-                            whileHover={{ scale: 1.1 }}
-                        >
-                            <span className="stat-number">100+</span>
-                            <span className="stat-label">Mentors</span>
-                        </motion.div>
+                    <div className="hero-stats-compact">
+                        <div className="stat-item-compact">
+                            <span className="stat-number-compact">10k+</span>
+                            <span className="stat-label-compact">Members</span>
+                        </div>
+                        <div className="stat-item-compact">
+                            <span className="stat-number-compact">5k+</span>
+                            <span className="stat-label-compact">Discussions</span>
+                        </div>
+                        <div className="stat-item-compact">
+                            <span className="stat-number-compact">100+</span>
+                            <span className="stat-label-compact">Mentors</span>
+                        </div>
                     </div>
-                </motion.div>
-                <div className="hero-pattern"></div>
+                </div>
             </motion.div>
 
-            {/* Features Grid */}
+            {/* Features Grid - Horizontal Scroll / Single Line */}
             <motion.div
-                className="features-container"
+                className="features-container-horizontal"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
             >
-                <div className="features-grid">
-                    {features.map((feature) => (
-                        <motion.div
-                            key={feature.id}
-                            className="feature-card-wrapper"
-                            variants={itemVariants}
-                            whileHover={{
-                                y: -10,
-                                transition: { duration: 0.3 }
-                            }}
-                        >
-                            <div
-                                className="feature-card"
-                                style={{ background: feature.color }}
+                <div className="features-scroll-wrapper">
+                    <div className="features-horizontal-grid">
+                        {features.map((feature) => (
+                            <motion.div
+                                key={feature.id}
+                                className="feature-card-compact"
+                                variants={itemVariants}
+                                whileHover={{ y: -5, transition: { duration: 0.2 } }}
                             >
-                                <div className="card-content">
-                                    <motion.div
-                                        className="card-icon"
-                                        whileHover={{ rotate: 360 }}
-                                        transition={{ duration: 0.6 }}
-                                    >
-                                        {feature.icon}
-                                    </motion.div>
-
-                                    <h3 className="card-title">{feature.title}</h3>
-                                    <p className="card-description">{feature.description}</p>
-
-                                    <div className="card-stats">
-                                        <span className="stats-badge">{feature.stats}</span>
+                                <div
+                                    className="card-content-compact"
+                                    style={{ background: feature.color }}
+                                >
+                                    <div className="card-header">
+                                        <motion.div
+                                            className="card-icon-compact"
+                                            whileHover={{ rotate: 360 }}
+                                            transition={{ duration: 0.5 }}
+                                        >
+                                            {feature.icon}
+                                        </motion.div>
+                                        <div className="card-stats-compact">
+                                            <span className="stats-badge-compact">{feature.stats}</span>
+                                        </div>
                                     </div>
 
+                                    <h3 className="card-title-compact">{feature.title}</h3>
+                                    <p className="card-description-compact">{feature.description}</p>
+
                                     <motion.button
-                                        className={`card-button ${!isLoggedIn ? 'locked' : ''} ${feature.comingSoon ? 'coming-soon' : ''}`}
+                                        className={`card-button-compact ${!isLoggedIn ? 'locked' : ''} ${feature.comingSoon ? 'coming-soon' : ''}`}
                                         onClick={() => !feature.comingSoon && handleNavigation(feature.path)}
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
                                         disabled={feature.comingSoon}
                                     >
                                         {feature.comingSoon ? (
@@ -199,89 +174,42 @@ const CommunityFeatures = () => {
                                         ) : !isLoggedIn ? (
                                             <>
                                                 <FaLock className="button-icon" />
-                                                Login to Access
+                                                Login
                                                 <FaArrowRight className="button-arrow" />
                                             </>
                                         ) : (
                                             <>
-                                                Explore Now
+                                                Explore
                                                 <FaArrowRight className="button-arrow" />
                                             </>
                                         )}
                                     </motion.button>
                                 </div>
-
-                                {/* Background Image Overlay */}
                                 <div
-                                    className="card-background"
+                                    className="card-background-compact"
                                     style={{ backgroundImage: `url(${feature.image})` }}
                                 ></div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </motion.div>
-
-            {/* Community Stats Section */}
-            <motion.div
-                className="community-stats-section"
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-            >
-                <h2 className="section-title">Join Our Growing Community</h2>
-                <div className="stats-grid">
-                    <motion.div
-                        className="stat-card"
-                        whileHover={{ scale: 1.05 }}
-                    >
-                        <div className="stat-icon">🌍</div>
-                        <div className="stat-detail">
-                            <span className="stat-value">50+</span>
-                            <span className="stat-label-countries">Countries</span>
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        className="stat-card"
-                        whileHover={{ scale: 1.05 }}
-                    >
-                        <div className="stat-icon">💬</div>
-                        <div className="stat-detail">
-                            <span className="stat-value">15k+</span>
-                            <span className="stat-label-countries">Messages Daily</span>
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        className="stat-card"
-                        whileHover={{ scale: 1.05 }}
-                    >
-                        <div className="stat-icon">🏆</div>
-                        <div className="stat-detail">
-                            <span className="stat-value">500+</span>
-                            <span className="stat-label-countries">Success Stories</span>
-                        </div>
-                    </motion.div>
+                            </motion.div>
+                        ))}
+                    </div>
                 </div>
             </motion.div>
 
             {/* CTA Section */}
             {!isLoggedIn && (
                 <motion.div
-                    className="cta-section"
-                    initial={{ opacity: 0, y: 50 }}
+                    className="cta-section-compact"
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 0.6 }}
                 >
-                    <div className="cta-content">
+                    <div className="cta-content-compact">
                         <h2>Ready to join the conversation?</h2>
                         <p>Create an account and start connecting with QA professionals worldwide</p>
-                        <div className="cta-buttons">
+                        <div className="cta-buttons-compact">
                             <motion.button
-                                className="cta-button primary"
+                                className="cta-button-compact primary"
                                 onClick={() => navigate("/register")}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
@@ -289,7 +217,7 @@ const CommunityFeatures = () => {
                                 Sign Up Now
                             </motion.button>
                             <motion.button
-                                className="cta-button secondary"
+                                className="cta-button-compact secondary"
                                 onClick={() => navigate("/login")}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
