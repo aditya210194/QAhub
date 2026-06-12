@@ -1,22 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './DiscussionForums.css'; // We'll create this CSS file
+import './DiscussionForums.css';
 
 const socket = io(process.env.REACT_APP_API_URL || 'http://127.0.0.1:5000');
 
 const DiscussionForum = () => {
+    // State Management
     const [discussions, setDiscussions] = useState([]);
     const [selectedDiscussion, setSelectedDiscussion] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [newDiscussionTopic, setNewDiscussionTopic] = useState('');
+    const [newDiscussionDescription, setNewDiscussionDescription] = useState('');
     const [loading, setLoading] = useState(false);
     const [username, setUsername] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [darkMode, setDarkMode] = useState(false);
+    const [typingUsers, setTypingUsers] = useState([]);
+    const [onlineUsers, setOnlineUsers] = useState(0);
+    const [isTyping, setIsTyping] = useState(false);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [showUserProfile, setShowUserProfile] = useState(null);
+    const [sortBy, setSortBy] = useState('newest');
+    const [userReputation, setUserReputation] = useState(0);
+    const [userBadges, setUserBadges] = useState([]);
 
+    // Refs
+    const typingTimeoutRef = useRef(null);
+    const messagesEndRef = useRef(null);
+    const messageInputRef = useRef(null);
+
+    // Scroll to bottom of messages
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    // Load user data
     useEffect(() => {
         const storedUser = sessionStorage.getItem('user');
         const token = sessionStorage.getItem('token');
@@ -30,6 +56,8 @@ const DiscussionForum = () => {
             try {
                 const user = JSON.parse(storedUser);
                 setUsername(user.username || user.fullName || 'Anonymous');
+                setUserReputation(user.reputation || 0);
+                setUserBadges(user.badges || []);
                 setIsLoggedIn(true);
             } catch (error) {
                 console.error('Error parsing user data:', error);
@@ -53,6 +81,8 @@ const DiscussionForum = () => {
                 const userData = await response.json();
                 sessionStorage.setItem('user', JSON.stringify(userData));
                 setUsername(userData.username || userData.fullName || 'Anonymous');
+                setUserReputation(userData.reputation || 0);
+                setUserBadges(userData.badges || []);
                 setIsLoggedIn(true);
             }
         } catch (error) {
@@ -60,6 +90,7 @@ const DiscussionForum = () => {
         }
     };
 
+    // Fetch discussions
     useEffect(() => {
         if (!isLoggedIn) return;
 
@@ -67,15 +98,34 @@ const DiscussionForum = () => {
         fetch(`${process.env.REACT_APP_API_URL}/api/discussions`)
             .then((res) => res.json())
             .then((data) => {
-                setDiscussions(data);
+                const sortedData = sortDiscussions(data, sortBy);
+                setDiscussions(sortedData);
                 setLoading(false);
             })
             .catch((error) => {
                 console.error("Error fetching discussions:", error);
                 setLoading(false);
             });
-    }, [isLoggedIn]);
+    }, [isLoggedIn, sortBy]);
 
+    // Sort discussions
+    const sortDiscussions = (discussionsList, sortType) => {
+        const sorted = [...discussionsList];
+        switch(sortType) {
+            case 'newest':
+                return sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            case 'oldest':
+                return sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            case 'mostActive':
+                return sorted.sort((a, b) => (b.messageCount || 0) - (a.messageCount || 0));
+            case 'popular':
+                return sorted.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+            default:
+                return sorted;
+        }
+    };
+
+    // Socket events for selected discussion
     useEffect(() => {
         if (!selectedDiscussion) return;
 
@@ -96,11 +146,38 @@ const DiscussionForum = () => {
             setMessages((prevMessages) => Array.isArray(prevMessages) ? [...prevMessages, message] : [message]);
         });
 
+        socket.on("userTyping", ({ discussionId, username: typingUser }) => {
+            if (discussionId === selectedDiscussion._id && typingUser !== username) {
+                setTypingUsers(prev => [...new Set([...prev, typingUser])]);
+                setTimeout(() => {
+                    setTypingUsers(prev => prev.filter(u => u !== typingUser));
+                }, 3000);
+            }
+        });
+
+        socket.on("userOnline", ({ count }) => {
+            setOnlineUsers(count);
+        });
+
         return () => {
             socket.off("receiveMessage");
+            socket.off("userTyping");
+            socket.off("userOnline");
         };
-    }, [selectedDiscussion]);
+    }, [selectedDiscussion, username]);
 
+    // Typing indicator
+    const handleTyping = () => {
+        if (!isTyping && selectedDiscussion) {
+            setIsTyping(true);
+            socket.emit("typing", { discussionId: selectedDiscussion._id, username });
+            typingTimeoutRef.current = setTimeout(() => {
+                setIsTyping(false);
+            }, 2000);
+        }
+    };
+
+    // Send message
     const sendMessage = () => {
         if (newMessage.trim() && selectedDiscussion) {
             const messageData = {
@@ -112,16 +189,20 @@ const DiscussionForum = () => {
             socket.emit('sendMessage', messageData);
             setMessages((prevMessages) => [...prevMessages, messageData]);
             setNewMessage('');
+            setIsTyping(false);
+            if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
         }
     };
 
+    // Create discussion
     const handleCreateDiscussion = async () => {
         if (newDiscussionTopic.trim()) {
             const newDiscussion = {
                 title: newDiscussionTopic,
-                content: 'This is the content of the new discussion',
+                content: newDiscussionDescription || 'Discussion content',
                 author: username || 'Anonymous',
                 createdAt: new Date(),
+                description: newDiscussionDescription,
             };
             try {
                 const response = await fetch(`${process.env.REACT_APP_API_URL}/api/discussions`, {
@@ -132,9 +213,11 @@ const DiscussionForum = () => {
                 if (response.ok) {
                     const data = await response.json();
                     socket.emit('new-discussion', data);
-                    setDiscussions((prevDiscussions) => [...prevDiscussions, data]);
+                    setDiscussions((prevDiscussions) => [data, ...prevDiscussions]);
                     setNewDiscussionTopic('');
+                    setNewDiscussionDescription('');
                     setShowCreateModal(false);
+                    setSelectedDiscussion(data);
                 }
             } catch (error) {
                 console.error('Error creating new discussion:', error);
@@ -142,6 +225,32 @@ const DiscussionForum = () => {
         }
     };
 
+    // Like/Unlike discussion
+    const toggleLike = async (discussionId) => {
+        try {
+            const token = sessionStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/discussions/${discussionId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            if (response.ok) {
+                const updatedDiscussion = await response.json();
+                setDiscussions(prev => prev.map(d =>
+                    d._id === discussionId ? { ...d, likes: updatedDiscussion.likes, likedByUser: updatedDiscussion.likedByUser } : d
+                ));
+                if (selectedDiscussion?._id === discussionId) {
+                    setSelectedDiscussion(prev => ({ ...prev, likes: updatedDiscussion.likes, likedByUser: updatedDiscussion.likedByUser }));
+                }
+            }
+        } catch (error) {
+            console.error('Error liking discussion:', error);
+        }
+    };
+
+    // Format date
     const formatDate = (dateString) => {
         if (!dateString) return "Unknown Date";
         const date = new Date(dateString);
@@ -162,10 +271,24 @@ const DiscussionForum = () => {
         });
     };
 
+    // Add emoji to message
+    const addEmoji = (emoji) => {
+        setNewMessage(prev => prev + emoji);
+        setShowEmojiPicker(false);
+        messageInputRef.current?.focus();
+    };
+
+    // Filter discussions
     const filteredDiscussions = discussions.filter(discussion =>
         discussion.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        discussion.author?.toLowerCase().includes(searchTerm.toLowerCase())
+        discussion.author?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        discussion.content?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    // Toggle dark mode
+    useEffect(() => {
+        document.body.classList.toggle('forum-dark-mode', darkMode);
+    }, [darkMode]);
 
     if (!isLoggedIn) {
         return (
@@ -185,31 +308,36 @@ const DiscussionForum = () => {
         );
     }
 
-     const renderInfoBox = () => (
-            <div className="info-box mb-4">
-                <div className="info-box-icon">
-                    <i className="bi bi-info-circle-fill"></i>
-                </div>
-                <div className="info-box-content">
-                    <h5 className="info-box-title">Welcome to the QA Discussion Forum</h5>
-                    <p className="info-box-text">
-                        This is your space to connect with fellow QA professionals, ask questions,
-                        share knowledge, and collaborate on testing challenges. Whether you're a beginner
-                        or an expert, your voice matters here. Start a discussion, join existing ones,
-                        and help build a vibrant community.
-                    </p>
-                    <ul className="info-box-list">
-                        <li><i className="bi bi-chat-text-fill"></i> Ask technical questions</li>
-                        <li><i className="bi bi-lightbulb-fill"></i> Share insights and best practices</li>
-                        <li><i className="bi bi-people-fill"></i> Network with peers and mentors</li>
-                        <li><i className="bi bi-trophy-fill"></i> Earn reputation and badges</li>
-                    </ul>
-                </div>
+    const renderInfoBox = () => (
+        <div className="info-box mb-4">
+            <div className="info-box-icon">
+                <i className="bi bi-info-circle-fill"></i>
             </div>
-        );
+            <div className="info-box-content">
+                <h5 className="info-box-title">Welcome to the QA Discussion Forum</h5>
+                <p className="info-box-text">
+                    This is your space to connect with fellow QA professionals, ask questions,
+                    share knowledge, and collaborate on testing challenges. Whether you're a beginner
+                    or an expert, your voice matters here. Start a discussion, join existing ones,
+                    and help build a vibrant community.
+                </p>
+                <ul className="info-box-list">
+                    <li><i className="bi bi-chat-text-fill"></i> Ask technical questions</li>
+                    <li><i className="bi bi-lightbulb-fill"></i> Share insights and best practices</li>
+                    <li><i className="bi bi-people-fill"></i> Network with peers and mentors</li>
+                    <li><i className="bi bi-trophy-fill"></i> Earn reputation and badges</li>
+                </ul>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="discussion-forum-container">
+        <div className={`discussion-forum-container ${darkMode ? 'dark-mode' : ''}`}>
+            {/* Dark Mode Toggle */}
+            <button className="dark-mode-toggle" onClick={() => setDarkMode(!darkMode)}>
+                {darkMode ? <i className="bi bi-sun-fill"></i> : <i className="bi bi-moon-fill"></i>}
+            </button>
+
             {/* Header Section */}
             <div className="forum-header">
                 <div className="container">
@@ -220,6 +348,17 @@ const DiscussionForum = () => {
                                 Discussion Forum
                             </h1>
                             <p className="forum-subtitle">Connect, share ideas, and learn from the community</p>
+                            <div className="forum-stats">
+                                <span className="stat-badge">
+                                    <i className="bi bi-chat-text"></i> {discussions.length} Discussions
+                                </span>
+                                <span className="stat-badge">
+                                    <i className="bi bi-people"></i> {onlineUsers} Online
+                                </span>
+                                <span className="stat-badge">
+                                    <i className="bi bi-trophy"></i> Reputation: {userReputation}
+                                </span>
+                            </div>
                         </div>
                         <div className="col-md-6 text-md-end">
                             <button
@@ -236,21 +375,27 @@ const DiscussionForum = () => {
 
             <div className="container forum-content">
                 <div className="row">
-                {/* Info Box - placed above sidebar on small screens, beside sidebar on larger screens */}
-              <div className="col-12 mb-4 d-lg-none">{renderInfoBox()}</div>
+                    <div className="col-12 mb-4 d-lg-none">{renderInfoBox()}</div>
+
                     {/* Discussions Sidebar */}
                     <div className="col-lg-4 mb-4 mb-lg-0">
                         <div className="discussions-sidebar">
-                         <div className="d-none d-lg-block mb-4">
-                                                        {renderInfoBox()}
-                                                    </div>
+                            <div className="d-none d-lg-block mb-4">{renderInfoBox()}</div>
+
                             <div className="sidebar-header">
                                 <div className="d-flex justify-content-between align-items-center mb-3">
                                     <h5 className="mb-0">
                                         <i className="bi bi-chat-text me-2"></i>
                                         All Discussions
                                     </h5>
-                                    <span className="discussion-count">{filteredDiscussions.length} topics</span>
+                                    <div className="sort-dropdown">
+                                        <select className="form-select form-select-sm" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                                            <option value="newest">Newest First</option>
+                                            <option value="oldest">Oldest First</option>
+                                            <option value="mostActive">Most Active</option>
+                                            <option value="popular">Most Liked</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div className="search-box">
                                     <i className="bi bi-search search-icon"></i>
@@ -280,6 +425,7 @@ const DiscussionForum = () => {
                                         >
                                             <div className="discussion-item-content">
                                                 <h6 className="discussion-title">{discussion.title || "Untitled"}</h6>
+                                                <div className="discussion-preview">{discussion.content?.substring(0, 60)}...</div>
                                                 <div className="discussion-meta">
                                                     <span className="discussion-author">
                                                         <i className="bi bi-person-circle me-1"></i>
@@ -289,9 +435,23 @@ const DiscussionForum = () => {
                                                         <i className="bi bi-clock me-1"></i>
                                                         {formatDate(discussion.createdAt)}
                                                     </span>
+                                                    <span className="discussion-likes">
+                                                        <i className="bi bi-heart-fill text-danger"></i> {discussion.likes || 0}
+                                                    </span>
+                                                    <span className="discussion-messages">
+                                                        <i className="bi bi-chat"></i> {discussion.messageCount || 0}
+                                                    </span>
                                                 </div>
                                             </div>
-                                            <i className="bi bi-chevron-right discussion-arrow"></i>
+                                            <button
+                                                className={`like-btn ${discussion.likedByUser ? 'liked' : ''}`}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    toggleLike(discussion._id);
+                                                }}
+                                            >
+                                                <i className="bi bi-heart-fill"></i>
+                                            </button>
                                         </div>
                                     ))
                                 ) : (
@@ -310,22 +470,33 @@ const DiscussionForum = () => {
                             {selectedDiscussion ? (
                                 <>
                                     <div className="chat-header">
-                                        <div className="d-flex align-items-center">
-                                            <div className="chat-avatar">
-                                                <i className="bi bi-person-circle fs-3"></i>
-                                            </div>
-                                            <div className="ms-3">
-                                                <h5 className="mb-1">{selectedDiscussion.title}</h5>
-                                                <div className="chat-meta">
-                                                    <small className="text-muted">
-                                                        <i className="bi bi-person me-1"></i>
-                                                        Started by {selectedDiscussion.author}
-                                                    </small>
-                                                    <small className="text-muted ms-3">
-                                                        <i className="bi bi-clock me-1"></i>
-                                                        {formatDate(selectedDiscussion.createdAt)}
-                                                    </small>
+                                        <div className="d-flex align-items-center justify-content-between">
+                                            <div className="d-flex align-items-center">
+                                                <div className="chat-avatar">
+                                                    <i className="bi bi-person-circle fs-3"></i>
                                                 </div>
+                                                <div className="ms-3">
+                                                    <h5 className="mb-1">{selectedDiscussion.title}</h5>
+                                                    <div className="chat-meta">
+                                                        <small className="text-muted">
+                                                            <i className="bi bi-person me-1"></i>
+                                                            Started by {selectedDiscussion.author}
+                                                        </small>
+                                                        <small className="text-muted ms-3">
+                                                            <i className="bi bi-clock me-1"></i>
+                                                            {formatDate(selectedDiscussion.createdAt)}
+                                                        </small>
+                                                        <small className="text-muted ms-3">
+                                                            <i className="bi bi-people me-1"></i>
+                                                            {onlineUsers} online
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="chat-actions">
+                                                <button className="btn btn-sm btn-outline-secondary" onClick={() => setShowUserProfile(selectedDiscussion.author)}>
+                                                    <i className="bi bi-person-badge"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -335,10 +506,11 @@ const DiscussionForum = () => {
                                             <div
                                                 key={index}
                                                 className={`message-wrapper ${msg.sender === username ? 'sent' : 'received'}`}
+                                                onClick={() => msg.sender !== username && setShowUserProfile(msg.sender)}
                                             >
                                                 <div className="message-bubble">
                                                     <div className="message-header">
-                                                        <strong>{msg.sender}</strong>
+                                                        <strong className="message-sender">{msg.sender}</strong>
                                                         <small className="message-time">
                                                             {formatDate(msg.createdAt)}
                                                         </small>
@@ -347,23 +519,30 @@ const DiscussionForum = () => {
                                                 </div>
                                             </div>
                                         ))}
-                                        {messages.length === 0 && (
-                                            <div className="text-center py-5">
-                                                <i className="bi bi-chat display-1 text-muted"></i>
-                                                <p className="text-muted mt-3">No messages yet. Start the conversation!</p>
+                                        {typingUsers.length > 0 && (
+                                            <div className="typing-indicator">
+                                                {typingUsers.map(user => (
+                                                    <span key={user} className="typing-user">{user} is typing...</span>
+                                                ))}
                                             </div>
                                         )}
+                                        <div ref={messagesEndRef} />
                                     </div>
 
                                     <div className="chat-input-area">
                                         <div className="input-group">
+                                            <button className="btn btn-outline-secondary emoji-btn" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+                                                <i className="bi bi-emoji-smile"></i>
+                                            </button>
                                             <input
+                                                ref={messageInputRef}
                                                 type="text"
                                                 className="form-control"
                                                 value={newMessage}
                                                 onChange={(e) => setNewMessage(e.target.value)}
-                                                placeholder="Type your message here..."
                                                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                                                onKeyDown={handleTyping}
+                                                placeholder="Type your message here..."
                                             />
                                             <button
                                                 className="btn btn-primary"
@@ -374,6 +553,15 @@ const DiscussionForum = () => {
                                                 Send
                                             </button>
                                         </div>
+                                        {showEmojiPicker && (
+                                            <div className="emoji-picker">
+                                                {['😊', '😂', '❤️', '👍', '🎉', '🔥', '👏', '🤔', '💡', '🚀', '✅', '❌'].map(emoji => (
+                                                    <button key={emoji} className="emoji-option" onClick={() => addEmoji(emoji)}>
+                                                        {emoji}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </>
                             ) : (
@@ -390,6 +578,37 @@ const DiscussionForum = () => {
                 </div>
             </div>
 
+            {/* User Profile Modal */}
+            {showUserProfile && (
+                <div className="modal-overlay" onClick={() => setShowUserProfile(null)}>
+                    <div className="modal-content user-profile-modal" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h5 className="modal-title">
+                                <i className="bi bi-person-circle me-2"></i>
+                                User Profile
+                            </h5>
+                            <button className="btn-close" onClick={() => setShowUserProfile(null)}></button>
+                        </div>
+                        <div className="modal-body">
+                            <div className="text-center mb-3">
+                                <i className="bi bi-person-circle display-1 text-primary"></i>
+                                <h4 className="mt-2">{showUserProfile}</h4>
+                            </div>
+                            <div className="user-stats">
+                                <div className="stat-item">
+                                    <i className="bi bi-chat-text"></i>
+                                    <span>Discussions: {discussions.filter(d => d.author === showUserProfile).length}</span>
+                                </div>
+                                <div className="stat-item">
+                                    <i className="bi bi-heart-fill text-danger"></i>
+                                    <span>Likes Received: {discussions.filter(d => d.author === showUserProfile).reduce((sum, d) => sum + (d.likes || 0), 0)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Create Discussion Modal */}
             {showCreateModal && (
                 <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
@@ -399,15 +618,11 @@ const DiscussionForum = () => {
                                 <i className="bi bi-plus-circle me-2"></i>
                                 Start New Discussion
                             </h5>
-                            <button
-                                type="button"
-                                className="btn-close"
-                                onClick={() => setShowCreateModal(false)}
-                            ></button>
+                            <button className="btn-close" onClick={() => setShowCreateModal(false)}></button>
                         </div>
                         <div className="modal-body">
                             <div className="mb-3">
-                                <label className="form-label">Discussion Topic</label>
+                                <label className="form-label">Discussion Topic *</label>
                                 <input
                                     type="text"
                                     className="form-control form-control-lg"
@@ -415,6 +630,16 @@ const DiscussionForum = () => {
                                     onChange={(e) => setNewDiscussionTopic(e.target.value)}
                                     placeholder="Enter your discussion topic..."
                                     autoFocus
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label">Description (Optional)</label>
+                                <textarea
+                                    className="form-control"
+                                    rows="3"
+                                    value={newDiscussionDescription}
+                                    onChange={(e) => setNewDiscussionDescription(e.target.value)}
+                                    placeholder="Provide more details about your discussion..."
                                 />
                                 <small className="text-muted mt-2 d-block">
                                     Choose a clear and descriptive title for your discussion

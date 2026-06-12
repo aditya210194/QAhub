@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './Home.css';
@@ -8,11 +8,25 @@ import CoursesData from './CoursesData';
 import heroBg from '../images/heroBg.png';
 
 const Home = () => {
+    const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState(null);
+    const [imagesLoaded, setImagesLoaded] = useState(false)
+
     useEffect(() => {
         AOS.init({
             duration: 800,
             once: true
         });
+
+        // Check if user is logged in
+        const token = sessionStorage.getItem('token');
+        const userData = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+
+        if (token && userData) {
+            setIsLoggedIn(true);
+            setUser(userData);
+        }
     }, []);
 
     const [selectedTopic, setSelectedTopic] = useState(null);
@@ -27,6 +41,22 @@ const Home = () => {
     const closeModal = () => {
         setShowModal(false);
         document.body.style.overflow = 'auto';
+    };
+
+    // Handle CTA button click - redirect based on login status
+    const handleGetStartedClick = (e) => {
+        if (isLoggedIn) {
+            e.preventDefault();
+            navigate('/courses');
+        }
+        // If not logged in, let the Link to="/register" work normally
+    };
+
+    const handleFreeTrialClick = (e) => {
+        if (isLoggedIn) {
+            e.preventDefault();
+            navigate('/courses');
+        }
     };
 
     // Get the top 5 most popular courses (based on rating)
@@ -145,9 +175,20 @@ const Home = () => {
                                 <Link to="/courses" className="btn btn-primary btn-lg">
                                     Explore Courses
                                 </Link>
-                                <Link to="/register" className="btn btn-outline-light btn-lg">
-                                    Free Trial
-                                </Link>
+                                {/* Show Free Trial/Get Started based on login status */}
+                                {!isLoggedIn ? (
+                                    <Link to="/register" className="btn btn-outline-light btn-lg">
+                                        Free Trial
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        to="/courses"
+                                        className="btn btn-outline-light btn-lg"
+                                        onClick={handleFreeTrialClick}
+                                    >
+                                        Continue Learning
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -285,7 +326,7 @@ const Home = () => {
                             <div className="col-lg-4 col-md-6 mb-4" key={course.id} data-aos="fade-up">
                                 <div className="card course-card h-100">
                                     <div className="card-img-top-container">
-                                        <img src={course.image} className="card-img-top" alt={course.title} />
+                                        <img src={course.image} loading="lazy" className="card-img-top" alt={course.title} />
                                         <div className="card-badge">{course.level}</div>
                                     </div>
                                     <div className="card-body">
@@ -347,6 +388,7 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
             {/* SEO Content Section - Visible text for crawlers */}
             <section className="seo-content-section py-4">
                 <div className="container">
@@ -369,19 +411,38 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* CTA Section */}
+            {/* CTA Section - Show different CTA based on login status */}
             <section className="cta-section py-5">
                 <div className="container">
                     <div className="cta-card text-center" data-aos="zoom-in">
-                        <h2 className="cta-title">Start Your QA Journey Today</h2>
-                        <p className="cta-subtitle">Join our community of 10,000+ QA professionals</p>
+                        <h2 className="cta-title">
+                            {isLoggedIn ? 'Continue Your Learning Journey' : 'Start Your QA Journey Today'}
+                        </h2>
+                        <p className="cta-subtitle">
+                            {isLoggedIn
+                                ? 'Access your courses and continue mastering QA skills'
+                                : 'Join our community of 10,000+ QA professionals'}
+                        </p>
                         <div className="cta-buttons">
-                            <Link to="/register" className="btn btn-light btn-lg">
-                                Get Started for Free
-                            </Link>
-                            <Link to="/courses" className="btn btn-outline-light btn-lg">
-                                Browse Courses
-                            </Link>
+                            {!isLoggedIn ? (
+                                <>
+                                    <Link to="/register" className="btn btn-light btn-lg">
+                                        Get Started for Free
+                                    </Link>
+                                    <Link to="/courses" className="btn btn-outline-light btn-lg">
+                                        Browse Courses
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <Link to="/courses" className="btn btn-light btn-lg" onClick={handleGetStartedClick}>
+                                        Continue Learning
+                                    </Link>
+                                    <Link to="/community-features" className="btn btn-outline-light btn-lg">
+                                        Join Community
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

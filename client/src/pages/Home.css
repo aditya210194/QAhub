@@ -127,7 +127,14 @@
     transform: translateY(-3px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
 }
+img[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
 
+img[loading="lazy"].loaded {
+    opacity: 1;
+}
 /* ==================== STATS SECTION ==================== */
 .stats-section {
     background: white;

@@ -106,9 +106,9 @@ const ContactUs = () => {
             </div>
 
             <div className="container contact-container">
-                <div className="row">
-                    {/* Contact Form */}
-                    <div className="col-lg-8 col-md-10" data-aos="fade-right">
+                <div className="row justify-content-center">
+                    {/* Contact Form - Centered */}
+                    <div className="col-lg-8 col-md-10 col-12" data-aos="fade-up">
                         <div className="contact-form-container">
                             <h3 className="form-title">
                                 <FontAwesomeIcon icon={faPaperPlane} className="form-icon" />
@@ -203,7 +203,9 @@ const ContactUs = () => {
                         </div>
                     </div>
 
-                   {/* Contact Info */}
+                    {/* ============================================================ */}
+                    {/* CONTACT INFO SECTION - HIDDEN (KEPT FOR FUTURE USE) */}
+                    {/* ============================================================ */}
                     {/*
                     <div className="col-lg-6" data-aos="fade-left">
                         <div className="contact-info-container">
@@ -256,7 +258,8 @@ const ContactUs = () => {
                                 ></iframe>
                             </div>
                         </div>
-                    </div>*/}
+                    </div>
+                    */}
                 </div>
             </div>
         </div>

@@ -3,9 +3,13 @@ import { Button, Card, Alert } from 'react-bootstrap';
 import {
     Bookmark, BookmarkFill, CheckCircle, Check2Circle,
     Share, ArrowLeft, ArrowRight, ArrowUp,
-    Lightning, StarFill,Clock,GraphUpArrow,Person
+    Lightning, StarFill, Clock, GraphUpArrow, Person
 } from 'react-bootstrap-icons';
-import ContentRenderer from '../ContentRenderer';
+
+// ✅ CHANGE THIS LINE
+// FROM: import RendererTestWrapper from '../renderers/RendererTestWrapper';
+// TO:
+import ContentRenderer from '../renderers/ContentRenderer';
 
 const TutorialContent = ({
                              activeTutorial,
@@ -35,12 +39,12 @@ const TutorialContent = ({
             />
         ));
     };
+
     return (
         <div className="tutorial-content-card">
             <Card className="glass-card" data-aos="fade-up">
                 <Card.Body>
                     <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap">
-                        {/* Breadcrumb and title */}
                         <div className="mb-3 mb-md-0">
                             <div className="breadcrumb mb-2">
                                 <span>Home</span>
@@ -51,24 +55,23 @@ const TutorialContent = ({
                             </div>
                             <h2 className="card-title">{activeTutorial.title}</h2>
                             <div className="tutorial-meta d-flex flex-wrap gap-3 mt-2">
-                <span className="text-muted">
-                  <Clock size={14} className="me-1" />
-                    {activeTutorial.duration}
-                </span>
                                 <span className="text-muted">
-                  <GraphUpArrow size={14} className="me-1" />
+                                    <Clock size={14} className="me-1" />
+                                    {activeTutorial.duration}
+                                </span>
+                                <span className="text-muted">
+                                    <GraphUpArrow size={14} className="me-1" />
                                     {activeTutorial.level}
-                </span>
+                                </span>
                                 {activeTutorial.author && (
                                     <span className="text-muted">
-                    <Person size={14} className="me-1" />
+                                        <Person size={14} className="me-1" />
                                         {activeTutorial.author}
-                  </span>
+                                    </span>
                                 )}
                             </div>
                         </div>
 
-                        {/* Action buttons */}
                         <div className="d-flex action-buttons">
                             <Button
                                 variant={isBookmarked ? 'primary' : 'glass'}
@@ -97,9 +100,10 @@ const TutorialContent = ({
                     </div>
 
                     <div id="tutorial-content">
+                        {/* ✅ USE ContentRenderer DIRECTLY */}
                         <ContentRenderer
                             content={activeTutorial.content}
-                            contentType={activeTutorial.contentType}
+                            contentType={activeTutorial.contentType || 'markdown'}
                         />
 
                         {/* Case studies */}
@@ -179,7 +183,7 @@ const TutorialContent = ({
                     </h4>
                     <div className="d-flex align-items-center flex-wrap">
                         <div className="rating-stars me-3 mb-2">
-                            {renderStars}
+                            {renderStars()}
                         </div>
                         <Button variant="primary" disabled={rating === 0}>
                             Submit Rating

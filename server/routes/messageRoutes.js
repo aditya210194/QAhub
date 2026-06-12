@@ -1,12 +1,14 @@
 const express = require('express');
-const { getMessages, createMessage } = require('../controllers/messageController');
+const { getMessages, createMessage, deleteMessage } = require('../controllers/messageController');
+const { authenticate } = require('../middleware/authenticate');
 
 const router = express.Router();
 
-// API to create a message
-router.post('/messages', createMessage);
-
-// API to get messages for a discussion
+// Public routes (messages are viewable by anyone)
 router.get('/messages/:discussionId', getMessages);
+
+// Protected routes
+router.post('/messages', authenticate, createMessage);
+router.delete('/messages/:id', authenticate, deleteMessage);
 
 module.exports = router;

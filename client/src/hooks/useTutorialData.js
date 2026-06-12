@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { fetchTutorials } from '../components/services/tutorialsAPI';
 import { transformApiResponse } from '../utils/tutorialUtils';
 
@@ -6,60 +6,78 @@ const useTutorialData = (fileName = 'software-testing.json') => {
     const [contentData, setContentData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const previousFileName = useRef(fileName);
 
     useEffect(() => {
+        // Only fetch if fileName actually changed
+        if (previousFileName.current !== fileName) {
+            console.log('🔄 fileName changed from', previousFileName.current, 'to', fileName);
+            previousFileName.current = fileName;
+        }
+
+        let isMounted = true;
+
         const loadContent = async () => {
+            console.log('📥 Loading content for:', fileName);
+            setLoading(true);
+            setContentData(null);
+            setError(null);
+
             try {
-                setLoading(true);
-                const data = await fetchTutorialContent(fileName);
-                setContentData(data);
+                const timestamp = Date.now();
+                const data = await fetchTutorialContent(fileName, timestamp);
+                if (isMounted) {
+                    console.log('✅ Setting contentData for:', fileName);
+                    setContentData(data);
+                }
             } catch (err) {
-                console.error('Content fetch failed:', err);
-                setError(err.message || 'Failed to load content');
+                console.error('❌ Error for', fileName, ':', err);
+                if (isMounted) {
+                    setError(err.message);
+                }
             } finally {
-                setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                }
             }
         };
 
         loadContent();
-    }, [fileName]);
+
+        return () => {
+            isMounted = false;
+        };
+    }, [fileName]); // This dependency is critical
 
     return { contentData, loading, error };
 };
 
-// Reusable fetch function
-export const fetchTutorialContent = async (fileName = 'software-testing.json') => {
-    console.log('Fetching tutorials in', process.env.REACT_APP_API_MODE, 'mode');
+export const fetchTutorialContent = async (fileName, timestamp) => {
+    console.log('🌐 Fetching file:', fileName);
+
+    const cacheBuster = timestamp || Date.now();
+
+    // Ensure we're using the correct path
+    const filePath = `/data/${fileName}?t=${cacheBuster}`;
+    console.log('📍 Fetching from:', filePath);
 
     try {
-        if (process.env.REACT_APP_API_MODE === 'local') {
-            const response = await fetch(`/data/${fileName}`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            console.log('Local data loaded:', fileName);
-            return transformApiResponse(data);
-        }
-
-        const apiResponse = await fetchTutorials(fileName);
-        return transformApiResponse(apiResponse);
-
-    } catch (error) {
-        console.error('Content fetch failed:', error);
-        return {
-            "Getting Started": {
-                tutorials: {
-                    "Introduction": {
-                        id: "intro",
-                        level: "Beginner",
-                        duration: "10 min",
-                        rating: "95% Rating",
-                        content: `Failed to load content. Error: ${error.message}`
-                    }
-                }
+        const response = await fetch(filePath, {
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
             }
-        };
+        });
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        console.log('📄 Raw data keys:', Object.keys(data));
+        return transformApiResponse(data);
+    } catch (error) {
+        console.error('❌ Fetch failed:', error);
+        throw error;
     }
 };
-
 
 export default useTutorialData;

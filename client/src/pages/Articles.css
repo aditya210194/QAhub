@@ -36,7 +36,7 @@
 /* ==================== HEADER SECTION ==================== */
 .articles-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 4rem 2rem;
+    padding: 2rem 0rem;
     position: relative;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);

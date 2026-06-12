@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { CookieConsentProvider, CookieService, ConsentMode } from '@vantezzen/react-cookie-banner'; // ADD THIS
+import { CookieConsentProvider, CookieService, ConsentMode } from '@vantezzen/react-cookie-banner';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import TermsConditions from "./pages/TermsConditions";
@@ -11,16 +11,18 @@ import Articles from './pages/Articles';
 import Resources from './pages/Resources';
 import Contact from './pages/ContactUs';
 import './App.css';
-import AutomationTesting from './pages/AutomationTesting';
-import ManualTesting from './pages/ManualTesting';
-import Agile from './pages/Agile';
-import APITesting from './pages/APITesting';
-import AutomationGuide from "./pages/Automation Tools and Frameworks Guide";
+// ✅ ADD THIS IMPORT - TutorialPage (replaces all individual tutorial pages)
+import TutorialPage from './pages/TutorialPage';
+// ❌ REMOVE or comment out these individual imports
+// import AutomationTesting from './pages/AutomationTesting';
+// import ManualTesting from './pages/ManualTesting';
+// import Agile from './pages/Agile';
+// import APITesting from './pages/APITesting';
+// import AutomationGuide from "./pages/Automation Tools and Frameworks Guide";
 import InterviewQA from './pages/InterviewQA';
 import Resumes from './pages/Resumes';
 import ResumeGenerator from "./pages/ResumeGenerator";
 import AboutUs from "./pages/AboutUs";
-import SoftwareTesting from './pages/SoftwareTesting';
 import SecondHeader from "./pages/SecondHeader";
 import CourseDetailPage from './pages/CourseDetailPage';
 import CommunityFeatures from './pages/CommunityFeatures';
@@ -41,9 +43,7 @@ import ConsentBanner from "./components/ConsentBanner";
 import ErrorBoundary from './components/ErrorBoundary';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from "@vercel/speed-insights/react";
-
-// ❌ REMOVE ReactGA initialization from here - it will be handled by CookieService
-// ReactGA.initialize('G-SDZDRH5VQ9'); // DELETE THIS LINE
+import ScrollToTop from './components/ScrollToTop';
 
 // ErrorBoundary wrapper component for routes
 const ErrorBoundaryRoute = ({ element: Element }) => (
@@ -56,19 +56,13 @@ const App = () => {
     const location = useLocation();
     const [token, setToken] = useState(sessionStorage.getItem('token'));
 
-    // ❌ REMOVE ReactGA.pageview from here - it will be handled by CookieService
-    // useEffect(() => {
-    //     ReactGA.pageview(location.pathname + location.search);
-    // }, [location]);
-
     const shouldShowSecondHeader = !["/", "/login", "/register", "/forgot-password", "/reset-password"].includes(location.pathname);
 
     return (
-        <CookieConsentProvider>  {/* ✅ WRAP EVERYTHING */}
-            {/* ✅ Add ConsentMode for Google Consent Mode v2 */}
+        <CookieConsentProvider>
             <ConsentMode />
+            <ScrollToTop />
 
-            {/* ✅ Move Google Analytics to CookieService */}
             <CookieService
                 id="google-analytics"
                 category="analytics"
@@ -91,7 +85,6 @@ const App = () => {
                 />
             </CookieService>
 
-            {/* ✅ Move AdSense to CookieService */}
             <CookieService
                 id="google-adsense"
                 category="marketing"
@@ -124,14 +117,13 @@ const App = () => {
                     <Route path="/courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
                     <Route path="/course/:courseId" element={<ProtectedRoute><CourseDetailPage /></ProtectedRoute>} />
 
-                    {/* Topic Pages with Error Boundaries */}
-                    <Route path="/software-testing" element={<ErrorBoundaryRoute element={SoftwareTesting} />} />
-                    <Route path="/automation-testing" element={<ErrorBoundaryRoute element={AutomationTesting} />} />
-                    <Route path="/manual-testing" element={<ErrorBoundaryRoute element={ManualTesting} />} />
-                    <Route path="/agile" element={<ErrorBoundaryRoute element={Agile} />} />
-                    <Route path="/api-testing" element={<ErrorBoundaryRoute element={APITesting} />} />
-                    <Route path="/automation-guide" element={<ErrorBoundaryRoute element={AutomationGuide} />} />
-
+                    {/* Tutorial Routes - with keys to force re-render */}
+                    <Route path="/software-testing" element={<TutorialPage key="software-testing" />} />
+                    <Route path="/automation-testing" element={<TutorialPage key="automation-testing" />} />
+                    <Route path="/manual-testing" element={<TutorialPage key="manual-testing" />} />
+                    <Route path="/agile" element={<TutorialPage key="agile" />} />
+                    <Route path="/api-testing" element={<TutorialPage key="api-testing" />} />
+                    <Route path="/automation-guide" element={<TutorialPage key="automation-tools" />} />
                     <Route path="/interview-qa" element={<InterviewQA />} />
                     <Route path="/resumes" element={<Resumes />} />
                     <Route path="/resume-generator" element={<ResumeGenerator />} />

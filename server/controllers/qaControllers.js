@@ -8,32 +8,36 @@ const path = require("path");
 // Get all questions with improved sorting
 exports.getAllQuestions = async (req, res) => {
     try {
-        const { sort = "newest", page = 1, limit = 10 } = req.query;
+        const { page = 1, limit = 10, sort = 'newest' } = req.query;
         const skip = (page - 1) * limit;
 
-        const sortOptions = {
-            newest: { createdAt: -1 },
-            mostAnswered: { answersCount: -1 },
-            unanswered: { answersCount: 1 },
-            trending: { trendingScore: -1 }
-        };
+        let sortOption = {};
+        switch(sort) {
+            case 'newest': sortOption = { createdAt: -1 }; break;
+            case 'mostAnswered': sortOption = { answersCount: -1 }; break;
+            case 'unanswered': sortOption = { answersCount: 1 }; break;
+            case 'trending': sortOption = { trendingScore: -1 }; break;
+            default: sortOption = { createdAt: -1 };
+        }
 
         const [questions, total] = await Promise.all([
             Question.find()
-                .sort(sortOptions[sort] || sortOptions.newest)
+                .sort(sortOption)
                 .skip(skip)
                 .limit(parseInt(limit))
-                .populate("user", "username"),
+                .populate('user', 'username fullName profilePicture')
+                .lean(),
             Question.countDocuments()
         ]);
 
         res.json({
             questions,
             totalPages: Math.ceil(total / limit),
-            currentPage: parseInt(page)
+            currentPage: parseInt(page),
+            total
         });
     } catch (err) {
-        res.status(500).json({ error: "Error fetching questions" });
+        res.status(500).json({ error: err.message });
     }
 };
 
@@ -41,47 +45,28 @@ exports.getAllQuestions = async (req, res) => {
 exports.getQuestionById = async (req, res) => {
     try {
         const question = await Question.findById(req.params.id)
-            .populate("user", "username");
+            .populate('user', 'username fullName profilePicture reputation')
+            .lean();
 
-        if (!question) return res.status(404).json({ error: "Question not found" });
-
-        // Fetch answers and populate comments + user details
-        const answers = await Answer.find({ questionId: req.params.id })
-            .populate({
-                path: "comments",
-                select: "text user createdAt", // Explicitly include fields
-                populate: {
-                    path: "user",
-                    model: "User", // Ensure model is specified
-                    select: "username"
-                }
-            })
-            .populate("user", "username");
-
-        // Debugging: Check if comments are populated correctly
-        if (answers.length > 0 && answers[0].comments.length > 0) {
-            console.log("Sample Comment:", {
-                text: answers[0].comments[0].text,
-                user: answers[0].comments[0].user
-            });
+        if (!question) {
+            return res.status(404).json({ error: 'Question not found' });
         }
 
-        // Combine question and answers with proper comment structure
-        const populatedQuestion = {
-            ...question.toObject(),
-            answers: answers.map(answer => ({
-                ...answer.toObject(),
-                comments: answer.comments.map(comment => ({
-                    ...comment.toObject(),
-                    user: comment.user // Already populated from the query
-                }))
-            }))
-        };
+        const answers = await Answer.find({ questionId: req.params.id })
+            .sort({ upvotes: -1, createdAt: -1 })
+            .populate('user', 'username fullName profilePicture')
+            .populate({
+                path: 'comments',
+                populate: { path: 'user', select: 'username fullName' }
+            })
+            .lean();
 
-        res.json(populatedQuestion);
+        // Increment view count asynchronously
+        Question.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } }).exec();
+
+        res.json({ ...question, answers });
     } catch (err) {
-        console.error("Error fetching question:", err);
-        res.status(500).json({ error: "Error fetching question" });
+        res.status(500).json({ error: err.message });
     }
 };
 
@@ -107,84 +92,120 @@ exports.askQuestion = async (req, res) => {
 exports.answerQuestion = async (req, res) => {
     try {
         const { answerText } = req.body;
-        const files = req.files; // Array of uploaded files
+        const files = req.files || [];
 
-        // Determine file URLs based on the environment
-        const fileUrls = files ? files.map(file => {
-            return process.env.NODE_ENV === 'production' ? file.location : `/uploads/${file.filename}`;
-        }) : [];
+        if (!answerText || answerText.trim().length < 10) {
+            return res.status(400).json({ error: 'Answer must be at least 10 characters' });
+        }
+
+        const fileUrls = files.map(file => {
+            return process.env.NODE_ENV === 'production'
+                ? file.location
+                : `/uploads/${file.filename}`;
+        });
 
         const answer = new Answer({
             questionId: req.params.id,
             answerText,
-            files: fileUrls, // Store file URLs
+            files: fileUrls,
             user: req.user.id
         });
 
         await answer.save();
 
-        // Push the answer's _id into the question's answers array
         await Question.findByIdAndUpdate(req.params.id, {
             $push: { answers: answer._id },
-            $inc: { answersCount: 1 } // Increment the answersCount
+            $inc: { answersCount: 1 }
         });
 
         res.status(201).json(answer);
     } catch (err) {
-        res.status(500).json({ error: "Error posting answer" });
+        console.error('Error posting answer:', err);
+        res.status(500).json({ error: err.message });
     }
 };
 
 // Add comment to a question
 exports.addComment = async (req, res) => {
     try {
-        const { text } = req.body; // Ensure this matches the frontend payload
-        const answerId = req.params.id; // Get the answer ID from the URL
-        const userId = req.user.id; // Get the user ID from the authenticated request
+        const { text } = req.body;
+        const answerId = req.params.id;
 
-        console.log("Request Body:", req.body); // Debugging
-        console.log("Answer ID:", answerId); // Debugging
-        console.log("User ID:", userId); // Debugging
-
-        // Validate input
-        if (!text || !answerId || !userId) {
-            return res.status(400).json({ error: "Missing required fields" });
+        if (!text || text.trim().length < 1) {
+            return res.status(400).json({ error: 'Comment text is required' });
         }
 
-        // Create a new comment
         const comment = new Comment({
-            answerId: answerId,
-            text: text, // Ensure this field is included
-            user: userId // Ensure this field is included
+            answerId,
+            text,
+            user: req.user.id
         });
 
-        // Save the comment to the database
         await comment.save();
 
-        // Update the answer to include the comment
         await Answer.findByIdAndUpdate(answerId, {
             $push: { comments: comment._id }
         });
 
-        res.status(201).json(comment);
+        const populatedComment = await Comment.findById(comment._id)
+            .populate('user', 'username fullName')
+            .lean();
+
+        res.status(201).json(populatedComment);
     } catch (err) {
-        console.error("Error posting comment:", err);
-        res.status(500).json({ error: "Error posting comment", details: err.message });
+        console.error('Error posting comment:', err);
+        res.status(500).json({ error: err.message });
     }
 };
 
 // Vote on a question
-exports.voteQuestion = async (req, res) => {
+exports.voteAnswer = async (req, res) => {
     try {
         const { voteType } = req.body; // 'up' or 'down'
-        const vote = await Vote.findOneAndUpdate(
-            { questionId: req.params.id, user: req.user.id },
-            { voteType },
-            { upsert: true, new: true }
-        );
-        res.json(vote);
+        const answer = await Answer.findById(req.params.id);
+
+        if (!answer) {
+            return res.status(404).json({ error: 'Answer not found' });
+        }
+
+        const existingVote = await Vote.findOne({
+            answerId: req.params.id,
+            user: req.user.id
+        });
+
+        if (existingVote) {
+            if (existingVote.voteType === voteType) {
+                // Remove vote
+                await existingVote.deleteOne();
+                if (voteType === 'up') answer.upvotes -= 1;
+                else answer.downvotes -= 1;
+            } else {
+                // Change vote
+                if (voteType === 'up') {
+                    answer.upvotes += 1;
+                    answer.downvotes -= 1;
+                } else {
+                    answer.upvotes -= 1;
+                    answer.downvotes += 1;
+                }
+                existingVote.voteType = voteType;
+                await existingVote.save();
+            }
+        } else {
+            // New vote
+            await Vote.create({
+                answerId: req.params.id,
+                user: req.user.id,
+                voteType
+            });
+            if (voteType === 'up') answer.upvotes += 1;
+            else answer.downvotes += 1;
+        }
+
+        await answer.save();
+        res.json({ upvotes: answer.upvotes, downvotes: answer.downvotes });
     } catch (err) {
-        res.status(500).json({ error: "Error voting" });
+        res.status(500).json({ error: err.message });
     }
 };
 

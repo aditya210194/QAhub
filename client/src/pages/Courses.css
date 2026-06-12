@@ -16,7 +16,7 @@
 /* ==================== HERO SECTION ==================== */
 .courses-hero {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 5rem 0;
+    padding: 2rem 0;
     position: relative;
     overflow: hidden;
 }

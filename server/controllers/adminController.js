@@ -10,31 +10,15 @@ const adminController = {
     getMentorApplications: async (req, res) => {
         try {
             const applications = await MentorApplication.find()
-                .populate('userId', 'fullName email username profilePicture createdAt')
-                .sort({ createdAt: -1 });
+                .select('userId expertise experience status createdAt')
+                .populate('userId', 'fullName email username')
+                .sort({ createdAt: -1 })
+                .lean();
 
-            // Transform to match frontend expectations
-            const formattedApps = applications.map(app => ({
-                _id: app._id,
-                user: {
-                    fullName: app.userId?.fullName || 'N/A',
-                    email: app.userId?.email || 'N/A',
-                    username: app.userId?.username || 'N/A'
-                },
-                expertise: app.expertise || 'Not specified',
-                experience: app.experience || 'Not specified',
-                status: app.status || 'Pending',
-                createdAt: app.createdAt,
-                bio: app.bio || '',
-                linkedIn: app.linkedIn || '',
-                hourlyRate: app.hourlyRate || '',
-                certifications: app.certifications || []
-            }));
-
-            res.json(formattedApps);
+            res.json(applications);
         } catch (error) {
             console.error('Error in getMentorApplications:', error);
-            res.status(500).json({ message: error.message, applications: [] });
+            res.status(500).json({ message: error.message });
         }
     },
 
@@ -43,9 +27,9 @@ const adminController = {
         try {
             const applications = await MenteeApplication.find()
                 .populate('userId', 'fullName email username profilePicture createdAt')
-                .sort({ createdAt: -1 });
+                .sort({ createdAt: -1 })
+                .lean();
 
-            // Transform to match frontend expectations
             const formattedApps = applications.map(app => ({
                 _id: app._id,
                 user: {
@@ -76,7 +60,8 @@ const adminController = {
         try {
             const users = await User.find({})
                 .select('-password')
-                .sort({ createdAt: -1 });
+                .sort({ createdAt: -1 })
+                .lean();
 
             res.json({ users: users });
         } catch (error) {
@@ -111,27 +96,26 @@ const adminController = {
     // Get recent activities
     getRecentActivities: async (req, res) => {
         try {
-            const recentUsers = await User.find()
-                .sort({ createdAt: -1 })
-                .limit(5)
-                .select('username fullName role createdAt');
+            const recentUsers = await User.aggregate([
+                { $sort: { createdAt: -1 } },
+                { $limit: 5 },
+                { $project: { fullName: 1, username: 1, role: 1, createdAt: 1 } }
+            ]);
 
-            const recentMentorApps = await MentorApplication.find()
-                .sort({ createdAt: -1 })
-                .limit(5)
-                .populate('userId', 'fullName username');
-
-            const recentMenteeApps = await MenteeApplication.find()
-                .sort({ createdAt: -1 })
-                .limit(5)
-                .populate('userId', 'fullName username');
+            const recentMentorApps = await MentorApplication.aggregate([
+                { $sort: { createdAt: -1 } },
+                { $limit: 5 },
+                { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'user' } },
+                { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
+                { $project: { 'user.fullName': 1, 'user.username': 1, status: 1, createdAt: 1 } }
+            ]);
 
             const activities = [];
 
             recentUsers.forEach(user => {
                 activities.push({
                     type: 'register',
-                    message: `${user.fullName || user.username} joined the platform as ${user.role}`,
+                    message: `${user.fullName || user.username} joined as ${user.role}`,
                     timestamp: user.createdAt
                 });
             });
@@ -139,26 +123,17 @@ const adminController = {
             recentMentorApps.forEach(app => {
                 activities.push({
                     type: 'apply',
-                    message: `${app.userId?.fullName || 'Someone'} applied to become a mentor`,
+                    message: `${app.user?.fullName || 'Someone'} applied to be a mentor`,
                     timestamp: app.createdAt
                 });
             });
 
-            recentMenteeApps.forEach(app => {
-                activities.push({
-                    type: 'apply',
-                    message: `${app.userId?.fullName || 'Someone'} applied to become a mentee`,
-                    timestamp: app.createdAt
-                });
-            });
-
-            // Sort by timestamp and get latest 10
             activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             res.json(activities.slice(0, 10));
         } catch (error) {
             console.error('Error in getRecentActivities:', error);
-            res.status(500).json({ message: error.message, activities: [] });
+            res.status(500).json({ message: error.message });
         }
     },
 
@@ -246,18 +221,22 @@ const adminController = {
         try {
             const stats = {
                 userGrowth: await User.aggregate([
-                    { $group: {
-                        _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
-                        count: { $sum: 1 }
-                    }},
+                    {
+                        $group: {
+                            _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+                            count: { $sum: 1 }
+                        }
+                    },
                     { $sort: { _id: 1 } },
                     { $limit: 6 }
                 ]),
                 roleDistribution: await User.aggregate([
-                    { $group: {
-                        _id: "$role",
-                        count: { $sum: 1 }
-                    }}
+                    {
+                        $group: {
+                            _id: "$role",
+                            count: { $sum: 1 }
+                        }
+                    }
                 ])
             };
             res.json(stats);
@@ -271,19 +250,23 @@ const adminController = {
     getApplicationTrends: async (req, res) => {
         try {
             const mentorTrends = await MentorApplication.aggregate([
-                { $group: {
-                    _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
-                    count: { $sum: 1 }
-                }},
+                {
+                    $group: {
+                        _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+                        count: { $sum: 1 }
+                    }
+                },
                 { $sort: { _id: 1 } },
                 { $limit: 6 }
             ]);
 
             const menteeTrends = await MenteeApplication.aggregate([
-                { $group: {
-                    _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
-                    count: { $sum: 1 }
-                }},
+                {
+                    $group: {
+                        _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+                        count: { $sum: 1 }
+                    }
+                },
                 { $sort: { _id: 1 } },
                 { $limit: 6 }
             ]);
@@ -369,40 +352,45 @@ const adminController = {
             console.error('Error in activateUser:', error);
             res.status(500).json({ message: error.message });
         }
+    },
+
+    // Get advanced analytics
+    getAdvancedAnalytics: async (req, res) => {
+        try {
+            const { startDate, endDate } = req.query;
+
+            const query = {};
+            if (startDate && endDate) {
+                query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
+            }
+
+            const totalUsers = await User.countDocuments();
+            const activeUsers = await User.countDocuments({
+                lastActive: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
+            });
+            const totalMentors = await User.countDocuments({ role: 'Mentor' });
+            const totalMentees = await User.countDocuments({ role: 'Mentee' });
+
+            const userGrowth = await User.aggregate([
+                { $match: query },
+                {
+                    $group: {
+                        _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+                        count: { $sum: 1 }
+                    }
+                },
+                { $sort: { _id: 1 } }
+            ]);
+
+            res.json({
+                overview: { totalUsers, activeUsers, totalMentors, totalMentees },
+                trends: userGrowth,
+            });
+        } catch (error) {
+            console.error('Error in getAdvancedAnalytics:', error);
+            res.status(500).json({ error: error.message });
+        }
     }
 };
-getAdvancedAnalytics: async (req, res) => {
-    try {
-        const { startDate, endDate } = req.query;
-
-        const query = {};
-        if (startDate && endDate) {
-            query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
-        }
-
-        const totalUsers = await User.countDocuments();
-        const activeUsers = await User.countDocuments({ lastActive: { $gte: new Date(Date.now() - 30*24*60*60*1000) } });
-        const totalMentors = await User.countDocuments({ role: 'Mentor' });
-        const totalMentees = await User.countDocuments({ role: 'Mentee' });
-
-        // Get user growth over time
-        const userGrowth = await User.aggregate([
-            { $match: query },
-            { $group: {
-                _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
-                count: { $sum: 1 }
-            }},
-            { $sort: { _id: 1 } }
-        ]);
-
-        res.json({
-            overview: { totalUsers, activeUsers, totalMentors, totalMentees },
-            trends: userGrowth,
-            // ... other analytics
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-}
 
 module.exports = adminController;

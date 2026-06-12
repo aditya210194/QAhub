@@ -30,7 +30,8 @@ import {
     EyeOff,
     Terminal,
     Cpu,
-    Share2
+    Share2,
+    faGlobe
 } from 'lucide-react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -167,7 +168,7 @@ const filterQuestions = (questions, searchTerm, selectedCategory, selectedDiffic
     return filtered;
 };
 
-// Advanced Answer Component
+// Advanced Answer Component - FIXED VERSION
 const AdvancedAnswer = ({ content, codeBlocks, diagrams, tables, darkMode }) => {
     const [copiedIndex, setCopiedIndex] = useState(null);
     const [expandedSections, setExpandedSections] = useState({});
@@ -306,7 +307,9 @@ const AdvancedAnswer = ({ content, codeBlocks, diagrams, tables, darkMode }) => 
                     table({children}) {
                         return (
                             <div className="table-responsive">
-                                <table className="markdown-table">{children}</table>
+                                <table className="markdown-table">
+                                    {children}
+                                </table>
                             </div>
                         );
                     },
