@@ -1,0 +1,221 @@
+{
+  "source": "automation-testing.json",
+  "totalCategories": 13,
+  "totalChunks": 5,
+  "chunks": [
+    {
+      "index": 0,
+      "file": "chunk-00-programming-for-testers.json",
+      "categoryCount": 3,
+      "tutorialCount": 32,
+      "categories": [
+        {
+          "name": "Programming for Testers",
+          "tutorialCount": 13,
+          "tutorialIds": [
+            "programming-fundamentals-for-testers",
+            "object-oriented-principles-automation",
+            "working-with-json-xml",
+            "database-testing-programming",
+            "test-automation-design-patterns",
+            "api-test-automation-advanced",
+            "mobile-test-automation",
+            "performance-testing-programming",
+            "ci-cd-test-integration",
+            "ai-ml-test-automation",
+            "security-test-automation",
+            "test-reporting-analytics",
+            "cross-browser-platform-testing"
+          ]
+        },
+        {
+          "name": "Automation Testing Fundamentals",
+          "tutorialCount": 10,
+          "tutorialIds": [
+            "what-is-test-automation",
+            "automation-architecture-components",
+            "choosing-tools-stack",
+            "automation-best-practices",
+            "test-pyramid-strategy-fundamentals",
+            "test-automation-planning-process",
+            "ci-cd-automation-integration",
+            "metrics-reporting-analytics",
+            "maintenance-optimization-strategies",
+            "emerging-trends-future"
+          ]
+        },
+        {
+          "name": "Web Automation (Selenium, Cypress, Playwright)",
+          "tutorialCount": 9,
+          "tutorialIds": [
+            "selenium-foundations",
+            "selenium-waits-pom-advanced",
+            "cypress-zero-to-productive",
+            "playwright-cross-browser-intro",
+            "handling-frames-windows-alerts",
+            "advanced-web-interactions",
+            "visual-testing-accessibility",
+            "performance-testing-web",
+            "ci-cd-web-automation"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "file": "chunk-01-mobile-automation-appium-espresso-xcuite.json",
+      "categoryCount": 3,
+      "tutorialCount": 25,
+      "categories": [
+        {
+          "name": "Mobile Automation (Appium, Espresso, XCUITest)",
+          "tutorialCount": 9,
+          "tutorialIds": [
+            "appium-setup-architecture",
+            "appium-writing-tests",
+            "appium-advanced-parallel-cloud",
+            "native-frameworks-espresso-xcuitest",
+            "mobile-game-ar-testing",
+            "mobile-performance-testing",
+            "mobile-security-testing",
+            "mobile-ci-cd-pipelines",
+            "cross-platform-mobile-testing"
+          ]
+        },
+        {
+          "name": "API Automation",
+          "tutorialCount": 9,
+          "tutorialIds": [
+            "api-fundamentals",
+            "postman-newman-automation",
+            "rest-assured-foundations-advanced",
+            "graphql-automation",
+            "api-performance-testing",
+            "api-security-testing",
+            "api-contract-testing",
+            "soap-api-testing",
+            "api-test-architecture"
+          ]
+        },
+        {
+          "name": "Performance and Load Automation",
+          "tutorialCount": 7,
+          "tutorialIds": [
+            "performance-fundamentals",
+            "jmeter-masterclass",
+            "gatling-code-first-load-testing",
+            "k6-modern-load-testing",
+            "performance-monitoring-apm",
+            "mobile-performance-testing",
+            "performance-test-automation-framework"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "file": "chunk-02-specialized-testing-domains.json",
+      "categoryCount": 3,
+      "tutorialCount": 18,
+      "categories": [
+        {
+          "name": "Specialized Testing Domains",
+          "tutorialCount": 8,
+          "tutorialIds": [
+            "accessibility-testing-automation",
+            "security-test-automation",
+            "database-testing-automation",
+            "iot-embedded-testing",
+            "voice-chatbot-testing",
+            "ai-ml-testing-automation",
+            "blockchain-testing",
+            "vr-ar-testing"
+          ]
+        },
+        {
+          "name": "Framework Design and Patterns",
+          "tutorialCount": 4,
+          "tutorialIds": [
+            "framework-types-overview",
+            "building-hybrid-framework",
+            "design-patterns-automation",
+            "framework-maintenance-evolution"
+          ]
+        },
+        {
+          "name": "Automation in CI/CD and DevOps",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "ci-basics-for-testers",
+            "integrating-tests-into-ci",
+            "integrating-tests-into-ci",
+            "docker-and-containers-for-testing",
+            "infrastructure-testing",
+            "gitops-testing"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "file": "chunk-03-test-management-analytics.json",
+      "categoryCount": 3,
+      "tutorialCount": 16,
+      "categories": [
+        {
+          "name": "Test Management & Analytics",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "tracking-automation-roi",
+            "tracking-automation-roi",
+            "test-portfolio-optimization",
+            "quality-metrics-dashboards",
+            "test-maturity-assessment"
+          ]
+        },
+        {
+          "name": "Automation Leadership & Strategy",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "automation-team-building",
+            "automation-business-case",
+            "industry-specific-automation",
+            "organizational-change-management",
+            "strategic-automation-planning"
+          ]
+        },
+        {
+          "name": "Advanced and Modern Automation Topics",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "bdd-cucumber-complete-guide",
+            "visual-regression-testing-complete-guide",
+            "ai-assisted-test-automation",
+            "chaos-engineering-testing",
+            "blockchain-test-automation",
+            "quantum-computing-testing"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "file": "chunk-04-real-world-projects-and-interview-prepar.json",
+      "categoryCount": 1,
+      "tutorialCount": 5,
+      "categories": [
+        {
+          "name": "Real-World Projects and Interview Preparation",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "end-to-end-automation-project",
+            "automation-interview-prep",
+            "mobile-automation-project",
+            "api-automation-framework",
+            "performance-testing-project"
+          ]
+        }
+      ]
+    }
+  ]
+}

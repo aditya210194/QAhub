@@ -1,0 +1,182 @@
+{
+  "source": "agile-testing.json",
+  "totalCategories": 12,
+  "totalChunks": 4,
+  "chunks": [
+    {
+      "index": 0,
+      "file": "chunk-00-introduction-to-agile.json",
+      "categoryCount": 3,
+      "tutorialCount": 21,
+      "categories": [
+        {
+          "name": "Introduction to Agile",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "what-is-agile-mastery",
+            "history-of-agile",
+            "agile-manifesto",
+            "12-agile-principles",
+            "traditional-vs-agile",
+            "when-to-use-agile"
+          ]
+        },
+        {
+          "name": "Agile Frameworks",
+          "tutorialCount": 7,
+          "tutorialIds": [
+            "scrum-framework",
+            "kanban-framework",
+            "extreme-programming-xp",
+            "lean-software-development",
+            "safe-framework",
+            "crystal-methodology",
+            "dsdm-methodology"
+          ]
+        },
+        {
+          "name": "Scrum Deep Dive",
+          "tutorialCount": 8,
+          "tutorialIds": [
+            "scrum-roles",
+            "product-owner",
+            "scrum-master",
+            "development-team",
+            "scrum-events",
+            "scrum-artifacts",
+            "definition-of-done",
+            "velocity-burndown"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "file": "chunk-01-kanban-deep-dive.json",
+      "categoryCount": 3,
+      "tutorialCount": 18,
+      "categories": [
+        {
+          "name": "Kanban Deep Dive",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "kanban-principles",
+            "visual-workflow-board",
+            "wip-limits",
+            "cycle-lead-time",
+            "continuous-delivery",
+            "kanban-metrics"
+          ]
+        },
+        {
+          "name": "Agile Planning & Estimation",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "user-stories-mastery",
+            "story-points-mastery",
+            "planning-poker-mastery",
+            "backlog-refinement-mastery",
+            "release-planning-mastery",
+            "agile-roadmaps-mastery"
+          ]
+        },
+        {
+          "name": "Agile Testing",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "agile-testing-principles",
+            "test-driven-development",
+            "behavior-driven-development",
+            "continuous-integration",
+            "automation-in-agile",
+            "exploratory-testing"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "file": "chunk-02-agile-metrics-reporting.json",
+      "categoryCount": 3,
+      "tutorialCount": 16,
+      "categories": [
+        {
+          "name": "Agile Metrics & Reporting",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "burn-down-chart",
+            "burn-up-chart",
+            "velocity-tracking",
+            "cumulative-flow-diagram",
+            "sprint-reports",
+            "kpi-in-agile"
+          ]
+        },
+        {
+          "name": "Agile Roles & Responsibilities",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "product-owner-responsibilities",
+            "scrum-master-responsibilities",
+            "development-team-responsibilities",
+            "agile-coach",
+            "stakeholders-in-agile"
+          ]
+        },
+        {
+          "name": "Scaling Agile",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "safe-overview",
+            "less-framework",
+            "nexus-framework",
+            "spotify-model",
+            "agile-portfolio-management"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "file": "chunk-03-agile-tools.json",
+      "categoryCount": 3,
+      "tutorialCount": 16,
+      "categories": [
+        {
+          "name": "Agile Tools",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "jira-tool",
+            "azure-devops",
+            "trello-tool",
+            "clickup-tool",
+            "rally-tool",
+            "versionone-tool"
+          ]
+        },
+        {
+          "name": "Agile Best Practices",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "continuous-feedback",
+            "cross-functional-teams",
+            "collaboration-techniques",
+            "retrospective-techniques",
+            "handling-changing-requirements"
+          ]
+        },
+        {
+          "name": "Agile Challenges",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "common-agile-mistakes",
+            "resistance-to-change",
+            "poor-backlog-management",
+            "scope-creep",
+            "lack-of-stakeholder-involvement"
+          ]
+        }
+      ]
+    }
+  ]
+}

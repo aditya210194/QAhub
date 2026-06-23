@@ -1,0 +1,330 @@
+{
+  "source": "software-testing.json",
+  "totalCategories": 19,
+  "totalChunks": 7,
+  "chunks": [
+    {
+      "index": 0,
+      "file": "chunk-00-software-testing-fundamentals.json",
+      "categoryCount": 3,
+      "tutorialCount": 27,
+      "categories": [
+        {
+          "name": "Software Testing Fundamentals",
+          "tutorialCount": 7,
+          "tutorialIds": [
+            "software-testing-complete-guide",
+            "stlc-overview-2",
+            "stlc-overview-3",
+            "stlc-overview-4",
+            "stlc-overview-5",
+            "stlc-overview-6",
+            "stlc-overview-7"
+          ]
+        },
+        {
+          "name": "Software Development & Testing Life Cycles",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "sdlc-comprehensive-guide",
+            "software-dev-test-life-cycle-2",
+            "stlc-ultimate-guide",
+            "software-dev-test-life-cycle-4",
+            "software-dev-test-life-cycle-5",
+            "software-dev-test-cycle-6"
+          ]
+        },
+        {
+          "name": "Types of Software Testing",
+          "tutorialCount": 14,
+          "tutorialIds": [
+            "testing-types-1",
+            "testing-type-2",
+            "testing-type-3",
+            "testing-type-4",
+            "testing-type-5",
+            "testing-types-6",
+            "testing-types-7",
+            "testing-types-8",
+            "testing-types-9",
+            "testing-types-10",
+            "testing-type-11",
+            "localization-internationalization-testing",
+            "installation-upgrade-testing",
+            "alpha-beta-testing"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "file": "chunk-01-levels-of-testing.json",
+      "categoryCount": 3,
+      "tutorialCount": 34,
+      "categories": [
+        {
+          "name": "Levels of Testing",
+          "tutorialCount": 7,
+          "tutorialIds": [
+            "unit-testing",
+            "integration-testing",
+            "system-testing",
+            "acceptance-testing",
+            "alpha-beta-testing",
+            "component-testing",
+            "test-levels-7"
+          ]
+        },
+        {
+          "name": "Testing Techniques",
+          "tutorialCount": 14,
+          "tutorialIds": [
+            "test-levels-7",
+            "test-technique-2",
+            "test-technique-3",
+            "test-technique-4",
+            "test-technique-3",
+            "test-technique-6",
+            "test-technique-7",
+            "test-technique-8-part1",
+            "test-technique-9-part1",
+            "test-technique-10-part1",
+            "test-technique-11",
+            "test-technique-12",
+            "test-technique-13",
+            "test-technique-14"
+          ]
+        },
+        {
+          "name": "Test Design & Documentation",
+          "tutorialCount": 13,
+          "tutorialIds": [
+            "test-design-&-doc-1",
+            "test-design-&-doc-2",
+            "test-design-&-doc-3",
+            "test-design-&-doc-4",
+            "test-design-&-doc-5",
+            "test-design-&-doc-6",
+            "test-design-&-doc-7",
+            "test-design-&-doc-8",
+            "test-design-&-doc-9",
+            "test-design-&-doc-10",
+            "test-design-&-doc-11",
+            "test-design-&-doc-11",
+            "test-design-&-doc-12"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "file": "chunk-02-bug-defect-management.json",
+      "categoryCount": 3,
+      "tutorialCount": 27,
+      "categories": [
+        {
+          "name": "Bug & Defect Management",
+          "tutorialCount": 7,
+          "tutorialIds": [
+            "test-design-&-doc-9",
+            "bug-defect-2-chunk-1",
+            "bug-defect-3-chunk-1",
+            "bug-defect-4-chunk-1",
+            "bug-defect-5",
+            "bug-defect-6",
+            "bug-defect-7"
+          ]
+        },
+        {
+          "name": "Agile & DevOps Testing",
+          "tutorialCount": 10,
+          "tutorialIds": [
+            "agile-devops-1",
+            "agile-devops-2-chunk1",
+            "agile-devops-3",
+            "agile-devops-4-chunk1",
+            "agile-devops-5",
+            "agile-devops-6",
+            "agile-devops-7",
+            "agile-devops-8",
+            "agile-devops-9",
+            "agile-devops-10"
+          ]
+        },
+        {
+          "name": "Performance & Security Testing",
+          "tutorialCount": 10,
+          "tutorialIds": [
+            "performance-sec-testing-1",
+            "performance-sec-testing-2",
+            "performance-sec-testing-3",
+            "performance-sec-testing-4",
+            "performance-sec-testing-5",
+            "performance-sec-testing-6",
+            "performance-sec-testing-7",
+            "performance-sec-testing-8",
+            "performance-sec-testing-9",
+            "performance-sec-testing-10"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "file": "chunk-03-test-automation-foundations.json",
+      "categoryCount": 3,
+      "tutorialCount": 27,
+      "categories": [
+        {
+          "name": "Test Automation Foundations",
+          "tutorialCount": 12,
+          "tutorialIds": [
+            "test-automation-1",
+            "test-automation-2",
+            "test-automation-3",
+            "test-automation-4",
+            "test-automation-5",
+            "test-automation-6",
+            "test-automation-7",
+            "test-automation-8",
+            "test-automation-9",
+            "test-automation-10",
+            "test-automation-11",
+            "test-automation-12"
+          ]
+        },
+        {
+          "name": "Tools in Software Testing",
+          "tutorialCount": 8,
+          "tutorialIds": [
+            "test-tools-1",
+            "test-tools-2",
+            "test-tools-3",
+            "test-tools-4",
+            "test-tools-5",
+            "test-tools-6",
+            "test-tools-7",
+            "version-control-mastery-2.0"
+          ]
+        },
+        {
+          "name": "Domain-Based Testing",
+          "tutorialCount": 7,
+          "tutorialIds": [
+            "domain-test-1",
+            "domain-test-2",
+            "domain-test-3",
+            "domain-test-4",
+            "domain-test-5",
+            "domain-test-6",
+            "domain-test-7"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "file": "chunk-04-career-certification.json",
+      "categoryCount": 3,
+      "tutorialCount": 19,
+      "categories": [
+        {
+          "name": "Career & Certification",
+          "tutorialCount": 8,
+          "tutorialIds": [
+            "career-certification-1",
+            "career-certification-2",
+            "career-certification-3",
+            "career-certification-4",
+            "career-certification-5",
+            "career-certification-6",
+            "career-certification-7",
+            "career-certification-8"
+          ]
+        },
+        {
+          "name": "Advanced Testing Metrics & KPIs",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "testing-KPIs-1",
+            "testing-KPIs-2",
+            "testing-KPIs-3",
+            "testing-KPIs-4",
+            "testing-KPIs-5",
+            "testing-KPIs-6"
+          ]
+        },
+        {
+          "name": "AI & ML in Testing",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "ai-ml-testing-1",
+            "ai-ml-testing-2",
+            "ai-ml-testing-3",
+            "ai-ml-testing-4",
+            "ai-ml-testing-5"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "file": "chunk-05-advanced-automation-frameworks.json",
+      "categoryCount": 3,
+      "tutorialCount": 14,
+      "categories": [
+        {
+          "name": "Advanced Automation Frameworks",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "automation-framework-1",
+            "automation-framework-2",
+            "automation-framework-3",
+            "automation-framework-4",
+            "automation-framework-5"
+          ]
+        },
+        {
+          "name": "Advanced Security Testing",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "security-testing-1",
+            "security-testing-2",
+            "security-testing-3",
+            "security-testing-4",
+            "security-testing-5"
+          ]
+        },
+        {
+          "name": "Real-Time QA Project Walkthroughs",
+          "tutorialCount": 4,
+          "tutorialIds": [
+            "real-qa-projects-1",
+            "real-qa-projects-2",
+            "real-qa-projects-3",
+            "real-qa-projects-4"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "file": "chunk-06-mentorship-career-growth.json",
+      "categoryCount": 1,
+      "tutorialCount": 5,
+      "categories": [
+        {
+          "name": "Mentorship & Career Growth",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "mentorship-career-1",
+            "mentorship-career-2",
+            "mentorship-career-3",
+            "mentorship-career-4",
+            "mentorship-career-5"
+          ]
+        }
+      ]
+    }
+  ]
+}

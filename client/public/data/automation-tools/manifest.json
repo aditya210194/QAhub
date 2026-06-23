@@ -1,0 +1,253 @@
+{
+  "source": "automation_tools_and_frameworks_guide.json",
+  "totalCategories": 13,
+  "totalChunks": 5,
+  "chunks": [
+    {
+      "index": 0,
+      "file": "chunk-00-soapui.json",
+      "categoryCount": 3,
+      "tutorialCount": 22,
+      "categories": [
+        {
+          "name": "SoapUI",
+          "tutorialCount": 12,
+          "tutorialIds": [
+            "what-is-soapui",
+            "getting-started-soapui",
+            "soapui-installation-setup",
+            "understanding-web-services",
+            "soapui-features",
+            "creating-running-test-cases",
+            "soap-requests-responses",
+            "security-testing-soapui",
+            "mocking-web-services",
+            "assertions-validations",
+            "advanced-features-soapui",
+            "best-practices-soapui"
+          ]
+        },
+        {
+          "name": "JIRA",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "what-is-jira",
+            "jira-setup-configuration",
+            "jira-agile-teams",
+            "jira-automation-rules",
+            "jira-reporting-dashboards"
+          ]
+        },
+        {
+          "name": "Appium",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "what-is-appium",
+            "appium-setup",
+            "writing-tests-appium",
+            "appium-best-practices",
+            "appium-mobile-web-testing"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "file": "chunk-01-karate-framework.json",
+      "categoryCount": 3,
+      "tutorialCount": 26,
+      "categories": [
+        {
+          "name": "Karate Framework",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "what-is-karate",
+            "karate-setup",
+            "writing-tests-karate",
+            "karate-advanced-features",
+            "karate-ui-automation",
+            "karate-ci-cd-integration"
+          ]
+        },
+        {
+          "name": "Selenium",
+          "tutorialCount": 10,
+          "tutorialIds": [
+            "what-is-selenium",
+            "selenium-webdriver-basics",
+            "setting-up-selenium",
+            "writing-selenium-tests",
+            "selenium-locator-strategies",
+            "selenium-handling-dynamic-content",
+            "selenium-grid-distributed-testing",
+            "selenium-grid-distributed-testing",
+            "selenium-ci-cd-integration",
+            "selenium-best-practices"
+          ]
+        },
+        {
+          "name": "QTP/UFT",
+          "tutorialCount": 10,
+          "tutorialIds": [
+            "what-is-qtp-uft",
+            "installing-qtp-uft",
+            "creating-object-repositories",
+            "keyword-driven-testing",
+            "integrating-uft-alm",
+            "creating-running-tests-uft",
+            "handling-synchronization-uft",
+            "parameterization-uft",
+            "uft-web-applications",
+            "uft-best-practices"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "file": "chunk-02-alm-qc.json",
+      "categoryCount": 3,
+      "tutorialCount": 39,
+      "categories": [
+        {
+          "name": "ALM QC",
+          "tutorialCount": 10,
+          "tutorialIds": [
+            "what-is-alm-qc",
+            "setting-up-projects-alm-qc",
+            "creating-managing-test-cases-alm",
+            "executing-tests-alm-qc",
+            "defect-tracking-alm-qc",
+            "customizing-alm-qc-workflows",
+            "integration-automation-tools",
+            "managing-requirements-alm-qc",
+            "reporting-analytics-alm-qc",
+            "collaboration-audit-trails"
+          ]
+        },
+        {
+          "name": "Postman",
+          "tutorialCount": 11,
+          "tutorialIds": [
+            "introduction-postman",
+            "features-postman",
+            "install-setup-postman",
+            "using-postman-api-testing",
+            "advanced-postman-features",
+            "best-practices-postman",
+            "postman-integration",
+            "postman-automation-testing",
+            "postman-vs-other-tools",
+            "postman-tutorials-resources",
+            "postman-faqs"
+          ]
+        },
+        {
+          "name": "JMeter",
+          "tutorialCount": 18,
+          "tutorialIds": [
+            "introduction-jmeter",
+            "jmeter-installation-setup",
+            "creating-basic-test-plan",
+            "understanding-thread-groups",
+            "configuring-http-requests",
+            "adding-listeners-viewing-results",
+            "assertions-jmeter",
+            "jmeter-controllers",
+            "using-timers-realistic-load",
+            "working-with-csv-data",
+            "advanced-jmeter-features",
+            "jmeter-ci-cd-integration",
+            "best-practices-jmeter",
+            "jmeter-troubleshooting",
+            "jmeter-reports-metrics",
+            "jmeter-vs-other-tools",
+            "jmeter-resources-tutorials",
+            "jmeter-faqs"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "file": "chunk-03-loadrunner.json",
+      "categoryCount": 3,
+      "tutorialCount": 31,
+      "categories": [
+        {
+          "name": "LoadRunner",
+          "tutorialCount": 11,
+          "tutorialIds": [
+            "introduction-loadrunner",
+            "components-loadrunner",
+            "installing-loadrunner",
+            "creating-scripts-vugen",
+            "setting-up-scenarios-controller",
+            "executing-performance-tests",
+            "analyzing-test-results",
+            "advanced-scripting-features",
+            "integrating-loadrunner-ci-cd",
+            "best-practices-load-testing",
+            "loadrunner-faqs"
+          ]
+        },
+        {
+          "name": "Robot Framework",
+          "tutorialCount": 10,
+          "tutorialIds": [
+            "introduction-robot-framework",
+            "setting-up-robot-framework",
+            "robot-framework-syntax",
+            "creating-test-cases-robot",
+            "built-in-keywords-libraries",
+            "custom-keywords-robot",
+            "variable-handling-robot",
+            "using-tags-organization",
+            "reporting-logging-robot",
+            "integrating-robot-ci-cd"
+          ]
+        },
+        {
+          "name": "TestNG",
+          "tutorialCount": 10,
+          "tutorialIds": [
+            "introduction-testng",
+            "setting-up-testng",
+            "testng-annotations",
+            "creating-test-cases-testng",
+            "parameterization-testng",
+            "testng-assertions",
+            "testng-xml-configuration",
+            "parallel-test-execution-testng",
+            "testng-listeners-reporters",
+            "integrating-testng-ci-cd"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "file": "chunk-04-junit.json",
+      "categoryCount": 1,
+      "tutorialCount": 10,
+      "categories": [
+        {
+          "name": "JUnit",
+          "tutorialCount": 10,
+          "tutorialIds": [
+            "introduction-junit",
+            "setting-up-junit",
+            "junit-annotations",
+            "creating-basic-test-cases",
+            "assertions-junit",
+            "parameterized-tests-junit",
+            "test-lifecycle-before-after",
+            "exception-testing-junit",
+            "junit-test-suites",
+            "integrating-junit-ci-cd"
+          ]
+        }
+      ]
+    }
+  ]
+}

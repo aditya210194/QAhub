@@ -1,0 +1,176 @@
+{
+  "source": "api-testing.json",
+  "totalCategories": 11,
+  "totalChunks": 4,
+  "chunks": [
+    {
+      "index": 0,
+      "file": "chunk-00-api-fundamentals-architecture.json",
+      "categoryCount": 3,
+      "tutorialCount": 22,
+      "categories": [
+        {
+          "name": "API Fundamentals & Architecture",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "what-is-api",
+            "http-protocol-mastery",
+            "rest-architecture-complete",
+            "api-design-principles",
+            "api-architecture-comparison",
+            "api-protocols-formats"
+          ]
+        },
+        {
+          "name": "Core API Testing Fundamentals",
+          "tutorialCount": 8,
+          "tutorialIds": [
+            "api-testing-basics",
+            "functional-testing-complete",
+            "negative-testing-mastery",
+            "integration-testing-strategies",
+            "regression-testing-apis",
+            "exploratory-testing-apis",
+            "compatibility-testing-deep",
+            "usability-testing-apis"
+          ]
+        },
+        {
+          "name": "Advanced API Testing Techniques",
+          "tutorialCount": 8,
+          "tutorialIds": [
+            "performance-testing-complete",
+            "security-testing-mastery",
+            "contract-testing-deep",
+            "fuzz-testing-apis",
+            "penetration-testing-apis",
+            "reliability-testing",
+            "data-integrity-testing",
+            "concurrency-testing"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "file": "chunk-01-api-automation-tooling.json",
+      "categoryCount": 3,
+      "tutorialCount": 24,
+      "categories": [
+        {
+          "name": "API Automation & Tooling",
+          "tutorialCount": 10,
+          "tutorialIds": [
+            "automation-fundamentals",
+            "postman-complete",
+            "rest-assured-mastery",
+            "jmeter-api-testing",
+            "python-api-testing",
+            "karate-framework",
+            "soapui-complete",
+            "mocking-stubbing-deep",
+            "frameworks-comparison",
+            "custom-frameworks"
+          ]
+        },
+        {
+          "name": "CI/CD & DevOps Integration",
+          "tutorialCount": 7,
+          "tutorialIds": [
+            "ci-cd-fundamentals",
+            "jenkins-pipeline",
+            "github-actions-api",
+            "gitlab-ci-api",
+            "docker-containerization",
+            "kubernetes-testing",
+            "test-observability"
+          ]
+        },
+        {
+          "name": "Specialized API Types & Protocols",
+          "tutorialCount": 7,
+          "tutorialIds": [
+            "graphql-testing-complete",
+            "grpc-testing-deep",
+            "websocket-testing",
+            "async-api-testing",
+            "soap-api-testing",
+            "odata-testing",
+            "rest-api-vs-graphql"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "file": "chunk-02-api-documentation-standards.json",
+      "categoryCount": 3,
+      "tutorialCount": 17,
+      "categories": [
+        {
+          "name": "API Documentation & Standards",
+          "tutorialCount": 5,
+          "tutorialIds": [
+            "openapi-swagger",
+            "openapi-validation",
+            "api-blueprint-raml",
+            "api-governance-complete",
+            "api-monetization"
+          ]
+        },
+        {
+          "name": "Real-World Case Studies & Scenarios",
+          "tutorialCount": 8,
+          "tutorialIds": [
+            "payment-api-case-study",
+            "ecommerce-api-testing",
+            "social-media-api",
+            "healthcare-api-testing",
+            "banking-api-testing",
+            "microservices-failure-patterns",
+            "third-party-integration",
+            "legacy-api-modernization"
+          ]
+        },
+        {
+          "name": "Test Data Management",
+          "tutorialCount": 4,
+          "tutorialIds": [
+            "test-data-fundamentals",
+            "data-generation-tools",
+            "data-privacy-compliance",
+            "database-state-management"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "file": "chunk-03-reporting-analytics.json",
+      "categoryCount": 2,
+      "tutorialCount": 8,
+      "categories": [
+        {
+          "name": "Reporting & Analytics",
+          "tutorialCount": 4,
+          "tutorialIds": [
+            "test-reporting-fundamentals",
+            "allure-reporting",
+            "extent-reports",
+            "metrics-kpis"
+          ]
+        },
+        {
+          "name": "Career & Professional Development",
+          "tutorialCount": 4,
+          "tutorialIds": [
+            "api-testing-interview-mastery",
+            "api-testing-certifications",
+            "resume-portfolio",
+            "career-pathways"
+          ]
+        }
+      ]
+    }
+  ]
+}

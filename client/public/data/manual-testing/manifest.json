@@ -1,0 +1,313 @@
+{
+  "source": "manual-testing.json",
+  "totalCategories": 18,
+  "totalChunks": 6,
+  "chunks": [
+    {
+      "index": 0,
+      "file": "chunk-00-manual-testing-fundamentals.json",
+      "categoryCount": 3,
+      "tutorialCount": 32,
+      "categories": [
+        {
+          "name": "Manual Testing Fundamentals",
+          "tutorialCount": 8,
+          "tutorialIds": [
+            "introduction-to-manual-testing",
+            "manual-vs-automation-testing",
+            "types-of-manual-testing",
+            "manual-testing-process-flow",
+            "manual-testing-life-cycle",
+            "roles-responsibilities-manual-tester",
+            "prerequisites-for-manual-testing",
+            "advantages-disadvantages-manual-testing"
+          ]
+        },
+        {
+          "name": "Testing Documentation",
+          "tutorialCount": 10,
+          "tutorialIds": [
+            "test-planning-manual-testing",
+            "writing-effective-test-cases",
+            "test-case-design-techniques",
+            "test-scenario-creation",
+            "test-data-preparation",
+            "traceability-matrix",
+            "test-execution-reports",
+            "defect-bug-report-writing",
+            "test-summary-reports",
+            "requirements-traceability-matrix"
+          ]
+        },
+        {
+          "name": "Testing Techniques & Methodologies",
+          "tutorialCount": 14,
+          "tutorialIds": [
+            "black-box-testing-techniques",
+            "white-box-testing-basics-testers",
+            "gray-box-testing",
+            "equivalence-partitioning",
+            "boundary-value-analysis",
+            "decision-table-testing",
+            "state-transition-testing",
+            "use-case-testing",
+            "error-guessing-technique",
+            "exploratory-testing",
+            "ad-hoc-testing",
+            "positive-negative-testing",
+            "risk-based-testing",
+            "regression-testing-manual-approach"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "file": "chunk-01-testing-types-in-manual-testing.json",
+      "categoryCount": 3,
+      "tutorialCount": 39,
+      "categories": [
+        {
+          "name": "Testing Types in Manual Testing",
+          "tutorialCount": 15,
+          "tutorialIds": [
+            "functional-testing-manual",
+            "non-functional-testing",
+            "system-testing",
+            "integration-testing",
+            "smoke-testing",
+            "sanity-testing",
+            "user-acceptance-testing",
+            "alpha-beta-testing",
+            "compatibility-testing",
+            "usability-testing",
+            "gui-testing",
+            "database-testing-basics",
+            "security-testing-fundamentals",
+            "performance-testing-concepts",
+            "accessibility-testing"
+          ]
+        },
+        {
+          "name": "Web Application Manual Testing",
+          "tutorialCount": 14,
+          "tutorialIds": [
+            "web-application-testing-checklist",
+            "browser-compatibility-testing",
+            "cross-browser-testing-techniques",
+            "responsive-design-testing",
+            "form-validation-testing",
+            "navigation-testing",
+            "cookie-testing",
+            "session-testing",
+            "link-testing",
+            "web-security-testing-basics",
+            "file-upload-download-testing",
+            "payment-gateway-testing",
+            "api-testing-basics-manual",
+            "rest-api-testing-postman"
+          ]
+        },
+        {
+          "name": "Mobile App Manual Testing",
+          "tutorialCount": 10,
+          "tutorialIds": [
+            "mobile-application-testing-checklist",
+            "ios-android-testing-differences",
+            "device-compatibility-testing",
+            "touch-gesture-testing",
+            "mobile-app-usability-testing",
+            "network-testing-mobile",
+            "interruption-testing",
+            "battery-consumption-testing",
+            "installation-uninstallation-testing",
+            "push-notification-testing"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "file": "chunk-02-desktop-application-testing.json",
+      "categoryCount": 3,
+      "tutorialCount": 18,
+      "categories": [
+        {
+          "name": "Desktop Application Testing",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "desktop-application-testing-checklist",
+            "installation-testing-desktop",
+            "uninstallation-testing",
+            "upgrade-testing",
+            "multi-user-environment-testing",
+            "file-system-operations-testing"
+          ]
+        },
+        {
+          "name": "Database Testing (Manual Approach)",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "basic-sql-for-testers",
+            "The Essential SQL Toolkit for Testers",
+            "data-integrity-testing",
+            "crud-operations-testing",
+            "data-migration-testing",
+            "backup-recovery-testing"
+          ]
+        },
+        {
+          "name": "Defect Management",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "defect-lifecycle",
+            "bug-severity-vs-priority",
+            "bug-tracking-process",
+            "effective-bug-reporting",
+            "bug-triage-process",
+            "bug-verification-closure"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "file": "chunk-03-testing-environments-tools.json",
+      "categoryCount": 3,
+      "tutorialCount": 18,
+      "categories": [
+        {
+          "name": "Testing Environments & Tools",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "test-environment-setup",
+            "virtual-machine-testing",
+            "cross-platform-testing",
+            "using-browser-developer-tools",
+            "screen-capture-annotation-tools",
+            "video-recording-bug-reporting"
+          ]
+        },
+        {
+          "name": "Agile Manual Testing",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "manual-testing-in-agile",
+            "sprint-testing-process",
+            "user-story-testing",
+            "acceptance-criteria-testing",
+            "daily-standup-for-testers",
+            "testing-in-continuous-integration"
+          ]
+        },
+        {
+          "name": "Specialized Testing Areas",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "e-commerce-website-testing",
+            "banking-application-testing",
+            "healthcare-application-testing",
+            "educational-platform-testing",
+            "social-media-application-testing",
+            "gaming-application-testing"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "file": "chunk-04-best-practices-career.json",
+      "categoryCount": 3,
+      "tutorialCount": 23,
+      "categories": [
+        {
+          "name": "Best Practices & Career",
+          "tutorialCount": 8,
+          "tutorialIds": [
+            "manual-testing-best-practices",
+            "common-mistakes-manual-testing",
+            "effective-communication-for-testers",
+            "time-management-for-testers",
+            "building-manual-testing-portfolio",
+            "manual-tester-career-path",
+            "certifications-manual-testers",
+            "transitioning-manual-to-automation"
+          ]
+        },
+        {
+          "name": "Real-World Scenarios",
+          "tutorialCount": 7,
+          "tutorialIds": [
+            "creating-test-plans-from-scratch",
+            "test-case-review-process",
+            "handling-changing-requirements",
+            "testing-without-requirements",
+            "prioritizing-test-cases",
+            "estimating-testing-effort",
+            "risk-assessment-testing"
+          ]
+        },
+        {
+          "name": "Advanced Manual Testing",
+          "tutorialCount": 8,
+          "tutorialIds": [
+            "heuristic-test-strategy",
+            "mind-mapping-test-planning",
+            "testing-tours-exploratory",
+            "pair-testing",
+            "crowdsourced-testing",
+            "crowdsourced-testing-platforms",
+            "usability-heuristics-nielsen",
+            "cognitive-walkthroughs"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "file": "chunk-05-tools-for-manual-testers.json",
+      "categoryCount": 3,
+      "tutorialCount": 20,
+      "categories": [
+        {
+          "name": "Tools for Manual Testers",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "jira-for-manual-testers",
+            "testrail-test-management",
+            "testrail-test-management",
+            "screen-recording-tools",
+            "snagit-capture-tools",
+            "note-taking-for-testers"
+          ]
+        },
+        {
+          "name": "Domain-Specific Testing",
+          "tutorialCount": 6,
+          "tutorialIds": [
+            "erp-application-testing",
+            "crm-application-testing",
+            "healthcare-hipaa-compliance-testing",
+            "financial-application-testing",
+            "e-learning-platform-testing",
+            "government-application-testing"
+          ]
+        },
+        {
+          "name": "Soft Skills for Manual Testers",
+          "tutorialCount": 8,
+          "tutorialIds": [
+            "critical-thinking-in-testing",
+            "attention-to-detail",
+            "communication-skills-for-testers",
+            "reporting-skills",
+            "time-management-testing",
+            "problem-solving-skills",
+            "analytical-thinking",
+            "collaboration-development-team"
+          ]
+        }
+      ]
+    }
+  ]
+}
