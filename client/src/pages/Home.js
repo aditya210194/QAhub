@@ -6,6 +6,7 @@ import './Home.css';
 import SecondHeader from "./SecondHeader";
 import CoursesData from './CoursesData';
 import heroBg from '../images/heroBg.png';
+import { Helmet } from 'react-helmet-async';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -154,6 +155,14 @@ const Home = () => {
 
     return (
         <div className="home">
+            <Helmet>
+                <title>QA Hub - Software Testing Education & Courses</title>
+                <meta name="description" content="Learn software testing with QA Hub. Explore courses on manual testing, automation, API testing, and more. Start your QA career today." />
+                <meta property="og:title" content="QA Hub - Software Testing Education" />
+                <meta property="og:description" content="Learn software testing with QA Hub. Courses on manual, automation, and API testing." />
+                <meta property="og:url" content="https://www.qahub.co.in" />
+                <meta property="og:type" content="website" />
+            </Helmet>
             <h1 style={{ display: 'none' }}>QA Hub - Software Testing Education Platform</h1>
             <SecondHeader />
 

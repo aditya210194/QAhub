@@ -11,6 +11,7 @@ import {
     faExternalLinkAlt,
     faFilter
 } from '@fortawesome/free-solid-svg-icons';
+import { Helmet } from 'react-helmet-async';
 
 // Category icons mapping
 const categoryIcons = {
@@ -771,6 +772,13 @@ const Resources = () => {
 
     return (
         <div className="resources">
+            <Helmet>
+                <title>Software Testing Resources | QA Hub</title>
+                <meta name="description" content="Download free software testing resources — templates, checklists, test plans, and study materials from QA Hub." />
+                <meta property="og:title" content="Software Testing Resources | QA Hub" />
+                <meta property="og:description" content="Free testing templates, checklists, test plans and study materials." />
+                <meta property="og:url" content="https://www.qahub.co.in/resources" />
+            </Helmet>
             <div className="resource-header">
                 <div className="header-content">
                     <h1 className="text-center" data-aos="fade-down">

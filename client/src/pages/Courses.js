@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaSearch, FaStar, FaClock, FaUserGraduate, FaFilter } from 'react-icons/fa';
 import CoursesData from './CoursesData';
 import './Courses.css';
+import { Helmet } from 'react-helmet-async';
 
 const CoursesPage = () => {
     const navigate = useNavigate();
@@ -53,6 +54,13 @@ const CoursesPage = () => {
 
     return (
         <div className="courses-page">
+            <Helmet>
+                <title>Software Testing Courses | QA Hub</title>
+                <meta name="description" content="Browse QA Hub's software testing courses — manual testing, Selenium automation, API testing, performance testing and more. Learn at your own pace." />
+                <meta property="og:title" content="Software Testing Courses | QA Hub" />
+                <meta property="og:description" content="Browse courses on manual testing, automation, API testing and more." />
+                <meta property="og:url" content="https://www.qahub.co.in/courses" />
+            </Helmet>
             {/* Hero Section */}
             <div className="courses-hero">
                 <div className="container">

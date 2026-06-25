@@ -12,6 +12,7 @@ import {
 import 'aos/dist/aos.css';
 import AOS from 'aos';
 import './AboutUs.css';
+import { Helmet } from 'react-helmet-async';
 
 const AboutUs = () => {
     useEffect(() => {
@@ -23,6 +24,13 @@ const AboutUs = () => {
 
     return (
         <div className="about-us">
+            <Helmet>
+                <title>About Us | QA Hub</title>
+                <meta name="description" content="Learn about QA Hub — our mission to make software testing education accessible, practical, and career-focused for every learner." />
+                <meta property="og:title" content="About Us | QA Hub" />
+                <meta property="og:description" content="Our mission to make software testing education accessible for everyone." />
+                <meta property="og:url" content="https://www.qahub.co.in/about" />
+            </Helmet>
             {/* Hero Section */}
             <div className="about-hero" data-aos="fade">
                 <div className="container">

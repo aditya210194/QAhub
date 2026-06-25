@@ -20,6 +20,7 @@ import {
     FaComments
 } from "react-icons/fa";
 import "./TermsConditions.css";
+import { Helmet } from 'react-helmet-async';
 
 const TermsConditions = () => {
     const [showBackToTop, setShowBackToTop] = useState(false);
@@ -206,6 +207,13 @@ const TermsConditions = () => {
 
     return (
         <div className="terms-page">
+            <Helmet>
+                <title>Terms & Conditions | QA Hub</title>
+                <meta name="description" content="Read QA Hub's terms and conditions for using our software testing education platform and services." />
+                <meta property="og:title" content="Terms & Conditions | QA Hub" />
+                <meta property="og:url" content="https://www.qahub.co.in/terms-and-conditions" />
+            </Helmet>
+
             {/* Header Section */}
             <motion.div
                 className="terms-header"

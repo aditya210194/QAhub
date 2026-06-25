@@ -28,6 +28,7 @@ import sampleResume9 from "../resumes/sampleResume9.pdf";
 import sampleResume10 from "../resumes/sampleResume10.pdf";
 import "./Resumes.css";
 import { processUploadedResume } from "../utils/pdfExtractor";
+import { Helmet } from 'react-helmet-async';
 
 const Resumes = () => {
     const navigate = useNavigate();
@@ -452,6 +453,13 @@ const Resumes = () => {
 
     return (
         <div className="resumes-page">
+            <Helmet>
+                <title>QA Resume Templates | QA Hub</title>
+                <meta name="description" content="Download professional QA engineer resume templates. Stand out in your job search with QA Hub's tested and proven resume formats." />
+                <meta property="og:title" content="QA Resume Templates | QA Hub" />
+                <meta property="og:description" content="Professional QA engineer resume templates to land your next job." />
+                <meta property="og:url" content="https://www.qahub.co.in/resumes" />
+            </Helmet>
             {/* Header Section */}
             <div className="resumes-header">
                 <div className="header-content">

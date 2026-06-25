@@ -15,6 +15,7 @@ import {
   FaSyncAlt
 } from "react-icons/fa";
 import "./PrivacyPolicy.css";
+import { Helmet } from 'react-helmet-async';
 
 const PrivacyPolicy = () => {
     const [showBackToTop, setShowBackToTop] = useState(false);
@@ -201,6 +202,12 @@ const PrivacyPolicy = () => {
 
     return (
         <div className="privacy-policy-page">
+            <Helmet>
+                <title>Privacy Policy | QA Hub</title>
+                <meta name="description" content="Read QA Hub's privacy policy to understand how we collect, use, and protect your personal information." />
+                <meta property="og:title" content="Privacy Policy | QA Hub" />
+                <meta property="og:url" content="https://www.qahub.co.in/privacy-policy" />
+            </Helmet>
             {/* Header Section */}
             <motion.div
                 className="privacy-header"

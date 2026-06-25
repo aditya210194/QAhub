@@ -26,6 +26,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import "./ResumeGenerator.css";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import ResumeTemplates, { TemplateSelector } from "../components/ResumeTemplates";
+import { Helmet } from 'react-helmet-async';
 
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
@@ -1033,6 +1034,13 @@ const ResumeGenerator = () => {
 
     return (
         <Container fluid className={`resume-generator-container ${darkMode ? 'dark-mode' : ''}`}>
+            <Helmet>
+                <title>QA Resume Generator | QA Hub</title>
+                <meta name="description" content="Build your perfect QA engineer resume in minutes with QA Hub's free resume generator. Tailored for software testing professionals." />
+                <meta property="og:title" content="QA Resume Generator | QA Hub" />
+                <meta property="og:description" content="Build a professional QA engineer resume in minutes for free." />
+                <meta property="og:url" content="https://www.qahub.co.in/resume-generator" />
+            </Helmet>
             {isProcessingUpload && (
                 <div className="upload-processing-overlay position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style={{ backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 10000 }}>
                     <Card className="text-center p-4"><FaSpinner className="spinner-animation mb-3" size={40} /><h5>Processing Your Resume...</h5><p className="text-muted mb-0">Extracting information from "{uploadedFileName}"</p></Card>

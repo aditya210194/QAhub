@@ -57,6 +57,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './MentorshipPage.css';
+import { Helmet } from 'react-helmet-async';
 
 // Custom components for markdown rendering
 // Custom components for markdown rendering
@@ -818,6 +819,13 @@ const MentorshipPage = () => {
 
     return (
         <div className="mentorship-page">
+            <Helmet>
+                <title>QA Mentorship Program | QA Hub</title>
+                <meta name="description" content="Get 1-on-1 mentorship from experienced QA engineers. Accelerate your software testing career with personalized guidance on QA Hub." />
+                <meta property="og:title" content="QA Mentorship Program | QA Hub" />
+                <meta property="og:description" content="1-on-1 mentorship from experienced QA engineers to accelerate your career." />
+                <meta property="og:url" content="https://www.qahub.co.in/mentorship" />
+            </Helmet>
             {/* Compact Hero Section */}
 
             <motion.div

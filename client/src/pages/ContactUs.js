@@ -11,6 +11,7 @@ import {
 import 'aos/dist/aos.css';
 import AOS from 'aos';
 import './ContactUs.css';
+import { Helmet } from 'react-helmet-async';
 
 const ContactUs = () => {
     useEffect(() => {
@@ -93,6 +94,13 @@ const ContactUs = () => {
 
     return (
         <div className="contact-us">
+            <Helmet>
+                <title>Contact Us | QA Hub</title>
+                <meta name="description" content="Get in touch with the QA Hub team. We're here to help with your software testing education journey." />
+                <meta property="og:title" content="Contact Us | QA Hub" />
+                <meta property="og:description" content="Get in touch with the QA Hub team for support and inquiries." />
+                <meta property="og:url" content="https://www.qahub.co.in/contact" />
+            </Helmet>
             {/* Hero Section */}
             <div className="contact-hero" data-aos="fade">
                 <div className="container">

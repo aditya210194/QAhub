@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './DiscussionForums.css';
+import { Helmet } from 'react-helmet-async';
 
 const socket = io(process.env.REACT_APP_API_URL || 'http://127.0.0.1:5000');
 
@@ -333,6 +334,13 @@ const DiscussionForum = () => {
 
     return (
         <div className={`discussion-forum-container ${darkMode ? 'dark-mode' : ''}`}>
+            <Helmet>
+                <title>Software Testing Discussion Forums | QA Hub</title>
+                <meta name="description" content="Join QA Hub's community forums. Ask questions, share knowledge, and connect with software testing professionals from around the world." />
+                <meta property="og:title" content="Testing Discussion Forums | QA Hub" />
+                <meta property="og:description" content="Ask questions and connect with software testing professionals worldwide." />
+                <meta property="og:url" content="https://www.qahub.co.in/forums" />
+            </Helmet>
             {/* Dark Mode Toggle */}
             <button className="dark-mode-toggle" onClick={() => setDarkMode(!darkMode)}>
                 {darkMode ? <i className="bi bi-sun-fill"></i> : <i className="bi bi-moon-fill"></i>}

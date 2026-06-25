@@ -42,6 +42,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Helmet } from 'react-helmet-async';
 
 // Custom Hooks
 const useInterviewData = (jsonFile) => {
@@ -906,6 +907,13 @@ const InterviewQuestions = () => {
 
     return (
         <div className={`interview-questions-page ${darkMode ? 'dark-mode' : ''}`}>
+            <Helmet>
+                <title>Software Testing Interview Questions & Answers | QA Hub</title>
+                <meta name="description" content="Prepare for your QA interviews with 500+ software testing interview questions and answers covering manual, automation, API and performance testing." />
+                <meta property="og:title" content="Testing Interview Q&A | QA Hub" />
+                <meta property="og:description" content="500+ QA interview questions covering manual, automation, API and performance testing." />
+                <meta property="og:url" content="https://www.qahub.co.in/interview-qa" />
+            </Helmet>
             {!isOnline && (
                 <Alert variant="warning" className="fixed-top">
                     You are currently offline. Some content may not be up-to-date.

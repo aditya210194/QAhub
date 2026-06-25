@@ -14,6 +14,7 @@ import MobileTutorialsSidebar from '../components/Tutorials/MobileTutorialsSideb
 import useTutorialData from '../hooks/useTutorialData';
 import useTutorialTracking from '../hooks/useTutorialTracking';
 import { filterTutorials } from '../utils/tutorialUtils';
+import { Helmet } from 'react-helmet-async';
 
 // Map route params to JSON files
 const FILE_MAP = {
@@ -199,6 +200,13 @@ const TutorialPage = () => {
 
     return (
         <div key={componentKey} className={`${pageCssClass} ${darkMode ? 'dark-mode' : ''}`}>
+            <Helmet>
+                <title>Software Testing Resources | QA Hub</title>
+                <meta name="description" content="Download free software testing resources — templates, checklists, test plans, and study materials from QA Hub." />
+                <meta property="og:title" content="Software Testing Resources | QA Hub" />
+                <meta property="og:description" content="Free testing templates, checklists, test plans and study materials." />
+                <meta property="og:url" content="https://www.qahub.co.in/resources" />
+            </Helmet>
             {!isOnline && (
                 <Alert variant="warning" className="fixed-top">
                     You are currently offline. Some content may not be up-to-date.

@@ -13,6 +13,7 @@ import {
     faThumbsUp
 } from '@fortawesome/free-solid-svg-icons';
 import './Articles.css';
+import { Helmet } from 'react-helmet-async';
 const Articles = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredArticles, setFilteredArticles] = useState([]);
@@ -657,6 +658,13 @@ const Articles = () => {
 
     return (
         <div className="articles">
+            <Helmet>
+                <title>Software Testing Articles | QA Hub</title>
+                <meta name="description" content="Read expert articles on software testing — best practices, tools, automation strategies, and QA industry insights on QA Hub." />
+                <meta property="og:title" content="Software Testing Articles | QA Hub" />
+                <meta property="og:description" content="Expert articles on testing best practices, tools, and QA industry insights." />
+                <meta property="og:url" content="https://www.qahub.co.in/articles" />
+            </Helmet>
             <div className="articles-header">
                 <div className="header-content">
                     <h1 className="text-center" data-aos="fade-down">

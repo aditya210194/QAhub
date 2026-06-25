@@ -15,6 +15,7 @@ import {
     FaRegHeart
 } from "react-icons/fa";
 import "./CourseDetailPage.css";
+import { Helmet } from 'react-helmet-async';
 
 const CourseDetailPage = () => {
     const { courseId } = useParams();
@@ -36,6 +37,13 @@ const CourseDetailPage = () => {
 
     return (
         <div className="course-detail-page">
+            <Helmet>
+                <title>Course Details | QA Hub</title>
+                <meta name="description" content="Detailed course curriculum, learning objectives, and enrollment information for QA Hub software testing courses." />
+                <meta property="og:title" content="Course Details | QA Hub" />
+                <meta property="og:description" content="Detailed curriculum and enrollment for QA Hub courses." />
+                <meta property="og:url" content="https://www.qahub.co.in/courses" />
+            </Helmet>
             {/* Hero Section */}
             <div className="course-hero">
                 <div className="container">
