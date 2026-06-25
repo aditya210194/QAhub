@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 const KeyPointsBlock = ({ block, index }) => {
     const [expanded, setExpanded] = useState(false);
