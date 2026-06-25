@@ -239,7 +239,42 @@
     "name": "Financial Rounding Error Catastrophe",
     "description": "In 2010, a major international bank's trading system experienced catastrophic financial losses due to rounding errors in interest calculation algorithms. The system improperly handled decimal precision when converting between currencies, resulting in account balance miscalculations that went undetected for months.",
     "lesson": "Financial systems require exhaustive testing of decimal precision, rounding logic, and currency conversion edge cases. Automated validation of calculation accuracy across all possible scenarios is non-negotiable for monetary systems."
-  }
+  },
+  "metrics": {
+    "Impact": "$450M loss",
+    "Duration": "6 months undetected",
+    "Affected Accounts": "12,500+",
+    "System": "Trading Platform v3.2"
+  },
+  "scenario": "A high-frequency trading platform processing 2.5M daily transactions across 8 currency pairs. The system used JavaScript's native 64-bit floating point arithmetic for interest calculations and currency conversions.",
+  "problem": "When converting from USD to JPY (involving decimal multiplication), the system would truncate at 4 decimal places instead of proper rounding. Over millions of micro-transactions, each losing 0.0001-0.0009 JPY per trade, the accumulated error reached $450M in misallocated funds before detection.",
+  "solution": "Implemented a decimal arithmetic library (decimal.js) with configurable precision of 12 decimal places for intermediate calculations and 6 decimal places for final amounts. Added automated validation tests covering 10,000+ edge cases including extreme values, division by fractions, and multi-currency conversions.",
+  "outcome": "System fully restored within 72 hours. All affected accounts were reconciled with 99.97% accuracy. The bank now requires ISO 4217 compliance certification for all financial modules and monthly precision audits.",
+  "analysis": [
+    {
+      "failure": "Floating point arithmetic in financial contexts",
+      "solution": "Use dedicated decimal libraries with fixed-point precision"
+    },
+    {
+      "failure": "No validation of accumulated rounding errors",
+      "solution": "Implement statistical monitoring for drift detection"
+    },
+    {
+      "failure": "Manual testing only covered happy paths",
+      "solution": "Automated property-based testing for boundary conditions"
+    },
+    {
+      "failure": "Currency conversion without rounding standards",
+      "solution": "Adopt financial rounding standards (half-up, ceiling, floor per currency)"
+    }
+  ],
+  "lessons": [
+    "Never use IEEE 754 floating point for monetary calculations",
+    "Always implement idempotent reconciliation jobs",
+    "Test with worst-case volume, not just unit-level accuracy",
+    "Log every rounding decision with audit trail",
+    "Establish maximum allowable error per transaction type"
+  ]
 },
                     {
   "type": "case-study",
@@ -248,7 +283,42 @@
     "name": "Insulin Pump Calibration Failure",
     "description": "A widely used insulin pump's firmware contained a critical bug in its calibration algorithm that caused dosage miscalculations under specific conditions. When patients changed time zones or adjusted their basal rates, the pump could deliver incorrect insulin amounts—sometimes dangerously high doses that led to severe hypoglycemic episodes.",
     "lesson": "Medical device software requires rigorous scenario-based testing covering all possible user interactions, environmental changes, and edge conditions. Safety-critical systems must have multiple layers of validation and fail-safes, with testing that simulates real-world usage patterns beyond standard functional verification."
-  }
+  },
+  "metrics": {
+    "Impact": "Severe hypoglycemia events",
+    "Patients Affected": "~2,500",
+    "Recall Class": "FDA Class I",
+    "Detection Time": "14 months"
+  },
+  "scenario": "A hybrid closed-loop insulin pump managing type 1 diabetes patients with automated basal rate adjustments. The system used a proprietary calibration formula that recalculated every 3 minutes based on interstitial glucose readings.",
+  "problem": "When users crossed time zones (triggering date/time shift) OR manually adjusted basal rates while the pump was in 'learning mode', the calibration algorithm would misinterpret the timing of previous dosages. This caused the pump to either: (a) deliver 2.5x intended dose when it thought no insulin was onboard, or (b) deliver no insulin when it falsely detected overdose risk. The bug triggered in only 0.03% of usage patterns, making it extremely difficult to reproduce in testing.",
+  "solution": "Redesigned calibration algorithm using timestamp-independent differential calculations instead of absolute time comparisons. Added hardware-level watchdog timer that cross-validates dosage calculations with a secondary microcontroller. Implemented mandatory 3-second user confirmation for any dosage >20% above 30-day average. Created automated test suite covering 50,000+ real-world patient scenarios including travel, illness, exercise, and manual overrides.",
+  "outcome": "Emergency firmware patch deployed within 72 hours. Full recall of 180,000 devices for hardware revision. FDA required prospective clinical trials of 5,000 patients for 6 months before re-approval. Manufacturer established independent medical safety board and now publishes all calibration logic for third-party security review.",
+  "analysis": [
+    {
+      "failure": "Time-dependent logic without absolute reference validation",
+      "solution": "Use duration-based calculations from last known good state"
+    },
+    {
+      "failure": "Single processor responsible for both calculation and verification",
+      "solution": "Implement diverse redundancy with independent validation"
+    },
+    {
+      "failure": "Statistical anomaly detection missing during operation",
+      "solution": "Real-time deviation monitoring with automated alerting"
+    },
+    {
+      "failure": "Test suite didn't include time zone or manual override combinations",
+      "solution": "Combinatorial testing covering user journey state space"
+    }
+  ],
+  "lessons": [
+    "Safety-critical code requires formal verification, not just unit tests",
+    "User behavior cannot be assumed rational or predictable",
+    "Rare bugs in medical devices need hardware-level fail-safes",
+    "Log all state changes with immutable audit trails",
+    "Regulatory approval must mandate real-world usage simulation"
+  ]
 },
 {
   "type": "case-study",
@@ -257,7 +327,42 @@
     "name": "Smartphone Call Feature Crash",
     "description": "A flagship smartphone's new call feature experienced catastrophic failure during peak network traffic on launch day. The feature, which allowed conference calling with multiple participants, had insufficient load handling and memory management. When thousands of users simultaneously attempted to use the feature, the system crashed, rendering phones unusable for calls until rebooted.",
     "lesson": "Performance and load testing must simulate real-world peak usage scenarios, not just average conditions. Features with network dependencies require testing under variable network conditions, and user-facing functionality needs graceful degradation rather than complete failure under stress."
-  }
+  },
+  "metrics": {
+    "Impact": "100% call failure rate",
+    "Users Affected": "15M+",
+    "Downtime": "8 hours",
+    "Support Tickets": "2.3M day one"
+  },
+  "scenario": "Global smartphone launch with 15 million devices activated simultaneously on launch day. New 'Dynamic Conference Calling' feature allowed up to 32 participants with real-time audio mixing and AI-based noise cancellation.",
+  "problem": "The feature allocated memory for each active conference call participant but failed to properly release memory when participants left calls. Under light testing (10 concurrent calls), the memory leak was negligible. However, at launch with 850,000 simultaneous conference calls, the leak consumed all available RAM within 4 minutes. The watchdog timer crashed the phone's modem subsystem, requiring a full reboot. The phone would crash again immediately upon reconnecting to cellular networks because existing conference call state was stored in the network tower cache.",
+  "solution": "Completely rewrote participant lifecycle management with reference-counted garbage collection. Added memory pressure handler that gracefully degrades conference calling to 8 participants maximum during high load. Implemented client-side crash detection that automatically clears corrupted network state before reconnecting. Created load testing infrastructure simulating 2 million concurrent sessions before any future feature release.",
+  "outcome": "Emergency patch deployed within 12 hours (critical fix) and 48 hours (full fix). Carrier network caches flushed globally. Company compensated all affected customers with $25 service credit. New mandatory requirement: any feature with network state must have automatic state reset capability on crash recovery.",
+  "analysis": [
+    {
+      "failure": "Load testing capped at 0.001% of expected launch volume",
+      "solution": "Scale testing infrastructure to 200% of worst-case projections"
+    },
+    {
+      "failure": "Memory leak detection only in isolation, not integrated systems",
+      "solution": "Continuous integration testing with leak detection and 72-hour soak tests"
+    },
+    {
+      "failure": "Network-state persistence without recovery mechanism",
+      "solution": "Idempotent session management with client-side reset capability"
+    },
+    {
+      "failure": "No graceful degradation path under resource exhaustion",
+      "solution": "Implement feature-toggled capacity limits with user transparency"
+    }
+  ],
+  "lessons": [
+    "Scale testing must match or exceed worst-case real-world usage",
+    "Memory leaks scale with users - test at max capacity, not average",
+    "Network state must be recoverable independent of client crashes",
+    "Every feature needs a 'circuit breaker' for peak load protection",
+    "Launch day traffic is not a load test - it's production reality"
+  ]
 }
                   ]
                 },
@@ -729,12 +834,56 @@
                         ]
                       ]
                     },
-                    {
-                      "type": "diagram",
-                      "title": "Technical Validation vs Business Value",
-                      "image": "venn-diagram-technical-business.png",
-                      "caption": "Venn diagram showing overlap between technical validation and business value"
-                    }
+                  {
+  "type": "diagram",
+  "title": "Technical Validation vs Business Value",
+  "diagramType": "architecture",
+  "description": "Venn diagram showing overlap between technical validation and business value",
+  "layers": [
+    {
+      "name": "Technical Validation",
+      "components": [
+        {
+          "name": "Code Quality",
+          "icon": "fa-code",
+          "description": "Clean code, standards compliance"
+        },
+        {
+          "name": "Test Coverage",
+          "icon": "fa-vial",
+          "description": "Unit, integration, E2E tests"
+        },
+        {
+          "name": "Performance",
+          "icon": "fa-gauge-high",
+          "description": "Speed, scalability, efficiency"
+        }
+      ]
+    },
+    {
+      "name": "Business Value",
+      "components": [
+        {
+          "name": "Revenue Impact",
+          "icon": "fa-dollar-sign",
+          "description": "Direct and indirect revenue"
+        },
+        {
+          "name": "Customer Satisfaction",
+          "icon": "fa-star",
+          "description": "NPS, retention, loyalty"
+        },
+        {
+          "name": "Market Share",
+          "icon": "fa-chart-line",
+          "description": "Competitive positioning"
+        }
+      ]
+    }
+  ],
+  "interactive": true,
+  "caption": "The IDEAL zone represents the intersection of technical excellence and business outcomes"
+}
                   ]
                 },
                 {
@@ -1598,11 +1747,43 @@
                           "value": "QA sets the process and standards. QC checks whether the output meets the standards. Testing is one tool to achieve QC."
                         },
                         {
-                          "type": "diagram",
-                          "title": "QA, QC, and Testing Relationship",
-                          "image": "qa-qc-testing-venn.png",
-                          "caption": "Venn diagram showing QA as the outer circle, QC inside QA, and Testing inside QC"
-                        }
+  "type": "diagram",
+  "title": "QA, QC, and Testing Relationship",
+  "diagramType": "ascii",
+  "content": [
+    "                    ┌─────────────────────────────────────────────┐",
+    "                    │           QUALITY ASSURANCE (QA)           │",
+    "                    │          (Process - Defect Prevention)     │",
+    "                    │    ┌────────────────────────────────────┐  │",
+    "                    │    │        QUALITY CONTROL (QC)       │  │",
+    "                    │    │       (Product - Defect Detection)│  │",
+    "                    │    │    ┌──────────────────────────┐   │  │",
+    "                    │    │    │        TESTING           │   │  │",
+    "                    │    │    │    (Execution - Finding  │   │  │",
+    "                    │    │    │        Defects)          │   │  │",
+    "                    │    │    │                          │   │  │",
+    "                    │    │    │  • Unit Testing          │   │  │",
+    "                    │    │    │  • Integration Testing   │   │  │",
+    "                    │    │    │  • System Testing        │   │  │",
+    "                    │    │    │  • UAT                   │   │  │",
+    "                    │    │    └──────────────────────────┘   │  │",
+    "                    │    │                                    │  │",
+    "                    │    │  • Test Planning                   │  │",
+    "                    │    │  • Test Design                     │  │",
+    "                    │    │  • Defect Tracking                 │  │",
+    "                    │    │  • Metrics Collection              │  │",
+    "                    │    └────────────────────────────────────┘  │",
+    "                    │                                            │",
+    "                    │  • Process Definition                     │",
+    "                    │  • Standards Creation                    │",
+    "                    │  • Guidelines & Training                 │",
+    "                    │  • Audit & Compliance                    │",
+    "                    └────────────────────────────────────────────┘",
+    "",
+    "              QA (Outer)  →  QC (Middle)  →  Testing (Inner)"
+  ],
+  "caption": "Venn diagram showing QA as the outer circle, QC inside QA, and Testing inside QC"
+}
                       ]
                     },
                     {
@@ -1674,12 +1855,68 @@
                             "QC teams emerged to validate deliverables"
                           ]
                         },
-                        {
-                          "type": "diagram",
-                          "title": "Waterfall Model with QA/QC",
-                          "image": "waterfall-model.png",
-                          "caption": "Diagram showing Waterfall Model stages with QA/QC happening near the end"
-                        }
+                       {
+  "type": "diagram",
+  "title": "Waterfall Model with QA/QC",
+  "diagramType": "ascii",
+  "content": [
+    "                    ┌─────────────────────────────────────────────────────┐",
+    "                    │               WATERFALL MODEL                      │",
+    "                    └─────────────────────────────────────────────────────┘",
+    "",
+    "                    ┌──────────────────────┐",
+    "                    │  1. REQUIREMENTS     │",
+    "                    │  • Gather needs      │",
+    "                    │  • Document specs    │",
+    "                    └──────────┬───────────┘",
+    "                               │",
+    "                               ▼",
+    "                    ┌──────────────────────┐",
+    "                    │  2. DESIGN           │",
+    "                    │  • Architecture      │",
+    "                    │  • Detailed design   │",
+    "                    └──────────┬───────────┘",
+    "                               │",
+    "                               ▼",
+    "                    ┌──────────────────────┐",
+    "                    │  3. IMPLEMENTATION   │",
+    "                    │  • Coding            │",
+    "                    │  • Unit testing      │",
+    "                    └──────────┬───────────┘",
+    "                               │",
+    "                               ▼",
+    "                    ┌──────────────────────────────────────────────┐",
+    "                    │  4. QA / QC PHASE                          │",
+    "                    │  ═════════════════════════════════════════ │",
+    "                    │  • Integration Testing                     │",
+    "                    │  • System Testing                          │",
+    "                    │  • User Acceptance Testing (UAT)          │",
+    "                    │  • Defect Tracking                         │",
+    "                    │  • Quality Metrics Collection              │",
+    "                    │  • Test Reporting                          │",
+    "                    │  • Validation & Verification              │",
+    "                    └──────────┬───────────────────────────────┘",
+    "                               │",
+    "                               ▼",
+    "                    ┌──────────────────────┐",
+    "                    │  5. DEPLOYMENT       │",
+    "                    │  • Release           │",
+    "                    │  • Production setup  │",
+    "                    └──────────┬───────────┘",
+    "                               │",
+    "                               ▼",
+    "                    ┌──────────────────────┐",
+    "                    │  6. MAINTENANCE      │",
+    "                    │  • Bug fixes         │",
+    "                    │  • Enhancements      │",
+    "                    └──────────────────────┘",
+    "",
+    "         ════════════════════════════════════════════════════════",
+    "         QA/QC Activities are concentrated at Stage 4 (Testing)",
+    "         ════════════════════════════════════════════════════════"
+  ],
+  "caption": "Diagram showing Waterfall Model stages with QA/QC happening near the end"
+}
                       ]
                     },
                     {
@@ -1748,11 +1985,51 @@
                           "content": "'Working software over comprehensive documentation' meant quality had to move faster."
                         },
                         {
-                          "type": "diagram",
-                          "title": "Agile Testing Quadrants",
-                          "image": "agile-testing-quadrants.png",
-                          "caption": "Diagram showing Agile Testing Quadrants with examples for each"
-                        }
+  "type": "diagram",
+  "title": "Agile Testing Quadrants",
+  "diagramType": "architecture",
+  "description": "Brian Marick's Agile Testing Quadrants - Quality-driven testing strategy",
+  "layers": [
+    {
+      "name": "🔴 Q3: Business Facing - Critiquing",
+      "components": [
+        {"name": "Exploratory", "icon": "fa-compass"},
+        {"name": "UAT", "icon": "fa-users"},
+        {"name": "Beta", "icon": "fa-flask"},
+        {"name": "Usability", "icon": "fa-mouse-pointer"}
+      ]
+    },
+    {
+      "name": "🟢 Q2: Business Facing - Supporting",
+      "components": [
+        {"name": "Functional", "icon": "fa-check-circle"},
+        {"name": "User Story", "icon": "fa-book"},
+        {"name": "Acceptance", "icon": "fa-thumbs-up"},
+        {"name": "Demos", "icon": "fa-play"}
+      ]
+    },
+    {
+      "name": "🟡 Q4: Technology Facing - Critiquing",
+      "components": [
+        {"name": "Performance", "icon": "fa-gauge-high"},
+        {"name": "Security", "icon": "fa-shield"},
+        {"name": "Load", "icon": "fa-weight-hanging"},
+        {"name": "Scalability", "icon": "fa-expand"}
+      ]
+    },
+    {
+      "name": "🔵 Q1: Technology Facing - Supporting",
+      "components": [
+        {"name": "Unit", "icon": "fa-code"},
+        {"name": "Component", "icon": "fa-puzzle-piece"},
+        {"name": "Integration", "icon": "fa-plug"},
+        {"name": "API", "icon": "fa-cloud"}
+      ]
+    }
+  ],
+  "caption": "Diagram showing Agile Testing Quadrants with examples for each",
+  "interactive": true
+}
                       ]
                     },
                     {
@@ -1773,11 +2050,67 @@
                           ]
                         },
                         {
-                          "type": "diagram",
-                          "title": "CI/CD Pipeline with QA Touchpoints",
-                          "image": "ci-cd-pipeline.png",
-                          "caption": "Diagram showing stages: code → build → test → deploy → monitor"
-                        }
+  "type": "diagram",
+  "title": "CI/CD Pipeline with QA Touchpoints",
+  "diagramType": "ascii",
+  "content": [
+    "                ┌──────────────────────────────────────────────────────────────────────┐",
+    "                │                CI/CD PIPELINE WITH QA TOUCHPOINTS                   │",
+    "                └──────────────────────────────────────────────────────────────────────┘",
+    "",
+    "    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐",
+    "    │   CODE      │    │   BUILD     │    │    UNIT     │    │ INTEGRATION │",
+    "    │   COMMIT    │───▶│   & PACKAGE │───▶│   TESTING   │───▶│   TESTING   │",
+    "    │             │    │             │    │   (QA)      │    │   (QA)      │",
+    "    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘",
+    "          │                  │                  │                  │",
+    "          │                  │                  │                  │",
+    "          ▼                  ▼                  ▼                  ▼",
+    "    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐",
+    "    │   UNIT      │    │   STATIC    │    │   CODE      │    │   BUILD     │",
+    "    │   TESTING   │    │   ANALYSIS  │    │   QUALITY   │    │   ARTIFACT  │",
+    "    │   (QA)      │    │   (QA)      │    │   GATES     │    │   STORAGE   │",
+    "    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘",
+    "",
+    "    ════════════════════════════════════════════════════════════════════════",
+    "                         CI (Continuous Integration)                        ",
+    "    ════════════════════════════════════════════════════════════════════════",
+    "",
+    "    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐",
+    "    │  DEPLOY TO  │    │    QA       │    │ PERFORMANCE │    │  SECURITY   │",
+    "    │  STAGING    │───▶│  VALIDATION │───▶│   TESTING   │───▶│  SCANNING   │",
+    "    │             │    │  (QA)       │    │   (QA)      │    │   (QA)      │",
+    "    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘",
+    "          │                  │                  │                  │",
+    "          │                  │                  │                  │",
+    "          ▼                  ▼                  ▼                  ▼",
+    "    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐",
+    "    │   UAT       │    │  SMOKE      │    │   REGRESSION│    │   QA        │",
+    "    │   TESTING   │    │  TESTING    │    │   TESTING   │    │   SIGN-OFF  │",
+    "    │   (QA)      │    │  (QA)       │    │   (QA)      │    │   (QA)      │",
+    "    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘",
+    "",
+    "    ════════════════════════════════════════════════════════════════════════",
+    "                    CD (Continuous Delivery/Deployment)                     ",
+    "    ════════════════════════════════════════════════════════════════════════",
+    "",
+    "    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐",
+    "    │  DEPLOY TO  │    │   SMOKE     │    │   MONITOR   │    │   ALERTING  │",
+    "    │  PRODUCTION │───▶│   TESTING   │───▶│   & OBSERVE │───▶│   & LOGGING │",
+    "    │             │    │   (QA)      │    │             │    │             │",
+    "    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘",
+    "",
+    "              ▲                    ▲                    ▲",
+    "              │                    │                    │",
+    "              └────────────────────┴────────────────────┘",
+    "                         CONTINUOUS FEEDBACK",
+    "",
+    "    ════════════════════════════════════════════════════════════════════════",
+    "    Legend:  [QA] = Quality Assurance Touchpoint",
+    "    ════════════════════════════════════════════════════════════════════════"
+  ],
+  "caption": "Diagram showing stages: code → build → test → deploy → monitor"
+}
                       ]
                     },
                     {
@@ -1982,12 +2315,36 @@
                       "type": "subsection",
                       "title": "4.3.7 Continuous Improvement in QA",
                       "content": [
-                        {
-                          "type": "diagram",
-                          "title": "PDCA Model for QA",
-                          "image": "pdca-qa.png",
-                          "caption": "Cycle diagram of PDCA model with QA-specific examples"
-                        }
+                       {
+  "type": "diagram",
+  "title": "PDCA Model for QA",
+  "diagramType": "flowchart",
+  "description": "Plan-Do-Check-Act continuous improvement cycle for Quality Assurance",
+  "components": [
+    {
+      "type": "start",
+      "label": "PLAN\nDefine QA Strategy",
+      "icon": "fa-clipboard-list"
+    },
+    {
+      "type": "default",
+      "label": "DO\nExecute Testing",
+      "icon": "fa-play"
+    },
+    {
+      "type": "default",
+      "label": "CHECK\nEvaluate Results",
+      "icon": "fa-clipboard-check"
+    },
+    {
+      "type": "end",
+      "label": "ACT\nImplement Improvements",
+      "icon": "fa-arrow-up"
+    }
+  ],
+  "caption": "Cycle diagram of PDCA model with QA-specific examples",
+  "interactive": true
+}
                       ]
                     }
                   ]
@@ -2203,11 +2560,40 @@
                       "title": "4.5.3 Testing as a Feedback Loop in QA",
                       "content": [
                         {
-                          "type": "diagram",
-                          "title": "Testing Feedback Loop",
-                          "image": "testing-feedback-loop.png",
-                          "caption": "Flow diagram showing Testing → Metrics → QA Process Review → Improved Guidelines"
-                        }
+  "type": "diagram",
+  "title": "Testing Feedback Loop",
+  "diagramType": "components",
+  "description": "Continuous improvement cycle for QA processes",
+  "components": [
+    {
+      "name": "Testing",
+      "icon": "fa-vial",
+      "description": "Execute test cases, log defects, gather results"
+    },
+    {
+      "name": "Metrics",
+      "icon": "fa-chart-bar",
+      "description": "Collect quality metrics, analyze trends, identify patterns"
+    },
+    {
+      "name": "Process Review",
+      "icon": "fa-clipboard-check",
+      "description": "Audit current processes, identify gaps, recommend improvements"
+    },
+    {
+      "name": "Guidelines Update",
+      "icon": "fa-pen-to-square",
+      "description": "Update testing guidelines, implement process changes"
+    },
+    {
+      "name": "Improved Quality",
+      "icon": "fa-check-circle",
+      "description": "Higher quality releases, reduced defects, better customer satisfaction"
+    }
+  ],
+  "caption": "Flow diagram showing Testing → Metrics → QA Process Review → Improved Guidelines",
+  "interactive": true
+}
                       ]
                     },
                     {
@@ -2246,11 +2632,38 @@
                       "title": "4.5.5 Testing Lifecycle Within QA/QC",
                       "content": [
                         {
-                          "type": "diagram",
-                          "title": "Testing Lifecycle",
-                          "image": "testing-lifecycle.png",
-                          "caption": "Flowchart with QA-involved phases in blue, QC-involved phases in green"
-                        }
+  "type": "diagram",
+  "title": "Testing Lifecycle",
+  "diagramType": "ascii",
+  "content": [
+    "┌─────────────────────────────────────────────────────────────┐",
+    "│                    TESTING LIFECYCLE                       │",
+    "├─────────────────────────────────────────────────────────────┤",
+    "│                                                             │",
+    "│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐ │",
+    "│  │  Requirements │    │   Test       │    │   Test Case  │ │",
+    "│  │   Review      │───▶│  Planning    │───▶│   Design     │ │",
+    "│  │   (QA)        │    │   (QA)       │    │   (QA)       │ │",
+    "│  └──────────────┘    └──────────────┘    └──────────────┘ │",
+    "│         │                    │                    │        │",
+    "│         ▼                    ▼                    ▼        │",
+    "│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐ │",
+    "│  │   Test       │    │   Defect     │    │  Retesting   │ │",
+    "│  │  Execution   │───▶│   Tracking   │───▶│   (QC)       │ │",
+    "│  │   (QC)       │    │   (QC)       │    │              │ │",
+    "│  └──────────────┘    └──────────────┘    └──────────────┘ │",
+    "│         │                                              │  │",
+    "│         ▼                                              ▼  │",
+    "│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐ │",
+    "│  │  Regression  │    │   Release    │    │  Lessons     │ │",
+    "│  │   Testing    │───▶│   Sign-off   │───▶│  Learned     │ │",
+    "│  │   (QC)       │    │   (Team)     │    │   (Team)     │ │",
+    "│  └──────────────┘    └──────────────┘    └──────────────┘ │",
+    "│                                                             │",
+    "└─────────────────────────────────────────────────────────────┘"
+  ],
+  "caption": "Flowchart with QA-involved phases in blue, QC-involved phases in green"
+}
                       ]
                     },
                     {
@@ -9841,23 +10254,24 @@
                       }
                     },
                     {
-                      "type": "tip-box",
-                      "title": "Executive Action Plan",
-                      "tips": [
-                        {
-                          "icon": "fas fa-chart-line",
-                          "text": "Calculate your Quality Debt: (Production Incidents × Avg. Resolution Cost) + (Revenue Impact × Customer Churn Rate)"
-                        },
-                        {
-                          "icon": "fas fa-balance-scale",
-                          "text": "Benchmark against industry: Healthcare should target <0.5% defect escape, e-commerce <1.5%"
-                        },
-                        {
-                          "icon": "fas fa-cogs",
-                          "text": "Implement STLC maturity assessment: Measure requirements coverage, automation percentage, and defect removal efficiency quarterly"
-                        }
-                      ]
-                    },
+  "type": "tip-box",
+  "title": "Executive Action Plan",
+  "variant": "success",
+  "tips": [
+    {
+      "icon": "fas fa-chart-line",
+      "text": "Calculate your Quality Debt: (Production Incidents × Avg. Resolution Cost) + (Revenue Impact × Customer Churn Rate)"
+    },
+    {
+      "icon": "fas fa-balance-scale",
+      "text": "Benchmark against industry: Healthcare should target <0.5% defect escape, e-commerce <1.5%"
+    },
+    {
+      "icon": "fas fa-cogs",
+      "text": "Implement STLC maturity assessment: Measure requirements coverage, automation percentage, and defect removal efficiency quarterly"
+    }
+  ]
+},
                     {
                       "type": "statistic",
                       "title": "Quality ROI Benchmark",
@@ -11580,23 +11994,23 @@
   "summary": "This entry criteria framework provides clear, specialized checkpoints for web application testing at each STLC phase, ensuring quality, alignment with user expectations, and operational readiness before progressing to subsequent stages."
 },
                 {
-                  "type": "case-study",
-                  "title": "Financial Portal Load Failure",
-                  "metrics": {
-                    "Incident Duration": "14 hours",
-                    "Revenue Impact": "$243K"
-                  },
-                  "analysis": [
-                    {
-                      "issue": "Missing entry criteria for production-like load testing",
-                      "solution": "Implemented mandatory 3-step verification:\n1. User behavior analytics validation\n2. Load test environment certification\n3. Monitoring tool configuration check"
-                    }
-                  ],
-                  "lessons": [
-                    "Entry criteria must validate test environment fidelity",
-                    "Production telemetry should inform test conditions"
-                  ]
-                }
+  "type": "case-study",
+  "title": "Financial Portal Load Failure",
+  "metrics": {
+    "Incident Duration": "14 hours",
+    "Revenue Impact": "$243K"
+  },
+  "analysis": [
+    {
+      "issue": "Missing entry criteria for production-like load testing",
+      "solution": "Implemented mandatory 3-step verification:\n1. User behavior analytics validation\n2. Load test environment certification\n3. Monitoring tool configuration check"
+    }
+  ],
+  "lessons": [
+    "Entry criteria must validate test environment fidelity",
+    "Production telemetry should inform test conditions"
+  ]
+}
               ]
             },
             {

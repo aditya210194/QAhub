@@ -646,3 +646,30 @@
 2026-06-11 12:00:01 [[32minfo[39m]: Successfully updated trending scores
 2026-06-11 15:00:01 [[32minfo[39m]: Successfully updated trending scores
 2026-06-11 16:00:12 [[32minfo[39m]: Successfully updated trending scores
+2026-06-12 16:36:36 [[32minfo[39m]: Successfully updated trending scores
+2026-06-16 10:39:58 [[32minfo[39m]: Successfully updated trending scores
+2026-06-16 11:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-06-16 16:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-06-17 10:41:44 [[32minfo[39m]: Successfully updated trending scores
+2026-06-17 11:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-06-23 10:32:07 [[32minfo[39m]: Successfully updated trending scores
+2026-06-23 11:00:02 [[32minfo[39m]: Successfully updated trending scores
+2026-06-23 12:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-06-23 15:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-06-23 16:23:12 [[32minfo[39m]: Successfully updated trending scores
+2026-06-24 11:00:12 [[32minfo[39m]: Successfully updated trending scores
+2026-06-24 12:00:01 [[32minfo[39m]: Successfully updated trending scores
+2026-06-24 15:00:30 [[31merror[39m]: MongoServerSelectionError: getaddrinfo ENOTFOUND ac-zxhxg84-shard-00-01.pmcpbkw.mongodb.net
+    at Topology.selectServer (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\sdam\topology.js:320:38)
+    at async tryOperation (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\operations\execute_operation.js:143:18)
+    at async executeOperation (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\operations\execute_operation.js:73:16)
+    at async FindCursor._initialize (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\find_cursor.js:60:26)
+    at async FindCursor.cursorInit (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:607:27)
+    at async FindCursor.fetchBatch (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:641:13)
+    at async FindCursor.next (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:323:17)
+    at async [Symbol.asyncIterator] (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:240:34)
+    at async FindCursor.toArray (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongodb\lib\cursor\abstract_cursor.js:400:26)
+    at async model.Query._find (C:\Users\kumar\software-testing-edu-old\server\node_modules\mongoose\lib\query.js:2363:14)
+2026-06-24 17:00:02 [[32minfo[39m]: Successfully updated trending scores
+2026-06-24 18:00:00 [[32minfo[39m]: Successfully updated trending scores
+2026-06-25 10:00:09 [[32minfo[39m]: Successfully updated trending scores

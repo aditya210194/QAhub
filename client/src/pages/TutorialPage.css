@@ -150,8 +150,72 @@
     position: relative;
     z-index: 5;
     flex: 0 0 33.333333%;
-    max-width: 33.333333%;
+    max-width: 26.333333% !important;
+
     padding: 0 1rem;
+}
+/* Sticky Sidebar Styles */
+.sidebar-col {
+    position: relative;
+}
+
+.sidebar-sticky-wrapper {
+    position: sticky;
+    top: 20px; /* Adjust this value based on your header height */
+    max-height: calc(100vh - 40px); /* Adjust based on your needs */
+    overflow-y: auto;
+}
+
+/* Hide scrollbar for cleaner look (optional) */
+.sidebar-sticky-wrapper::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar-sticky-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-sticky-wrapper::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.sidebar-sticky-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Dark mode scrollbar */
+.dark-mode .sidebar-sticky-wrapper::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+}
+
+.dark-mode .sidebar-sticky-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #5a5a5a;
+}
+
+/* Ensure sidebar content doesn't overflow */
+.sidebar-card {
+    height: 100%;
+}
+
+/* Smooth scroll for the sidebar */
+.sidebar-sticky-wrapper {
+    scroll-behavior: smooth;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .sidebar-sticky-wrapper {
+        position: relative;
+        top: 0;
+        max-height: none;
+        overflow-y: visible;
+    }
+}
+
+/* Optional: Add transition for smooth sticky behavior */
+.sidebar-sticky-wrapper {
+    transition: top 0.3s ease;
 }
 
 /* Main Content Column - No overlap */
@@ -159,7 +223,7 @@
     position: relative;
     z-index: 5;
     flex: 0 0 66.666667%;
-    max-width: 66.666667%;
+    max-width: 70.666667% !important;
     padding: 0 1rem;
 }
 

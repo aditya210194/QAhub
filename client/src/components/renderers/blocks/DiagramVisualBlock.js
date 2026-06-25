@@ -29,7 +29,7 @@ const DiagramVisualBlock = ({ block, index }) => {
     }
 
     // Handle ASCII/Text diagram (like your Usage Tracking Pipeline)
-    if (content.length > 0 && typeof content[0] === 'string' && content[0].includes('═') || content[0].includes('─') || content[0].includes('┌')) {
+    if (content.length > 0 && typeof content[0] === 'string' && (content[0].includes('═') || content[0].includes('─') || content[0].includes('┌'))) {
         return (
             <div className="diagram-visual-ascii my-4">
                 {title && <h4 className="mb-3 text-center">{title}</h4>}

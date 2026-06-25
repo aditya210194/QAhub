@@ -1,4 +1,13 @@
 // ==================== ENVIRONMENT CONFIGURATION ====================
+console.log("Step 1: Starting...");
+process.on('uncaughtException', (err) => {
+    console.error('❌ Uncaught Exception:', err.message);
+    console.error(err.stack);
+});
+process.on('unhandledRejection', (err) => {
+    console.error('❌ Unhandled Rejection:', err.message);
+    console.error(err.stack);
+});
 require('dotenv').config({
     path: `.env.${process.env.NODE_ENV || 'development'}`
 });

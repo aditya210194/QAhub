@@ -34,7 +34,8 @@ const ChecklistBlock = ({ block, index }) => {
     };
 
     const toggleAll = () => {
-        const allChecked = Object.keys(checkedItems).length === items.length;
+        const allChecked = Object.keys(checkedItems).length === items.length &&
+            Object.values(checkedItems).every(v => v === true);
         const newState = {};
         if (!allChecked) {
             items.forEach((_, idx) => { newState[idx] = true; });
@@ -57,6 +58,20 @@ const ChecklistBlock = ({ block, index }) => {
 
     const style = variantStyles[variant] || variantStyles.default;
 
+    // Helper function to get item text from various possible properties
+    const getItemText = (item) => {
+        if (typeof item === 'string') return item;
+        return item.item || item.text || item.title || item.label || `Item ${index + 1}`;
+    };
+
+    // Helper function to get item description
+    const getItemDescription = (item) => {
+        if (typeof item === 'object') {
+            return item.description || item.desc || '';
+        }
+        return '';
+    };
+
     return (
         <div className={`checklist-block my-4 p-3 ${style.bg} ${style.border ? 'border' : ''} rounded ${style.rounded ? 'shadow-sm' : ''}`}>
             {title && <h4 className="mb-3">{title}</h4>}
@@ -78,9 +93,13 @@ const ChecklistBlock = ({ block, index }) => {
 
             <div className="checklist-items">
                 {items.map((item, idx) => {
-                    const itemText = typeof item === 'string' ? item : item.text || item.title || `Item ${idx + 1}`;
-                    const itemDescription = typeof item === 'object' ? item.description : '';
+                    const itemText = getItemText(item);
+                    const itemDescription = getItemDescription(item);
                     const isChecked = checkedItems[idx] || false;
+
+                    // Get additional fields if they exist
+                    const frequency = typeof item === 'object' ? item.frequency : null;
+                    const owner = typeof item === 'object' ? item.owner : null;
 
                     return (
                         <div key={idx} className={`checklist-item d-flex mb-2 p-2 rounded ${isChecked ? 'bg-success bg-opacity-10' : ''}`}>
@@ -97,6 +116,12 @@ const ChecklistBlock = ({ block, index }) => {
                                 <div className={`checklist-text ${isChecked ? 'text-decoration-line-through text-muted' : ''}`}>
                                     {itemText}
                                 </div>
+                                {(frequency || owner) && (
+                                    <div className="checklist-meta small text-muted mt-1">
+                                        {frequency && <span className="me-3"><i className="fas fa-clock me-1"></i>{frequency}</span>}
+                                        {owner && <span><i className="fas fa-user me-1"></i>{owner}</span>}
+                                    </div>
+                                )}
                                 {itemDescription && !isChecked && (
                                     <div className="checklist-description small text-muted mt-1">
                                         {itemDescription}

@@ -27,9 +27,14 @@ const TipBoxBlock = ({ block, index }) => {
     // Convert string tips to objects if needed
     const formattedTips = displayTips.map(tip => {
         if (typeof tip === 'string') {
-            return { title: null, content: tip };
+            return { icon: 'fa-star', content: tip };
         }
-        return tip;
+        // Handle both 'text' and 'content' properties
+        return {
+            icon: tip.icon || 'fa-star',
+            content: tip.text || tip.content || '',
+            title: tip.title || null
+        };
     });
 
     return (
@@ -55,7 +60,7 @@ const TipBoxBlock = ({ block, index }) => {
                         <li key={idx} className="mb-3 pb-3 border-bottom">
                             <div className="d-flex">
                                 <div className="tip-icon me-3 mt-1">
-                                    <i className="fas fa-star text-warning"></i>
+                                    <i className={`${tip.icon || 'fa-star'} text-warning`}></i>
                                 </div>
                                 <div className="tip-text">
                                     {tip.title && <strong>{tip.title}</strong>}

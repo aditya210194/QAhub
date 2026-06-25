@@ -1,14 +1,23 @@
+// src/components/renderers/blocks/CaseStudyBlock.js
 import React, { useState } from 'react';
 
 const CaseStudyBlock = ({ block, index }) => {
     const [expanded, setExpanded] = useState(false);
+
+    // Check if we have content to show in expanded section
+    const hasAnalysis = block.analysis && Array.isArray(block.analysis) && block.analysis.length > 0;
+    const hasLessons = block.lessons && Array.isArray(block.lessons) && block.lessons.length > 0;
+    const hasExpandedContent = hasAnalysis || hasLessons;
+
+    // Always show expand button if there's analysis or lessons (even if just 1)
+    const showExpandButton = hasExpandedContent;
 
     return (
         <div className="case-study card my-4 shadow-sm">
             <div className="card-header bg-primary bg-opacity-10">
                 <div className="d-flex justify-content-between align-items-center">
                     <h5 className="mb-0"><i className="fas fa-chart-line me-2 text-primary"></i>{block.title || 'Case Study'}</h5>
-                    {(block.analysis?.length > 2 || block.lessons?.length > 2) && (
+                    {showExpandButton && (
                         <button className="btn btn-sm btn-outline-primary" onClick={() => setExpanded(!expanded)}>
                             <i className={`fas fa-chevron-${expanded ? 'up' : 'down'} me-1`}></i>
                             {expanded ? 'Less' : 'More'}
@@ -48,18 +57,42 @@ const CaseStudyBlock = ({ block, index }) => {
                 )}
                 {expanded && (
                     <>
-                        {block.analysis && (
+                        {hasAnalysis && (
                             <div className="case-study-analysis mt-3 p-3 bg-light rounded">
                                 <h6><i className="fas fa-chart-bar me-2"></i>Analysis</h6>
                                 <ul className="mb-0">
-                                    {block.analysis.map((item, i) => <li key={i}><strong>{item.failure}:</strong> {item.solution}</li>)}
+                                    {block.analysis.map((item, i) => {
+                                        // Handle both 'failure' and 'issue' property names
+                                        const label = item.failure || item.issue || 'Issue';
+                                        const solution = item.solution || '';
+                                        // Handle multiline solutions (split by \n)
+                                        const solutionLines = solution.split('\n').filter(line => line.trim());
+                                        return (
+                                            <li key={i} className="mb-2">
+                                                <strong>{label}:</strong>
+                                                {solutionLines.length > 1 ? (
+                                                    <ul className="mt-1 mb-0">
+                                                        {solutionLines.map((line, lineIdx) => (
+                                                            <li key={lineIdx}>{line}</li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <span> {solution}</span>
+                                                )}
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             </div>
                         )}
-                        {block.lessons && (
+                        {hasLessons && (
                             <div className="case-study-lessons mt-3 p-3 bg-success bg-opacity-10 rounded">
                                 <h6><i className="fas fa-graduation-cap me-2"></i>Key Lessons</h6>
-                                <ul className="mb-0">{block.lessons.map((lesson, i) => <li key={i}>{lesson}</li>)}</ul>
+                                <ul className="mb-0">
+                                    {block.lessons.map((lesson, i) => (
+                                        <li key={i}>{lesson}</li>
+                                    ))}
+                                </ul>
                             </div>
                         )}
                     </>

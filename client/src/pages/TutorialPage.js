@@ -263,81 +263,84 @@ const TutorialPage = () => {
                         </Button>
                     </div>
 
+                    {/* Sticky Sidebar */}
                     <aside className="sidebar-col d-none d-lg-block col-lg-4">
-                        <div className="sidebar-card">
-                            <div className="card glass-card" data-aos="fade-right">
-                                <div className="card-body">
-                                    <div className="search-container mb-4">
-                                        <div className={`search-box ${isSearchFocused ? 'focused' : ''}`}>
-                                            <Search className="search-icon" />
-                                            <input
-                                                type="text"
-                                                placeholder="Search tutorials..."
-                                                value={searchQuery}
-                                                onChange={(e) => setSearchQuery(e.target.value)}
-                                                onFocus={() => setIsSearchFocused(true)}
-                                                onBlur={() => setIsSearchFocused(false)}
-                                                disabled={loading || error}
-                                            />
-                                            <button
-                                                className="search-clear"
-                                                onClick={() => setSearchQuery('')}
-                                            >
-                                                <XLg />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {loading ? (
-                                        <div className="text-center py-4">
-                                            <Spinner animation="border" variant="primary" />
-                                            <p className="mt-2">Loading tutorials...</p>
-                                        </div>
-                                    ) : error ? (
-                                        <Alert variant="danger">{error}</Alert>
-                                    ) : (
-                                        <CategoryAccordion
-                                            key={fileName}
-                                            categories={filteredContent}
-                                            activeTutorialTitle={activeTutorial?.title}
-                                            onSelectTutorial={trackView}
-                                            bookmarks={bookmarks}
-                                            completedTutorials={completedTutorials}
-                                        />
-                                    )}
-                                </div>
-                            </div>
-
-                            {recentlyViewed.length > 0 && (
+                        <div className="sidebar-sticky-wrapper">
+                            <div className="sidebar-card">
                                 <div className="card glass-card" data-aos="fade-right">
                                     <div className="card-body">
-                                        <h5 className="card-title mb-3">Recently Viewed</h5>
-                                        <ul className="recent-list">
-                                            {recentlyViewed.map((item, i) => (
-                                                <li key={i} className="d-flex justify-content-between align-items-center mb-2">
-                                                    <Button
-                                                        variant="link"
-                                                        className="p-0 text-truncate text-start recent-item"
-                                                        onClick={() => trackView(item.title, item.tutorial)}
-                                                    >
-                                                        {item.title}
-                                                    </Button>
-                                                    <Button
-                                                        variant="link"
-                                                        className="p-0 text-danger ms-2"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setRecentlyViewed(prev => prev.filter(view => view.title !== item.title));
-                                                        }}
-                                                    >
-                                                        <XCircle size={18} />
-                                                    </Button>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        <div className="search-container mb-4">
+                                            <div className={`search-box ${isSearchFocused ? 'focused' : ''}`}>
+                                                <Search className="search-icon" />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search tutorials..."
+                                                    value={searchQuery}
+                                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                                    onFocus={() => setIsSearchFocused(true)}
+                                                    onBlur={() => setIsSearchFocused(false)}
+                                                    disabled={loading || error}
+                                                />
+                                                <button
+                                                    className="search-clear"
+                                                    onClick={() => setSearchQuery('')}
+                                                >
+                                                    <XLg />
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {loading ? (
+                                            <div className="text-center py-4">
+                                                <Spinner animation="border" variant="primary" />
+                                                <p className="mt-2">Loading tutorials...</p>
+                                            </div>
+                                        ) : error ? (
+                                            <Alert variant="danger">{error}</Alert>
+                                        ) : (
+                                            <CategoryAccordion
+                                                key={fileName}
+                                                categories={filteredContent}
+                                                activeTutorialTitle={activeTutorial?.title}
+                                                onSelectTutorial={trackView}
+                                                bookmarks={bookmarks}
+                                                completedTutorials={completedTutorials}
+                                            />
+                                        )}
                                     </div>
                                 </div>
-                            )}
+
+                                {recentlyViewed.length > 0 && (
+                                    <div className="card glass-card mt-3" data-aos="fade-right">
+                                        <div className="card-body">
+                                            <h5 className="card-title mb-3">Recently Viewed</h5>
+                                            <ul className="recent-list">
+                                                {recentlyViewed.map((item, i) => (
+                                                    <li key={i} className="d-flex justify-content-between align-items-center mb-2">
+                                                        <Button
+                                                            variant="link"
+                                                            className="p-0 text-truncate text-start recent-item"
+                                                            onClick={() => trackView(item.title, item.tutorial)}
+                                                        >
+                                                            {item.title}
+                                                        </Button>
+                                                        <Button
+                                                            variant="link"
+                                                            className="p-0 text-danger ms-2"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setRecentlyViewed(prev => prev.filter(view => view.title !== item.title));
+                                                            }}
+                                                        >
+                                                            <XCircle size={18} />
+                                                        </Button>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </aside>
 
