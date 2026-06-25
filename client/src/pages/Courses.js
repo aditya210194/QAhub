@@ -60,6 +60,50 @@ const CoursesPage = () => {
                 <meta property="og:title" content="Software Testing Courses | QA Hub" />
                 <meta property="og:description" content="Browse courses on manual testing, automation, API testing and more." />
                 <meta property="og:url" content="https://www.qahub.co.in/courses" />
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "ItemList",
+                        "name": "Software Testing Courses",
+                        "description": "Comprehensive software testing courses on QA Hub",
+                        "url": "https://www.qahub.co.in/courses",
+                        "itemListElement": [
+                            {
+                                "@type": "Course",
+                                "position": 1,
+                                "name": "Manual Testing",
+                                "description": "Master core software testing principles and techniques",
+                                "provider": {
+                                    "@type": "Organization",
+                                    "name": "QA Hub",
+                                    "url": "https://www.qahub.co.in"
+                                }
+                            },
+                            {
+                                "@type": "Course",
+                                "position": 2,
+                                "name": "Automation Testing",
+                                "description": "Build robust automation frameworks with Selenium and Cypress",
+                                "provider": {
+                                    "@type": "Organization",
+                                    "name": "QA Hub",
+                                    "url": "https://www.qahub.co.in"
+                                }
+                            },
+                            {
+                                "@type": "Course",
+                                "position": 3,
+                                "name": "API Testing",
+                                "description": "Validate backend services with Postman and REST Assured",
+                                "provider": {
+                                    "@type": "Organization",
+                                    "name": "QA Hub",
+                                    "url": "https://www.qahub.co.in"
+                                }
+                            }
+                        ]
+                    })}
+                </script>
             </Helmet>
             {/* Hero Section */}
             <div className="courses-hero">

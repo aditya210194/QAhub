@@ -162,6 +162,21 @@ const Home = () => {
                 <meta property="og:description" content="Learn software testing with QA Hub. Courses on manual, automation, and API testing." />
                 <meta property="og:url" content="https://www.qahub.co.in" />
                 <meta property="og:type" content="website" />
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "EducationalOrganization",
+                        "name": "QA Hub",
+                        "url": "https://www.qahub.co.in",
+                        "logo": "https://www.qahub.co.in/logo.png",
+                        "description": "India's leading software testing education platform offering courses in manual, automation, API and performance testing.",
+                        "sameAs": [],
+                        "address": {
+                            "@type": "PostalAddress",
+                            "addressCountry": "IN"
+                        }
+                    })}
+                </script>
             </Helmet>
             <h1 style={{ display: 'none' }}>QA Hub - Software Testing Education Platform</h1>
             <SecondHeader />
