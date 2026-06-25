@@ -69,51 +69,51 @@ export const truncateText = (text, maxLength) => {
 
 // ==================== Markdown Components ====================
 
-export const markdownComponents = {
-    code({ node, inline, className, children, ...props }) {
-        const match = /language-(\w+)/.exec(className || '');
-        const id = uuidv4();
+const CodeBlock = ({ node, inline, className, children, ...props }) => {
+    const match = /language-(\w+)/.exec(className || '');
+    const id = uuidv4();
+    const [copied, setCopied] = React.useState(false);
 
-        // Use a ref to track copy state locally within this component instance
-        const [copied, setCopied] = React.useState(false);
+    const handleCopy = () => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
-        const handleCopy = () => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        };
-
-        return !inline && match ? (
-            <div className="code-block-wrapper">
-                <div className="code-header d-flex justify-content-between align-items-center">
-                    <div className="language-tag">
-                        <span className="badge bg-secondary">{match[1]}</span>
-                    </div>
-                    <CopyToClipboard text={String(children).replace(/\n$/, '')} onCopy={handleCopy}>
-                        <button className="copy-button btn btn-sm btn-outline-secondary">
-                            {copied ? (
-                                <><i className="fas fa-check me-1"></i> Copied!</>
-                            ) : (
-                                <><i className="fas fa-copy me-1"></i> Copy</>
-                            )}
-                        </button>
-                    </CopyToClipboard>
+    return !inline && match ? (
+        <div className="code-block-wrapper">
+            <div className="code-header d-flex justify-content-between align-items-center">
+                <div className="language-tag">
+                    <span className="badge bg-secondary">{match[1]}</span>
                 </div>
-                <SyntaxHighlighter
-                    style={atomDark}
-                    language={match[1]}
-                    PreTag="div"
-                    showLineNumbers
-                    {...props}
-                >
-                    {String(children).replace(/\n$/, '')}
-                </SyntaxHighlighter>
+                <CopyToClipboard text={String(children).replace(/\n$/, '')} onCopy={handleCopy}>
+                    <button className="copy-button btn btn-sm btn-outline-secondary">
+                        {copied ? (
+                            <><i className="fas fa-check me-1"></i> Copied!</>
+                        ) : (
+                            <><i className="fas fa-copy me-1"></i> Copy</>
+                        )}
+                    </button>
+                </CopyToClipboard>
             </div>
-        ) : (
-            <code className={className} {...props}>
-                {children}
-            </code>
-        );
-    },
+            <SyntaxHighlighter
+                style={atomDark}
+                language={match[1]}
+                PreTag="div"
+                showLineNumbers
+                {...props}
+            >
+                {String(children).replace(/\n$/, '')}
+            </SyntaxHighlighter>
+        </div>
+    ) : (
+        <code className={className} {...props}>
+            {children}
+        </code>
+    );
+};
+
+export const markdownComponents = {
+    code: CodeBlock,
 
     table({ children }) {
         return (
