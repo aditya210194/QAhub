@@ -1,10 +1,12 @@
+'use client';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { registerUser } from '../services/authService';
-import { useNavigate, Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaUser, FaEnvelope, FaLock, FaSignature } from 'react-icons/fa';
 import './Register.css';
-import SecondHeader from "../../pages/SecondHeader";
-import registerHeroImg from '../../images/register-hero.jpg'; // Add your image path
+import SecondHeader from "../../views/SecondHeader";
+import registerHeroImg from '../../images/register-hero.jpg';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -17,12 +19,11 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [passwordStrength, setPasswordStrength] = useState(0);
-    const navigate = useNavigate();
+    const router = useRouter();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-
         if (name === 'password') {
             calculatePasswordStrength(value);
         }
@@ -69,7 +70,7 @@ const Register = () => {
                 sessionStorage.setItem('token', data.token);
                 sessionStorage.setItem('user', JSON.stringify(data.user));
                 window.dispatchEvent(new Event("storage"));
-                navigate('/profile');
+                router.push('/profile');
             } else {
                 throw new Error("Registration failed - no token received");
             }
@@ -83,16 +84,7 @@ const Register = () => {
     return (
         <>
             <SecondHeader />
-            <div
-                className="register-container"
-                style={{
-                    backgroundImage: `url(${registerHeroImg})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundAttachment: 'fixed'
-                }}
-            >
+            <div className="register-container" style={{ backgroundImage: `url(${registerHeroImg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                 <div className="register-overlay"></div>
                 <div className="register-card">
                     <div className="register-header">
@@ -109,75 +101,25 @@ const Register = () => {
 
                     <form onSubmit={handleSubmit} className="register-form">
                         <div className="form-group">
-                            <label htmlFor="username">
-                                <FaUser className="label-icon" /> Username
-                            </label>
-                            <input
-                                type="text"
-                                id="username"
-                                name="username"
-                                value={formData.username}
-                                onChange={handleChange}
-                                placeholder="e.g., johndoe123"
-                                required
-                                minLength="3"
-                                maxLength="20"
-                                pattern="[a-zA-Z0-9]+"
-                                title="Only letters and numbers allowed"
-                            />
+                            <label htmlFor="username"><FaUser className="label-icon" /> Username</label>
+                            <input type="text" id="username" name="username" value={formData.username} onChange={handleChange} placeholder="e.g., johndoe123" required minLength="3" maxLength="20" pattern="[a-zA-Z0-9]+" title="Only letters and numbers allowed" />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="fullName">
-                                <FaSignature className="label-icon" /> Full Name
-                            </label>
-                            <input
-                                type="text"
-                                id="fullName"
-                                name="fullName"
-                                value={formData.fullName}
-                                onChange={handleChange}
-                                placeholder="e.g., John Doe"
-                                required
-                            />
+                            <label htmlFor="fullName"><FaSignature className="label-icon" /> Full Name</label>
+                            <input type="text" id="fullName" name="fullName" value={formData.fullName} onChange={handleChange} placeholder="e.g., John Doe" required />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="email">
-                                <FaEnvelope className="label-icon" /> Email
-                            </label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="your.email@example.com"
-                                required
-                            />
+                            <label htmlFor="email"><FaEnvelope className="label-icon" /> Email</label>
+                            <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="your.email@example.com" required />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="password">
-                                <FaLock className="label-icon" /> Password
-                            </label>
+                            <label htmlFor="password"><FaLock className="label-icon" /> Password</label>
                             <div className="password-input-container">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    id="password"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    placeholder="Create a strong password"
-                                    required
-                                    minLength="8"
-                                />
-                                <button
-                                    type="button"
-                                    className="password-toggle"
-                                    onClick={togglePasswordVisibility}
-                                    aria-label={showPassword ? "Hide password" : "Show password"}
-                                >
+                                <input type={showPassword ? "text" : "password"} id="password" name="password" value={formData.password} onChange={handleChange} placeholder="Create a strong password" required minLength="8" />
+                                <button type="button" className="password-toggle" onClick={togglePasswordVisibility} aria-label={showPassword ? "Hide password" : "Show password"}>
                                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                                 </button>
                             </div>
@@ -204,11 +146,11 @@ const Register = () => {
                     </form>
 
                     <div className="terms-agreement">
-                        By registering, you agree to our <Link to="/terms-and-conditions">Terms of Service</Link> and <Link to="/privacy-policy">Privacy Policy</Link>
+                        By registering, you agree to our <Link href="/terms-and-conditions">Terms of Service</Link> and <Link href="/privacy-policy">Privacy Policy</Link>
                     </div>
 
                     <div className="login-redirect">
-                        Already have an account? <Link to="/login">Sign in</Link>
+                        Already have an account? <Link href="/login">Sign in</Link>
                     </div>
                 </div>
             </div>

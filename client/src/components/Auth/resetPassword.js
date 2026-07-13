@@ -1,5 +1,6 @@
+'use client';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 const ResetPassword = () => {
@@ -9,7 +10,7 @@ const ResetPassword = () => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+    const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,7 +24,7 @@ const ResetPassword = () => {
 
         setLoading(true);
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/reset-password`, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/reset-password`, {
                 email,
                 code,
                 newPassword,
@@ -31,7 +32,7 @@ const ResetPassword = () => {
 
             if (response.status === 200) {
                 setMessage('Password reset successful. You can now log in with your new password.');
-                setTimeout(() => navigate('/login'), 3000); // Redirect to login after 3 seconds
+                setTimeout(() => router.push('/login'), 3000);
             }
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to reset password. Try again later.');

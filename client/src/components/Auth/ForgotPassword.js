@@ -1,5 +1,6 @@
+'use client';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { FiMail, FiArrowRight } from 'react-icons/fi';
 import './ForgotPassword.css';
@@ -9,14 +10,13 @@ const ForgotPassword = () => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+    const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage('');
         setError('');
 
-        // Validation
         if (!email.trim()) {
             setError('Email is required');
             return;
@@ -30,20 +30,17 @@ const ForgotPassword = () => {
         setLoading(true);
         try {
             const response = await axios.post(
-                `${process.env.REACT_APP_API_URL}/api/auth/forgot-password`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/auth/forgot-password`,
                 { email },
-                { timeout: 10000 } // 10 seconds timeout
+                { timeout: 10000 }
             );
 
             if (response.status === 200) {
                 setMessage('Password reset link has been sent to your email. Redirecting...');
-                setTimeout(() => navigate('/reset-password'), 3000);
+                setTimeout(() => router.push('/reset-password'), 3000);
             }
         } catch (err) {
-            const errorMessage = err.response?.data?.message ||
-                err.message ||
-                'Network error. Please try again later.';
-            setError(errorMessage);
+            setError(err.response?.data?.message || 'Network error. Please try again later.');
         } finally {
             setLoading(false);
         }
@@ -57,9 +54,7 @@ const ForgotPassword = () => {
                         <div className="card border-0 shadow-sm p-4 p-md-5 rounded-3">
                             <div className="text-center mb-4">
                                 <h2 className="fw-bold text-primary mb-3">Forgot Password?</h2>
-                                <p className="text-muted">
-                                    Enter your email and we'll send you a link to reset your password
-                                </p>
+                                <p className="text-muted">Enter your email and we'll send you a link to reset your password</p>
                             </div>
 
                             {message && (
@@ -115,7 +110,7 @@ const ForgotPassword = () => {
                                     <button
                                         type="button"
                                         className="btn btn-link text-decoration-none"
-                                        onClick={() => navigate('/login')}
+                                        onClick={() => router.push('/login')}
                                     >
                                         Back to Login
                                     </button>

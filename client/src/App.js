@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useState } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from "react-router-dom";
 import { CookieConsentProvider, CookieService, ConsentMode } from '@vantezzen/react-cookie-banner';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -9,43 +9,43 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import ScrollToTop from './components/ScrollToTop';
-import SecondHeader from "./pages/SecondHeader";
+import SecondHeader from "./views/SecondHeader";
 import './App.css';
 
 // ===== LAZY LOADED PAGES =====
 // Each page is only downloaded when the user navigates to it
 
 // Core pages
-const Home = lazy(() => import('./pages/Home'));
-const AboutUs = lazy(() => import('./pages/AboutUs'));
-const Contact = lazy(() => import('./pages/ContactUs'));
-const NotFound = lazy(() => import('./pages/NotFound'));
+const Home = lazy(() => import('./views/Home'));
+const AboutUs = lazy(() => import('./views/AboutUs'));
+const Contact = lazy(() => import('./views/ContactUs'));
+const NotFound = lazy(() => import('./views/NotFound'));
 
 // Legal
-const TermsConditions = lazy(() => import('./pages/TermsConditions'));
-const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsConditions = lazy(() => import('./views/TermsConditions'));
+const PrivacyPolicy = lazy(() => import('./views/PrivacyPolicy'));
 
 // Content pages
-const Articles = lazy(() => import('./pages/Articles'));
-const Resources = lazy(() => import('./pages/Resources'));
-const InterviewQA = lazy(() => import('./pages/InterviewQA'));
-const Resumes = lazy(() => import('./pages/Resumes'));
-const ResumeGenerator = lazy(() => import('./pages/ResumeGenerator'));
+const Articles = lazy(() => import('./views/Articles'));
+const Resources = lazy(() => import('./views/Resources'));
+const InterviewQA = lazy(() => import('./views/InterviewQA'));
+const Resumes = lazy(() => import('./views/Resumes'));
+const ResumeGenerator = lazy(() => import('./views/ResumeGenerator'));
 
 // Course pages (protected)
-const Courses = lazy(() => import('./pages/Courses'));
-const CourseDetailPage = lazy(() => import('./pages/CourseDetailPage'));
+const Courses = lazy(() => import('./views/Courses'));
+const CourseDetailPage = lazy(() => import('./views/CourseDetailPage'));
 
 // Tutorial pages
-const TutorialPage = lazy(() => import('./pages/TutorialPage'));
+const TutorialPage = lazy(() => import('./views/TutorialPage'));
 
 // Community pages (protected)
-const CommunityFeatures = lazy(() => import('./pages/CommunityFeatures'));
-const DiscussionForums = lazy(() => import('./pages/DiscussionForums'));
-const QaHomepage = lazy(() => import('./pages/QaHomepage'));
-const QuestionDetail = lazy(() => import('./pages/QuestionDetail'));
-const AskQuestion = lazy(() => import('./pages/AskQuestion'));
-const MentorshipProgram = lazy(() => import('./pages/MentorshipPage'));
+const CommunityFeatures = lazy(() => import('./views/CommunityFeatures'));
+const DiscussionForums = lazy(() => import('./views/DiscussionForums'));
+const QaHomepage = lazy(() => import('./views/QaHomepage'));
+const QuestionDetail = lazy(() => import('./views/QuestionDetail'));
+const AskQuestion = lazy(() => import('./views/AskQuestion'));
+const MentorshipProgram = lazy(() => import('./views/MentorshipPage'));
 
 // Auth pages
 const Register = lazy(() => import('./components/Auth/Register'));
@@ -74,7 +74,7 @@ const PageLoader = () => (
 );
 
 const App = () => {
-    const location = useLocation();
+    const location = usePathname();
     const [token, setToken] = useState(sessionStorage.getItem('token'));
 
     const shouldShowSecondHeader = !["/", "/login", "/register", "/forgot-password", "/reset-password"].includes(location.pathname);

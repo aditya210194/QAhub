@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -7,7 +8,7 @@ const UserManagement = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/users`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/users`, {
                     headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
                 });
                 setUsers(response.data);
@@ -20,7 +21,7 @@ const UserManagement = () => {
 
     const deleteUser = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/users/${id}`);
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`);
             setUsers(users.filter(user => user.id !== id));
         } catch (error) {
             console.error('Error deleting user:', error);
@@ -49,11 +50,7 @@ const UserManagement = () => {
                         <td className='p-3'>{user.role}</td>
                         <td className='p-3'>
                             <button className='bg-blue-500 text-white px-3 py-1 mr-2 rounded'>Edit</button>
-                            <button
-                                onClick={() => deleteUser(user.id)}
-                                className='bg-red-500 text-white px-3 py-1 rounded'>
-                                Delete
-                            </button>
+                            <button onClick={() => deleteUser(user.id)} className='bg-red-500 text-white px-3 py-1 rounded'>Delete</button>
                         </td>
                     </tr>
                 ))}

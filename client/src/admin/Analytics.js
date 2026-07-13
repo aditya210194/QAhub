@@ -1,4 +1,4 @@
-// client/src/admin/Analytics.js
+'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import {
@@ -11,7 +11,7 @@ import {
     FaUsers, FaChartLine, FaCalendarAlt, FaDownload, FaSyncAlt,
     FaUserPlus, FaUserCheck, FaUserGraduate, FaChalkboardTeacher,
     FaEye, FaThumbsUp, FaComments, FaShare, FaArrowUp, FaArrowDown,
-    FaSpinner, FaFileExport, FaPrint, FaFilter,FaClock,FaCheckCircle, FaTimesCircle
+    FaSpinner, FaFileExport, FaPrint, FaFilter, FaClock, FaCheckCircle, FaTimesCircle
 } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import './Analytics.css';
@@ -54,7 +54,7 @@ const Analytics = () => {
             }
 
             const headers = { Authorization: `Bearer ${token}` };
-            const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+            const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
             // Fetch all data in parallel
             const [mentorsRes, menteesRes, usersRes, activitiesRes] = await Promise.all([
@@ -147,7 +147,7 @@ const Analytics = () => {
             const experienceLevels = Array.from(experienceMap.entries()).map(([level, mentors]) => ({
                 level,
                 mentors,
-                mentees: Math.floor(Math.random() * 20) // Placeholder for mentee experience
+                mentees: Math.floor(Math.random() * 20)
             }));
 
             setAnalyticsData({

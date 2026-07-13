@@ -1,18 +1,20 @@
 import axios from 'axios';
 
-// Base URL for your BE API
-const API_URL = `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/auth`;
+// ✅ CHANGE: Use NEXT_PUBLIC_API_URL for Next.js
+// ✅ Fallback to localhost:5000 if not set
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/auth`;
+const BASE_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 // Register User
 export const registerUser = async (userData) => {
-    const response = await axios.post(`${API_URL}/register`, userData,{ withCredentials: true });
+    const response = await axios.post(`${API_URL}/register`, userData, { withCredentials: true });
     return response.data;
 };
 
 // Login User
 export const loginUser = async (credentials) => {
     try {
-        const response = await axios.post(`${API_URL}/login`, credentials,{ withCredentials: true });
+        const response = await axios.post(`${API_URL}/login`, credentials, { withCredentials: true });
 
         console.log('=== LOGIN API RESPONSE ===');
         console.log('Full response:', response);
@@ -44,10 +46,12 @@ export const loginUser = async (credentials) => {
     }
 };
 
-// Fetch User Profile
+// ✅ FIX: Use BASE_API_URL instead of REACT_APP_API_URL
 export const fetchUserProfile = async (token) => {
-    console.log("Fetching Profile with Token:", token); // Debug
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/profile`, {
+    console.log("📡 Fetching Profile with Token:", token ? 'Present' : 'Missing');
+    console.log("📡 API URL:", `${BASE_API_URL}/api/profile`);
+
+    const response = await axios.get(`${BASE_API_URL}/api/profile`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -55,13 +59,13 @@ export const fetchUserProfile = async (token) => {
     return response.data;
 };
 
-// Update User Profile (including image upload)
+// ✅ FIX: Use BASE_API_URL instead of REACT_APP_API_URL
 export const updateUserProfile = async (token, formData) => {
-    try{
-        const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/profile`, formData, {
+    try {
+        const response = await axios.put(`${BASE_API_URL}/api/profile`, formData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data', // For file uploads
+                'Content-Type': 'multipart/form-data',
             },
         });
         return response.data;

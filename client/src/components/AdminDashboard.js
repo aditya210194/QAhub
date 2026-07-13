@@ -1,7 +1,7 @@
-// AdminDashboard.js - Complete Admin Panel with Logout Button
+'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     FaUsers,
@@ -55,8 +55,7 @@ import {
     FaDatabase,
     FaServer,
     FaCloudUploadAlt,
-    FaSignOutAlt,
-
+    FaSignOutAlt
 } from 'react-icons/fa';
 import {
     LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
@@ -92,12 +91,12 @@ const AdminDashboard = () => {
     // Mobile menu state
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const navigate = useNavigate();
+    const router = useRouter();
 
     // Colors for charts
     const COLORS = ['#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6', '#ec4899'];
 
-    // Close mobile menu when clicking a link (for better UX)
+    // Close mobile menu when clicking a link
     const handleNavClick = (section) => {
         setActiveSection(section);
         if (window.innerWidth <= 768) {
@@ -105,21 +104,16 @@ const AdminDashboard = () => {
         }
     };
 
-    // ✅ Logout function
+    // Logout function
     const handleLogout = () => {
         if (window.confirm('Are you sure you want to logout from Admin Panel?')) {
-            // Clear all stored data
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('user');
             localStorage.removeItem('user');
             localStorage.removeItem('token');
-
-            // Show notification
             showNotification('Logged out successfully', 'success');
-
-            // Redirect to login page
             setTimeout(() => {
-                navigate('/login');
+                router.push('/login');
             }, 500);
         }
     };
@@ -130,18 +124,18 @@ const AdminDashboard = () => {
         try {
             const token = sessionStorage.getItem('token');
             if (!token) {
-                navigate('/login');
+                router.push('/login');
                 return;
             }
 
             const headers = { Authorization: `Bearer ${token}` };
 
             const [mentorsRes, menteesRes, usersRes, analyticsRes, activitiesRes] = await Promise.all([
-                axios.get(`${process.env.REACT_APP_API_URL}/api/admin/mentor-applications`, { headers }),
-                axios.get(`${process.env.REACT_APP_API_URL}/api/admin/mentee-applications`, { headers }),
-                axios.get(`${process.env.REACT_APP_API_URL}/api/admin/users`, { headers }),
-                axios.get(`${process.env.REACT_APP_API_URL}/api/admin/analytics`, { headers }),
-                axios.get(`${process.env.REACT_APP_API_URL}/api/admin/recent-activities`, { headers })
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/mentor-applications`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/mentee-applications`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/users`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/analytics`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/recent-activities`, { headers })
             ]);
 
             setMentorApplications(Array.isArray(mentorsRes.data) ? mentorsRes.data : []);
@@ -164,7 +158,7 @@ const AdminDashboard = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [navigate]);
+    }, [router]);
 
     useEffect(() => {
         fetchAllData();
@@ -188,7 +182,6 @@ const AdminDashboard = () => {
         try {
             const token = sessionStorage.getItem('token');
 
-            // ✅ Fix: Use correct endpoints based on your backend
             let endpoint;
             if (type === 'mentor') {
                 endpoint = action === 'approve'
@@ -201,7 +194,7 @@ const AdminDashboard = () => {
             }
 
             const response = await axios.put(
-                `${process.env.REACT_APP_API_URL}${endpoint}`,
+                `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`,
                 { status: action === 'approve' ? 'Approved' : 'Rejected' },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -221,7 +214,7 @@ const AdminDashboard = () => {
         try {
             const token = sessionStorage.getItem('token');
             await axios.post(
-                `${process.env.REACT_APP_API_URL}/api/admin/users/${userId}/${action}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/admin/users/${userId}/${action}`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -349,7 +342,7 @@ const AdminDashboard = () => {
                     <FaCog /> Settings
                 </button>
 
-                {/* ✅ Logout Button */}
+                {/* Logout Button */}
                 <button
                     className="nav-item logout-btn"
                     onClick={handleLogout}
@@ -515,7 +508,7 @@ const AdminDashboard = () => {
         </div>
     );
 
-    // Mentor Applications Section - Enhanced with more data
+    // Mentor Applications Section
     const MentorApplications = () => {
         const filteredApps = getFilteredApplications(mentorApplications);
         return (
@@ -546,59 +539,59 @@ const AdminDashboard = () => {
                 <div className="applications-table">
                     <table>
                         <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Expertise</th>
-                                <th>Experience</th>
-                                <th>Availability</th>
-                                <th>LinkedIn</th>
-                                <th>Applied On</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Expertise</th>
+                            <th>Experience</th>
+                            <th>Availability</th>
+                            <th>LinkedIn</th>
+                            <th>Applied On</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            {filteredApps.map((app) => (
-                                <tr key={app._id}>
-                                    <td>{app.user?.fullName || 'N/A'}</td>
-                                    <td>{app.user?.email || 'N/A'}</td>
-                                    <td>{app.expertise || 'Not specified'}</td>
-                                    <td>{app.experience || 'N/A'} years</td>
-                                    <td>{app.availability || 'Not specified'}</td>
-                                    <td>
-                                        {app.linkedIn ? (
-                                            <a href={app.linkedIn} target="_blank" rel="noopener noreferrer" style={{ color: '#0077b5' }}>
-                                                Profile
-                                            </a>
-                                        ) : 'N/A'}
-                                    </td>
-                                    <td>{new Date(app.createdAt).toLocaleDateString()}</td>
-                                    <td>
+                        {filteredApps.map((app) => (
+                            <tr key={app._id}>
+                                <td>{app.user?.fullName || 'N/A'}</td>
+                                <td>{app.user?.email || 'N/A'}</td>
+                                <td>{app.expertise || 'Not specified'}</td>
+                                <td>{app.experience || 'N/A'} years</td>
+                                <td>{app.availability || 'Not specified'}</td>
+                                <td>
+                                    {app.linkedIn ? (
+                                        <a href={app.linkedIn} target="_blank" rel="noopener noreferrer" style={{ color: '#0077b5' }}>
+                                            Profile
+                                        </a>
+                                    ) : 'N/A'}
+                                </td>
+                                <td>{new Date(app.createdAt).toLocaleDateString()}</td>
+                                <td>
                                         <span className={`status-badge ${app.status?.toLowerCase()}`}>
                                             {app.status === 'Pending' && <FaClock />}
                                             {app.status === 'Approved' && <FaCheckCircle />}
                                             {app.status === 'Rejected' && <FaTimesCircle />}
                                             {app.status}
                                         </span>
-                                    </td>
-                                    <td className="actions">
-                                        <button className="view-btn" onClick={() => { setSelectedApplication(app); setShowDetailsModal(true); }}>
-                                            <FaEye /> View
-                                        </button>
-                                        {app.status === 'Pending' && (
-                                            <>
-                                                <button className="approve-btn" onClick={() => handleApplicationAction(app._id, 'mentor', 'approve')}>
-                                                    <FaCheck /> Approve
-                                                </button>
-                                                <button className="reject-btn" onClick={() => handleApplicationAction(app._id, 'mentor', 'reject')}>
-                                                    <FaBan /> Reject
-                                                </button>
-                                            </>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
+                                </td>
+                                <td className="actions">
+                                    <button className="view-btn" onClick={() => { setSelectedApplication(app); setShowDetailsModal(true); }}>
+                                        <FaEye /> View
+                                    </button>
+                                    {app.status === 'Pending' && (
+                                        <>
+                                            <button className="approve-btn" onClick={() => handleApplicationAction(app._id, 'mentor', 'approve')}>
+                                                <FaCheck /> Approve
+                                            </button>
+                                            <button className="reject-btn" onClick={() => handleApplicationAction(app._id, 'mentor', 'reject')}>
+                                                <FaBan /> Reject
+                                            </button>
+                                        </>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
                         </tbody>
                     </table>
                 </div>
@@ -606,83 +599,83 @@ const AdminDashboard = () => {
         );
     };
 
-   // Mentee Applications Section - Enhanced with more data
-   const MenteeApplications = () => {
-       const filteredApps = getFilteredApplications(menteeApplications);
-       return (
-           <div className="applications-section">
-               <div className="section-header">
-                   <h2><FaUserGraduate /> Mentee Applications</h2>
-                   <div className="filters">
-                       <div className="search-box">
-                           <FaSearch />
-                           <input type="text" placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                       </div>
-                       <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                           <option value="all">All Status</option>
-                           <option value="Pending">Pending</option>
-                           <option value="Approved">Approved</option>
-                           <option value="Rejected">Rejected</option>
-                       </select>
-                       <button onClick={() => exportToCSV(filteredApps, 'mentee-applications')}><FaDownload /> Export</button>
-                   </div>
-               </div>
-               <div className="applications-table">
-                   <table>
-                       <thead>
-                           <tr>
-                               <th>Name</th>
-                               <th>Email</th>
-                               <th>Learning Goals</th>
-                               <th>Current Skills</th>
-                               <th>Desired Skills</th>
-                               <th>Time Commitment</th>
-                               <th>Applied On</th>
-                               <th>Status</th>
-                               <th>Actions</th>
-                           </tr>
-                       </thead>
-                       <tbody>
-                           {filteredApps.map((app) => (
-                               <tr key={app._id}>
-                                   <td>{app.user?.fullName || 'N/A'}</td>
-                                   <td>{app.user?.email || 'N/A'}</td>
-                                   <td style={{ maxWidth: '200px' }}>{app.learningGoals?.substring(0, 60)}...</td>
-                                   <td>{app.currentSkills || 'Not specified'}</td>
-                                   <td>{app.desiredSkills || 'Not specified'}</td>
-                                   <td>{app.timeCommitment || 'N/A'} hrs/week</td>
-                                   <td>{new Date(app.createdAt).toLocaleDateString()}</td>
-                                   <td>
-                                       <span className={`status-badge ${app.status?.toLowerCase()}`}>
-                                           {app.status === 'Pending' && <FaClock />}
-                                           {app.status === 'Approved' && <FaCheckCircle />}
-                                           {app.status === 'Rejected' && <FaTimesCircle />}
-                                           {app.status}
-                                       </span>
-                                   </td>
-                                   <td className="actions">
-                                       <button className="view-btn" onClick={() => { setSelectedApplication(app); setShowDetailsModal(true); }}>
-                                           <FaEye /> View
-                                       </button>
-                                       {app.status === 'Pending' && (
-                                           <>
-                                               <button className="approve-btn" onClick={() => handleApplicationAction(app._id, 'mentee', 'approve')}>
-                                                   <FaCheck /> Approve
-                                               </button>
-                                               <button className="reject-btn" onClick={() => handleApplicationAction(app._id, 'mentee', 'reject')}>
-                                                   <FaBan /> Reject
-                                               </button>
-                                           </>
-                                       )}
-                                   </td>
-                               </tr>
-                           ))}
-                       </tbody>
-                   </table>
-               </div>
-           </div>
-       );
-   };
+    // Mentee Applications Section
+    const MenteeApplications = () => {
+        const filteredApps = getFilteredApplications(menteeApplications);
+        return (
+            <div className="applications-section">
+                <div className="section-header">
+                    <h2><FaUserGraduate /> Mentee Applications</h2>
+                    <div className="filters">
+                        <div className="search-box">
+                            <FaSearch />
+                            <input type="text" placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                        </div>
+                        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                            <option value="all">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                        <button onClick={() => exportToCSV(filteredApps, 'mentee-applications')}><FaDownload /> Export</button>
+                    </div>
+                </div>
+                <div className="applications-table">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Learning Goals</th>
+                            <th>Current Skills</th>
+                            <th>Desired Skills</th>
+                            <th>Time Commitment</th>
+                            <th>Applied On</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {filteredApps.map((app) => (
+                            <tr key={app._id}>
+                                <td>{app.user?.fullName || 'N/A'}</td>
+                                <td>{app.user?.email || 'N/A'}</td>
+                                <td style={{ maxWidth: '200px' }}>{app.learningGoals?.substring(0, 60)}...</td>
+                                <td>{app.currentSkills || 'Not specified'}</td>
+                                <td>{app.desiredSkills || 'Not specified'}</td>
+                                <td>{app.timeCommitment || 'N/A'} hrs/week</td>
+                                <td>{new Date(app.createdAt).toLocaleDateString()}</td>
+                                <td>
+                                        <span className={`status-badge ${app.status?.toLowerCase()}`}>
+                                            {app.status === 'Pending' && <FaClock />}
+                                            {app.status === 'Approved' && <FaCheckCircle />}
+                                            {app.status === 'Rejected' && <FaTimesCircle />}
+                                            {app.status}
+                                        </span>
+                                </td>
+                                <td className="actions">
+                                    <button className="view-btn" onClick={() => { setSelectedApplication(app); setShowDetailsModal(true); }}>
+                                        <FaEye /> View
+                                    </button>
+                                    {app.status === 'Pending' && (
+                                        <>
+                                            <button className="approve-btn" onClick={() => handleApplicationAction(app._id, 'mentee', 'approve')}>
+                                                <FaCheck /> Approve
+                                            </button>
+                                            <button className="reject-btn" onClick={() => handleApplicationAction(app._id, 'mentee', 'reject')}>
+                                                <FaBan /> Reject
+                                            </button>
+                                        </>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
 
     // Users Management Section
     const UsersManagement = () => {
@@ -703,27 +696,25 @@ const AdminDashboard = () => {
                     <table>
                         <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
                         <tbody>
-                            {filteredUsers.map((user) => (
-                                <tr key={user._id}>
-                                    <td>{user.fullName}</td>
-                                    <td>{user.email}</td>
-                                    <td><span className={`role-badge ${user.role?.toLowerCase()}`}>{user.role}</span></td>
-                                    <td><span className={`status-badge ${user.isActive !== false ? 'active' : 'inactive'}`}>{user.isActive !== false ? 'Active' : 'Inactive'}</span></td>
-                                    <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                                    <td className="actions">
-                                        <button className="view-btn" onClick={() => { setSelectedApplication(user); setShowDetailsModal(true); }}><FaEye /> View</button>
-                                        {user.role !== 'Admin' && (<><button className="edit-btn" onClick={() => handleUserAction(user._id, 'edit-role')}><FaEdit /> Edit Role</button>{user.isActive !== false ? (<button className="suspend-btn" onClick={() => handleUserAction(user._id, 'suspend')}><FaSuspend /> Suspend</button>) : (<button className="activate-btn" onClick={() => handleUserAction(user._id, 'activate')}><FaUserCheck /> Activate</button>)}</>)}
-                                    </td>
-                                </tr>
-                            ))}
+                        {filteredUsers.map((user) => (
+                            <tr key={user._id}>
+                                <td>{user.fullName}</td>
+                                <td>{user.email}</td>
+                                <td><span className={`role-badge ${user.role?.toLowerCase()}`}>{user.role}</span></td>
+                                <td><span className={`status-badge ${user.isActive !== false ? 'active' : 'inactive'}`}>{user.isActive !== false ? 'Active' : 'Inactive'}</span></td>
+                                <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                                <td className="actions">
+                                    <button className="view-btn" onClick={() => { setSelectedApplication(user); setShowDetailsModal(true); }}><FaEye /> View</button>
+                                    {user.role !== 'Admin' && (<><button className="edit-btn" onClick={() => handleUserAction(user._id, 'edit-role')}><FaEdit /> Edit Role</button>{user.isActive !== false ? (<button className="suspend-btn" onClick={() => handleUserAction(user._id, 'suspend')}><FaSuspend /> Suspend</button>) : (<button className="activate-btn" onClick={() => handleUserAction(user._id, 'activate')}><FaUserCheck /> Activate</button>)}</>)}
+                                </td>
+                            </tr>
+                        ))}
                         </tbody>
                     </table>
                 </div>
             </div>
         );
     };
-
-
 
     // Settings Section
     const Settings = () => (
@@ -737,22 +728,21 @@ const AdminDashboard = () => {
         </div>
     );
 
-    // Details Modal - Enhanced with safe data handling
+    // Details Modal
     const DetailsModal = () => (
         <div className="modal-overlay" onClick={() => setShowDetailsModal(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
                     <h3>
                         {selectedApplication?.expertise ? 'Mentor Application Details' :
-                         selectedApplication?.learningGoals ? 'Mentee Application Details' :
-                         'User Details'}
+                            selectedApplication?.learningGoals ? 'Mentee Application Details' :
+                                'User Details'}
                     </h3>
                     <button className="close-modal" onClick={() => setShowDetailsModal(false)}>×</button>
                 </div>
                 <div className="modal-body">
                     {selectedApplication && (
                         <div className="details-grid">
-                            {/* Personal Information Section */}
                             <div className="detail-section full-width">
                                 <h4 className="section-title">📋 Personal Information</h4>
                             </div>
@@ -785,7 +775,6 @@ const AdminDashboard = () => {
                                 <p>{selectedApplication.updatedAt ? new Date(selectedApplication.updatedAt).toLocaleString() : 'N/A'}</p>
                             </div>
 
-                            {/* Mentor Specific Fields */}
                             {selectedApplication.expertise && (
                                 <>
                                     <div className="detail-section full-width">
@@ -852,7 +841,6 @@ const AdminDashboard = () => {
                                 </>
                             )}
 
-                            {/* Mentee Specific Fields */}
                             {selectedApplication.learningGoals && (
                                 <>
                                     <div className="detail-section full-width">
@@ -913,7 +901,6 @@ const AdminDashboard = () => {
                                 </>
                             )}
 
-                            {/* User Management Fields */}
                             {!selectedApplication.expertise && !selectedApplication.learningGoals && selectedApplication.role && (
                                 <>
                                     <div className="detail-section full-width">

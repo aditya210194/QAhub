@@ -1,25 +1,27 @@
-// src/components/ProtectedRoute.js
-import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
+'use client';
+import { useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 
 const ProtectedRoute = ({ children, requiredRole }) => {
-    const isAuthenticated = sessionStorage.getItem("token");
-    const location = useLocation();
+    const router = useRouter();
+    const pathname = usePathname();
 
-    // Get user from localStorage or sessionStorage
-    const user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}");
-    const userRole = user?.role;
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
 
-    // Check if authenticated
-    if (!isAuthenticated) {
-        return <Navigate to={`/login?next=${encodeURIComponent(location.pathname + location.search)}`} replace />;
-    }
+        const token = sessionStorage.getItem('token');
+        const user = JSON.parse(sessionStorage.getItem('user') || '{}');
 
-    // Check if role is required and user has the right role
-    // ✅ FIX: Accept both 'Admin' and 'admin'
-    if (requiredRole && userRole !== requiredRole && userRole !== "Admin" && userRole !== "admin") {
-        return <Navigate to="/" replace />;
-    }
+        if (!token) {
+            router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+            return;
+        }
+
+        if (requiredRole && user.role !== requiredRole && user.role !== 'Admin') {
+            router.push('/');
+            return;
+        }
+    }, [router, pathname, requiredRole]);
 
     return children;
 };
