@@ -1,198 +1,337 @@
-// routes/profileRoutes.js
+// server/routes/profileRoutes.js
 const express = require('express');
+const router = express.Router();
+const { authenticate } = require('../middleware/authenticate');
+const User = require('../models/User');
 const multer = require('multer');
 const path = require('path');
-const User = require('../models/User');
-const { authenticate } = require('../middleware/authenticate');
-const router = express.Router();
 const fs = require('fs');
 
-// Ensure upload directory exists
-const uploadDir = 'uploads/profile_pictures';
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure multer storage
+// ==================== MULTER CONFIGURATION FOR FILE UPLOADS ====================
+// Configure storage for profile pictures
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
+        const uploadDir = 'uploads/profile_pictures';
+        // Create directory if it doesn't exist
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
         cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
-        // Create a unique filename
+        // Generate unique filename: profile-{userId}-{timestamp}-{random}.{ext}
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         const ext = path.extname(file.originalname);
-        // Sanitize the filename
-        const sanitizedName = `profile-${req.user.id}-${uniqueSuffix}${ext}`;
-        cb(null, sanitizedName);
+        cb(null, `profile-${req.user.id}-${uniqueSuffix}${ext}`);
     }
 });
 
-// File filter to only allow images
+// File filter for images only
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif|webp/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-        return cb(null, true);
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
     } else {
-        cb(new Error('Only image files are allowed'));
+        cb(new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.'), false);
     }
 };
 
+// Multer upload middleware
 const upload = multer({
     storage: storage,
-    fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
-});
-router.get('/test-file/:filename', authenticate, async (req, res) => {
-    const filename = req.params.filename;
-    const filepath = path.join(__dirname, '../uploads/profile_pictures', filename);
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    },
+    fileFilter: fileFilter
+}).single('profilePicture');
 
-    try {
-        if (fs.existsSync(filepath)) {
-            const stats = fs.statSync(filepath);
-            res.json({
-                exists: true,
-                path: filepath,
-                size: stats.size,
-                created: stats.birthtime
-            });
-        } else {
-            // List all files in directory
-            const files = fs.readdirSync(path.join(__dirname, '../uploads/profile_pictures'));
-            res.json({
-                exists: false,
-                requestedFile: filename,
-                availableFiles: files
-            });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// GET: Fetch user's profile data
+// ==================== GET CURRENT USER PROFILE ====================
+// GET /api/profile - Get current user profile
 router.get('/profile', authenticate, async (req, res) => {
     try {
-        console.log("Fetching profile for user ID:", req.user.id);
+        console.log('📡 Profile request for user ID:', req.user.id);
 
-        const user = await User.findById(req.user.id).select('-password');
+        const user = await User.findById(req.user.id)
+            .select('-password -resetPasswordCode -resetPasswordExpires');
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            console.log('❌ User not found for ID:', req.user.id);
+            return res.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
         }
 
-        // Construct the full URL for profile picture
-        let profilePictureUrl = null;
-        if (user.profilePicture) {
-            // Get just the filename if it's a full path
-            let filename = user.profilePicture;
-            if (filename.includes('/')) {
-                filename = filename.split('/').pop();
-            }
-            if (filename.includes('\\')) {
-                filename = filename.split('\\').pop();
-            }
-
-            // Construct the full URL
-            const baseUrl = `${req.protocol}://${req.get('host')}`;
-            profilePictureUrl = `${baseUrl}/uploads/profile_pictures/${filename}`;
-
-            console.log("Generated profile picture URL:", profilePictureUrl);
-        }
-
-        res.status(200).json({
-            username: user.username,
-            fullName: user.fullName,
-            email: user.email,
-            bio: user.bio || '',
-            location: user.location || '',
-            experienceLevel: user.experienceLevel || '',
-            skills: user.skills || [],
-            profilePicture: profilePictureUrl,
+        console.log('✅ Profile found for user:', user.username);
+        res.json({
+            success: true,
+            data: user
         });
-    } catch (err) {
-        console.error('Server Error:', err);
-        res.status(500).json({ message: 'Server error' });
+    } catch (error) {
+        console.error('❌ Error fetching profile:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
 });
 
-// PUT: Update user's profile data and upload a profile picture
-router.put('/profile', authenticate, upload.single('profilePicture'), async (req, res) => {
-    try {
-        console.log("Updating profile for user ID:", req.user.id);
-        console.log("Request body:", req.body);
-        console.log("File:", req.file);
-
-        const { username, fullName, email, bio, location, experienceLevel, skills } = req.body;
-
-        const user = await User.findById(req.user.id);
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+// ==================== UPDATE USER PROFILE ====================
+// PUT /api/profile - Update user profile (with optional image upload)
+router.put('/profile', authenticate, (req, res) => {
+    upload(req, res, async (err) => {
+        // Handle multer errors
+        if (err) {
+            console.error('❌ Upload error:', err);
+            return res.status(400).json({
+                success: false,
+                error: err.message
+            });
         }
 
-        // Update user profile details
-        if (username) user.username = username;
-        if (fullName) user.fullName = fullName;
-        if (email) user.email = email;
-        if (bio !== undefined) user.bio = bio;
-        if (location !== undefined) user.location = location;
-        if (experienceLevel) user.experienceLevel = experienceLevel;
+        try {
+            console.log('📡 Profile update request for user:', req.user.id);
+            console.log('📦 Update data:', req.body);
 
-        // Handle skills
-        if (skills) {
-            if (Array.isArray(skills)) {
-                user.skills = skills;
-            } else if (typeof skills === 'string') {
-                user.skills = skills.split(',').map(skill => skill.trim()).filter(skill => skill);
+            const { username, fullName, email, bio, location, experienceLevel, skills } = req.body;
+
+            const user = await User.findById(req.user.id);
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'User not found'
+                });
             }
-        }
 
-        // Handle profile picture upload
-        if (req.file) {
-            console.log("File uploaded successfully:", req.file.filename);
-            // Store just the filename
-            user.profilePicture = req.file.filename;
+            // Update fields
+            if (username) user.username = username;
+            if (fullName) user.fullName = fullName;
+            if (email) user.email = email;
+            if (bio !== undefined) user.bio = bio;
+            if (location !== undefined) user.location = location;
+            if (experienceLevel) user.experienceLevel = experienceLevel;
 
-            // Optional: Delete old profile picture if it exists
-            if (user.profilePicture && user.profilePicture !== req.file.filename) {
-                const oldFilePath = path.join(__dirname, '../uploads/profile_pictures', user.profilePicture);
-                if (fs.existsSync(oldFilePath)) {
-                    fs.unlinkSync(oldFilePath);
-                    console.log("Deleted old profile picture:", oldFilePath);
+            // Handle skills - convert from comma-separated string to array
+            if (skills !== undefined) {
+                if (typeof skills === 'string') {
+                    user.skills = skills.split(',').map(s => s.trim()).filter(s => s);
+                } else if (Array.isArray(skills)) {
+                    user.skills = skills;
                 }
             }
+
+            // Handle profile picture upload
+            if (req.file) {
+                // Delete old profile picture if exists
+                if (user.profilePicture) {
+                    try {
+                        const oldPath = path.join(__dirname, '..', user.profilePicture);
+                        if (fs.existsSync(oldPath)) {
+                            fs.unlinkSync(oldPath);
+                            console.log('🗑️ Deleted old profile picture:', oldPath);
+                        }
+                    } catch (unlinkErr) {
+                        console.warn('⚠️ Could not delete old profile picture:', unlinkErr.message);
+                    }
+                }
+
+                // Set new profile picture path
+                user.profilePicture = `uploads/profile_pictures/${req.file.filename}`;
+                console.log('🖼️ Profile picture updated:', user.profilePicture);
+            }
+
+            await user.save();
+
+            // Return updated user without sensitive fields
+            const updatedUser = user.toObject();
+            delete updatedUser.password;
+            delete updatedUser.resetPasswordCode;
+            delete updatedUser.resetPasswordExpires;
+
+            console.log('✅ Profile updated for user:', user.username);
+            res.json({
+                success: true,
+                data: updatedUser
+            });
+        } catch (error) {
+            console.error('❌ Error updating profile:', error);
+            res.status(500).json({
+                success: false,
+                error: error.message
+            });
+        }
+    });
+});
+
+// ==================== GET PROFILE BY USERNAME ====================
+// GET /api/profile/:username - Get user profile by username
+router.get('/profile/:username', async (req, res) => {
+    try {
+        const { username } = req.params;
+        console.log('📡 Profile request for username:', username);
+
+        const user = await User.findOne({ username })
+            .select('-password -resetPasswordCode -resetPasswordExpires -email');
+
+        if (!user) {
+            console.log('❌ User not found for username:', username);
+            return res.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
         }
 
-        await user.save();
-        console.log("User profile updated successfully");
-
-        // Construct the URL for the response
-        const baseUrl = `${req.protocol}://${req.get('host')}`;
-        const profilePictureUrl = user.profilePicture
-            ? `${baseUrl}/uploads/profile_pictures/${user.profilePicture}`
-            : null;
-
-        res.status(200).json({
-            message: 'Profile updated successfully',
-            profilePicture: user.profilePicture,
-            user: {
-                username: user.username,
-                fullName: user.fullName,
-                email: user.email,
-                bio: user.bio,
-                location: user.location,
-                experienceLevel: user.experienceLevel,
-                skills: user.skills,
-                profilePicture: profilePictureUrl,
-            }
+        console.log('✅ Profile found for user:', user.username);
+        res.json({
+            success: true,
+            data: user
         });
-    } catch (err) {
-        console.error('Server Error:', err);
-        res.status(500).json({ message: 'Server error' });
+    } catch (error) {
+        console.error('❌ Error fetching user profile:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// ==================== GET PROFILE BY USER ID ====================
+// GET /api/profile/id/:userId - Get user profile by ID (Admin only)
+router.get('/profile/id/:userId', authenticate, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        console.log('📡 Profile request for user ID:', userId);
+
+        // Check if requesting user is admin
+        if (req.user.role !== 'Admin') {
+            return res.status(403).json({
+                success: false,
+                error: 'Access denied. Admin only.'
+            });
+        }
+
+        const user = await User.findById(userId)
+            .select('-password -resetPasswordCode -resetPasswordExpires');
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            data: user
+        });
+    } catch (error) {
+        console.error('❌ Error fetching user profile:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// ==================== UPLOAD PROFILE PICTURE ONLY ====================
+// POST /api/profile/upload-picture - Upload profile picture only
+router.post('/profile/upload-picture', authenticate, (req, res) => {
+    upload(req, res, async (err) => {
+        if (err) {
+            console.error('❌ Upload error:', err);
+            return res.status(400).json({
+                success: false,
+                error: err.message
+            });
+        }
+
+        try {
+            if (!req.file) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'No file uploaded'
+                });
+            }
+
+            const user = await User.findById(req.user.id);
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'User not found'
+                });
+            }
+
+            // Delete old profile picture if exists
+            if (user.profilePicture) {
+                try {
+                    const oldPath = path.join(__dirname, '..', user.profilePicture);
+                    if (fs.existsSync(oldPath)) {
+                        fs.unlinkSync(oldPath);
+                    }
+                } catch (unlinkErr) {
+                    console.warn('⚠️ Could not delete old profile picture:', unlinkErr.message);
+                }
+            }
+
+            // Set new profile picture path
+            user.profilePicture = `uploads/profile_pictures/${req.file.filename}`;
+            await user.save();
+
+            console.log('🖼️ Profile picture uploaded for user:', user.username);
+            res.json({
+                success: true,
+                message: 'Profile picture uploaded successfully',
+                data: {
+                    profilePicture: user.profilePicture
+                }
+            });
+        } catch (error) {
+            console.error('❌ Error uploading profile picture:', error);
+            res.status(500).json({
+                success: false,
+                error: error.message
+            });
+        }
+    });
+});
+
+// ==================== DELETE PROFILE PICTURE ====================
+// DELETE /api/profile/delete-picture - Delete profile picture
+router.delete('/profile/delete-picture', authenticate, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
+        }
+
+        if (user.profilePicture) {
+            try {
+                const filePath = path.join(__dirname, '..', user.profilePicture);
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                    console.log('🗑️ Deleted profile picture:', filePath);
+                }
+            } catch (unlinkErr) {
+                console.warn('⚠️ Could not delete profile picture:', unlinkErr.message);
+            }
+
+            user.profilePicture = '';
+            await user.save();
+        }
+
+        res.json({
+            success: true,
+            message: 'Profile picture deleted successfully'
+        });
+    } catch (error) {
+        console.error('❌ Error deleting profile picture:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
 });
 

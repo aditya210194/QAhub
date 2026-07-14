@@ -59,14 +59,29 @@ app.set('trust proxy', 1);
 const server = http.createServer(app);
 
 // ==================== SOCKET.IO CONFIGURATION ====================
+// Get allowed origins from environment or use defaults
+const socketAllowedOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+    : [
+        'https://qahub.co.in',
+        'https://www.qahub.co.in',
+        'https://api.qahub.co.in',
+        'http://localhost:3000',
+        'http://localhost:3001'
+    ];
+
+// Add Next.js default origins if not present
+if (!socketAllowedOrigins.includes('http://localhost:3000')) {
+    socketAllowedOrigins.push('http://localhost:3000');
+}
+if (!socketAllowedOrigins.includes('http://localhost:3001')) {
+    socketAllowedOrigins.push('http://localhost:3001');
+}
+
 const io = socketIo(server, {
     cors: {
-        origin: [
-            "https://qahub.co.in",
-            "https://www.qahub.co.in",
-            "http://localhost:3000"
-        ],
-        methods: ["GET", "POST"],
+        origin: socketAllowedOrigins,
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         credentials: true
     },
     transports: ["websocket", "polling"]
@@ -131,24 +146,59 @@ if (process.env.NODE_ENV !== 'test') {
 // Cookie parser
 app.use(cookieParser());
 
-// ==================== CORS CONFIGURATION ====================
-const allowedOrigins = [
-    'https://qahub.co.in',
-    'https://www.qahub.co.in',
-    'http://localhost:3000',
-    'https://api.qahub.co.in'
-];
+// ==================== CORS CONFIGURATION (UPDATED FOR NEXT.JS) ====================
+// Get allowed origins from environment variable
+const allowedOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+    : [
+        'https://qahub.co.in',
+        'https://www.qahub.co.in',
+        'https://api.qahub.co.in',
+        'http://localhost:3000',
+        'http://localhost:3001'
+    ];
+
+// Add Next.js defaults if not in list
+if (!allowedOrigins.includes('http://localhost:3000')) {
+    allowedOrigins.push('http://localhost:3000');
+}
+if (!allowedOrigins.includes('http://localhost:3001')) {
+    allowedOrigins.push('http://localhost:3001');
+}
+
+console.log('✅ Allowed Origins:', allowedOrigins);
 
 app.use(cors({
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Allow requests with no origin (like mobile apps, curl, etc)
+        if (!origin) {
+            return callback(null, true);
+        }
+
+        // Allow all localhost in development
+        if (process.env.NODE_ENV !== 'production') {
+            if (origin.match(/^http:\/\/localhost:\d+$/)) {
+                return callback(null, true);
+            }
+        }
+
+        // Check against allowed origins
+        if (allowedOrigins.includes(origin)) {
             callback(null, origin);
         } else {
+            console.warn(`⚠️ CORS blocked: ${origin}`);
             callback(new Error("Not allowed by CORS"));
         }
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'X-Requested-With',
+        'Accept',
+        'Origin',
+        'Access-Control-Allow-Origin'
+    ],
     credentials: true,
     preflightContinue: false,
     optionsSuccessStatus: 204
@@ -203,7 +253,11 @@ app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'healthy',
         timestamp: new Date().toISOString(),
-        uptime: process.uptime()
+        uptime: process.uptime(),
+        environment: process.env.NODE_ENV || 'development',
+        cors: {
+            allowedOrigins: allowedOrigins
+        }
     });
 });
 
@@ -313,6 +367,11 @@ io.on('connection', (socket) => {
         console.log(`Socket ${socket.id} joined discussion ${discussionId}`);
     });
 
+    // Typing indicator
+    socket.on('typing', ({ discussionId, username }) => {
+        socket.to(discussionId).emit('userTyping', { discussionId, username });
+    });
+
     socket.on('disconnect', () => {
         console.log('❌ Socket disconnected:', socket.id);
     });
@@ -328,6 +387,8 @@ server.listen(port, '0.0.0.0', () => {
 ║   🔌 WebSocket: enabled                                                      ║
 ║   💾 Cache: enabled (TTL: 5 minutes)                                         ║
 ║   🔒 Rate limiting: enabled                                                  ║
+║   ✅ CORS: Next.js + React compatible                                        ║
+║   📋 Allowed Origins: ${allowedOrigins.length} origins configured            ║
 ║                                                                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
     `);
