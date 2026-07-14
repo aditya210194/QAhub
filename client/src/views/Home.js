@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './Home.css';
@@ -8,12 +9,11 @@ import SecondHeader from "./SecondHeader";
 import CoursesData from '../data/CoursesData';
 import heroBg from '../images/heroBg.png';
 
-
 const Home = () => {
     const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
-    const [imagesLoaded, setImagesLoaded] = useState(false)
+    const [imagesLoaded, setImagesLoaded] = useState(false);
 
     useEffect(() => {
         AOS.init({
@@ -45,13 +45,11 @@ const Home = () => {
         document.body.style.overflow = 'auto';
     };
 
-    // Handle CTA button click - redirect based on login status
     const handleGetStartedClick = (e) => {
         if (isLoggedIn) {
             e.preventDefault();
             router.push('/courses');
         }
-        // If not logged in, let the Link to="/register" work normally
     };
 
     const handleFreeTrialClick = (e) => {
@@ -156,7 +154,6 @@ const Home = () => {
 
     return (
         <div className="home">
-
             <h1 style={{ display: 'none' }}>QA Hub - Software Testing Education Platform</h1>
             <SecondHeader />
 
@@ -178,7 +175,6 @@ const Home = () => {
                                 <Link href="/courses" className="btn btn-primary btn-lg">
                                     Explore Courses
                                 </Link>
-                                {/* Show Free Trial/Get Started based on login status */}
                                 {!isLoggedIn ? (
                                     <Link href="/register" className="btn btn-outline-light btn-lg">
                                         Free Trial
@@ -317,7 +313,7 @@ const Home = () => {
                 </div>
             )}
 
-            {/* Courses Section */}
+            {/* Courses Section - UPDATED WITH BETTER IMAGE HANDLING */}
             <section className="courses-section py-5">
                 <div className="container">
                     <div className="text-center mb-5" data-aos="fade-up">
@@ -329,7 +325,17 @@ const Home = () => {
                             <div className="col-lg-4 col-md-6 mb-4" key={course.id} data-aos="fade-up">
                                 <div className="card course-card h-100">
                                     <div className="card-img-top-container">
-                                        <img src={course.image} loading="lazy" className="card-img-top" alt={course.title} />
+                                        {/* ✅ FIXED: Better image handling with fallback */}
+                                        <img
+                                            src={course.image || 'https://via.placeholder.com/400x250/667eea/ffffff?text=Course'}
+                                            loading="lazy"
+                                            className="card-img-top"
+                                            alt={course.title}
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = 'https://via.placeholder.com/400x250/667eea/ffffff?text=' + encodeURIComponent(course.title);
+                                            }}
+                                        />
                                         <div className="card-badge">{course.level}</div>
                                     </div>
                                     <div className="card-body">
@@ -392,7 +398,7 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* SEO Content Section - Visible text for crawlers */}
+            {/* SEO Content Section */}
             <section className="seo-content-section py-4">
                 <div className="container">
                     <div className="row">
@@ -414,7 +420,7 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* CTA Section - Show different CTA based on login status */}
+            {/* CTA Section */}
             <section className="cta-section py-5">
                 <div className="container">
                     <div className="cta-card text-center" data-aos="zoom-in">
