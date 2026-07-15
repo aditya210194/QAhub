@@ -8,19 +8,6 @@ import SecondHeader from '../src/views/SecondHeader';
 import ConsentBanner from '../src/components/ConsentBanner';
 import ScrollToTop from '../src/components/ScrollToTop';
 
-// ✅ Conditionally import Vercel Analytics only in production
-let Analytics, SpeedInsights;
-if (process.env.NODE_ENV === 'production') {
-    try {
-        const vercelAnalytics = require('@vercel/analytics/react');
-        const vercelSpeedInsights = require('@vercel/speed-insights/react');
-        Analytics = vercelAnalytics.Analytics;
-        SpeedInsights = vercelSpeedInsights.SpeedInsights;
-    } catch (e) {
-        console.log('⚠️ Vercel Analytics not available');
-    }
-}
-
 export default function ClientLayout({ children }) {
     const pathname = usePathname();
     const [mounted, setMounted] = useState(false);
@@ -86,14 +73,6 @@ export default function ClientLayout({ children }) {
             </main>
 
             <Footer />
-
-            {/* ✅ Only render Vercel Analytics in production */}
-            {process.env.NODE_ENV === 'production' && mounted && Analytics && (
-                <Analytics />
-            )}
-            {process.env.NODE_ENV === 'production' && mounted && SpeedInsights && (
-                <SpeedInsights />
-            )}
         </CookieConsentProvider>
     );
 }

@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../src/index.css';
-import '../src/App.css';
-
+import '../src/styles/globals.css';
+import { Analytics } from '@vercel/analytics/next';        // ← ADD THIS
+import { SpeedInsights } from '@vercel/speed-insights/next'; // ← ADD THIS
 import Providers from './providers';
 import ClientLayout from './client-layout';
 import ErrorBoundary from '../src/components/ErrorBoundary';
@@ -14,6 +14,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
+        <head>
+            {/* ... head content ... */}
+        </head>
         <body>
         <ErrorBoundary>
             <Providers>
@@ -22,6 +25,8 @@ export default function RootLayout({ children }) {
                 </ClientLayout>
             </Providers>
         </ErrorBoundary>
+        <Analytics />
+        <SpeedInsights />
         </body>
         </html>
     );
