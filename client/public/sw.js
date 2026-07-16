@@ -7,7 +7,7 @@ const OFFLINE_URL = '/offline.html';
 const STATIC_ASSETS = [
     '/',
     '/offline.html',
-    '/Qahub_logo.png',
+    '/Qahub_logo1.png',
     '/manifest.json',
     '/favicon.ico',
 ];

@@ -104,49 +104,81 @@ body.dark-mode {
 .navbar-brand {
     padding: 0;
     margin-right: 2rem;
-    position: relative;
-    overflow: hidden;
-    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    min-height: 60px;
 }
 
 .navbar-brand img {
-    width: 180px;
-    height: auto;
+    height: 50px;
+    width: auto;
+    display: block;
     transition: all var(--transition-speed);
-    padding-top: 8px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    filter: none;
 }
 
-.scrolled .navbar-brand img {
-    width: 160px;
-    transform: scale(0.98);
+/* Dark mode logo adjustments */
+.fixed-navbar.dark-mode .navbar-brand img {
+    filter: brightness(0) invert(1);
 }
 
-.navbar-brand img:hover {
-    transform: scale(1.05) translateY(-2px);
-    filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.3));
+/* Scrolled state */
+.fixed-navbar.scrolled .navbar-brand img {
+    height: 42px;
 }
 
-/* Shimmer effect on logo hover */
-.navbar-brand::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg,
-        transparent,
-        rgba(255, 255, 255, 0.3),
-        transparent
-    );
-    transition: left 0.8s ease;
-    pointer-events: none;
-    border-radius: var(--border-radius);
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .navbar-brand img {
+        height: 40px;
+    }
+
+    .fixed-navbar.scrolled .navbar-brand img {
+        height: 35px;
+    }
+}
+/* ==================== ALTERNATIVE: SVG with CSS Variables ==================== */
+/* If your SVG uses CSS variables, add these: */
+
+.navbar-brand svg {
+    height: 50px;
+    width: auto;
+    display: block;
+    transition: all var(--transition-speed);
 }
 
-.navbar-brand:hover::before {
-    left: 100%;
+.fixed-navbar.scrolled .navbar-brand svg {
+    height: 42px;
+}
+
+/* Dark mode SVG color override */
+.fixed-navbar.dark-mode .navbar-brand svg .text-qa {
+    fill: #ffffff !important;
+}
+
+.fixed-navbar.dark-mode .navbar-brand svg .text-hub {
+    fill: #9f7aea !important;
+}
+
+.fixed-navbar.dark-mode .navbar-brand svg .icon-bg {
+    fill: #9f7aea !important;
+}
+
+.fixed-navbar.dark-mode .navbar-brand svg .text-tagline {
+    fill: #9f7aea !important;
+}
+
+/* Hover effect */
+.navbar-brand:hover img,
+.navbar-brand:hover svg {
+    transform: scale(1.02);
+    filter: drop-shadow(0 4px 8px rgba(124, 58, 237, 0.3));
+}
+
+/* Dark mode hover */
+.fixed-navbar.dark-mode .navbar-brand:hover img {
+    filter: brightness(0) invert(1) drop-shadow(0 4px 8px rgba(159, 122, 234, 0.4));
 }
 
 /* ==================== NAVIGATION LINKS ==================== */

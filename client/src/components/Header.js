@@ -6,7 +6,7 @@ import axios from 'axios';
 import './Header.css';
 import { getProfileImageUrl } from '../utils/imageUtils';
 
-const logo = '/Qahub_logo.png';
+const logo = '/Qahub_logo.svg';
 
 const Header = () => {
     const router = useRouter();
