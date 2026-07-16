@@ -1628,3 +1628,585 @@
         break-inside: avoid;
     }
 }
+/* ==================== BODY.DARK-MODE SUPPORT ==================== */
+
+/* Override for body.dark-mode to work with existing CSS */
+body.dark-mode .mentorship-page {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .mentorship-page::before {
+    background: radial-gradient(circle, rgba(159, 122, 234, 0.1) 0%, transparent 50%);
+}
+
+body.dark-mode .mentorship-page::after {
+    background: radial-gradient(circle, rgba(159, 122, 234, 0.05) 0%, transparent 60%);
+}
+
+/* Hero - Dark Mode */
+body.dark-mode .mentorship-hero-compact {
+    background: rgba(26, 26, 46, 0.8);
+    border-bottom-color: rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .hero-title-compact {
+    color: #e2e8f0;
+}
+
+body.dark-mode .hero-subtitle-compact {
+    color: #a0aec0;
+}
+
+/* Main Card - Dark Mode */
+body.dark-mode .mentorship-card-compact {
+    background: rgba(45, 55, 72, 0.95);
+    border-color: rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .section-title-compact {
+    color: #e2e8f0;
+}
+
+body.dark-mode .section-title-compact::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Status Indicator - Dark Mode */
+body.dark-mode .view-status-btn-compact {
+    background: rgba(26, 26, 46, 0.8);
+    border-color: rgba(159, 122, 234, 0.2);
+    color: #e2e8f0;
+}
+
+body.dark-mode .view-status-btn-compact:hover {
+    background: rgba(26, 26, 46, 0.9);
+}
+
+/* Role Cards - Dark Mode */
+body.dark-mode .role-card-horizontal {
+    background: #2d3748;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .role-card-horizontal.mentor-card:hover {
+    border-color: #9f7aea;
+}
+
+body.dark-mode .role-card-horizontal.mentee-card:hover {
+    border-color: #68d391;
+}
+
+body.dark-mode .role-card-horizontal.ai-card:hover {
+    border-color: #f6ad55;
+}
+
+body.dark-mode .role-card-horizontal h3 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .role-card-horizontal p {
+    color: #a0aec0;
+}
+
+body.dark-mode .applied-badge-horizontal {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+}
+
+body.dark-mode .role-features-horizontal span {
+    color: #a0aec0;
+}
+
+body.dark-mode .mentor-card .role-features-horizontal span svg { color: #9f7aea; }
+body.dark-mode .mentee-card .role-features-horizontal span svg { color: #68d391; }
+body.dark-mode .ai-card .role-features-horizontal span svg { color: #f6ad55; }
+
+body.dark-mode .role-btn-horizontal {
+    color: #1a1a2e;
+}
+
+body.dark-mode .mentor-btn { background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%); }
+body.dark-mode .mentee-btn { background: linear-gradient(135deg, #68d391 0%, #48bb78 100%); }
+body.dark-mode .ai-btn { background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%); }
+
+/* Form - Dark Mode */
+body.dark-mode .form-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .form-header h3 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .back-btn {
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #a0aec0;
+}
+
+body.dark-mode .back-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+}
+
+body.dark-mode .form-group label {
+    color: #e2e8f0;
+}
+
+body.dark-mode .form-group label svg {
+    color: #9f7aea;
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+}
+
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group select:focus,
+body.dark-mode .form-group textarea:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .form-group input::placeholder,
+body.dark-mode .form-group textarea::placeholder {
+    color: #718096;
+}
+
+body.dark-mode .btn-secondary {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #a0aec0;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+body.dark-mode .btn-primary.mentor-btn { background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%); }
+body.dark-mode .btn-primary.mentee-btn { background: linear-gradient(135deg, #68d391 0%, #48bb78 100%); }
+
+body.dark-mode .btn-primary {
+    color: #1a1a2e;
+}
+
+/* AI Chat - Dark Mode */
+body.dark-mode .ai-chat-section {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+}
+
+body.dark-mode .ai-chat-section .chat-container {
+    background: #1a202c;
+}
+
+body.dark-mode .ai-chat-section .chat-messages {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+}
+
+body.dark-mode .ai-chat-section .message.ai .message-content {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+}
+
+body.dark-mode .ai-chat-section .message.user .message-content {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .ai-chat-section .message.user .message-time {
+    color: rgba(26, 26, 46, 0.7);
+}
+
+body.dark-mode .ai-chat-section .message-time {
+    color: #718096;
+}
+
+body.dark-mode .ai-chat-section .welcome-message {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .ai-chat-section .welcome-message h4 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .ai-chat-section .welcome-message p {
+    color: #a0aec0;
+}
+
+body.dark-mode .ai-chat-section .suggested-questions button {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+}
+
+body.dark-mode .ai-chat-section .suggested-questions button:hover {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+    border-color: transparent;
+}
+
+/* Chat Input - Dark Mode */
+body.dark-mode .ai-chat-section .chat-input-form {
+    background: #1a202c;
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .ai-chat-section .chat-input {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+}
+
+body.dark-mode .ai-chat-section .chat-input:focus {
+    border-color: #9f7aea;
+    background: #2d3748;
+    box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .ai-chat-section .chat-input::placeholder {
+    color: #718096;
+}
+
+body.dark-mode .action-btn {
+    background: #2d3748;
+    color: #a0aec0;
+}
+
+body.dark-mode .action-btn:hover {
+    background: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .send-btn {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+/* Formatting Toolbar - Dark Mode */
+body.dark-mode .formatting-toolbar {
+    background: #2d3748;
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .formatting-toolbar button {
+    background: #1a202c;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #a0aec0;
+}
+
+body.dark-mode .formatting-toolbar button:hover {
+    background: #9f7aea;
+    border-color: #9f7aea;
+    color: #1a1a2e;
+}
+
+/* Attached Files - Dark Mode */
+body.dark-mode .attached-files-preview {
+    background: #2d3748;
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .file-preview-item {
+    background: #1a202c;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .file-name {
+    color: #e2e8f0;
+}
+
+body.dark-mode .file-size {
+    color: #718096;
+}
+
+body.dark-mode .remove-file {
+    color: #718096;
+}
+
+body.dark-mode .remove-file:hover {
+    color: #fc8181;
+    background: rgba(252, 129, 129, 0.2);
+}
+
+/* Chat Header - Dark Mode */
+body.dark-mode .ai-chat-section .chat-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+/* Scrollbar - Dark Mode */
+body.dark-mode .ai-chat-section .chat-messages::-webkit-scrollbar-track {
+    background: #1a202c;
+}
+
+body.dark-mode .ai-chat-section .chat-messages::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4a5568 0%, #718096 100%);
+}
+
+body.dark-mode .ai-chat-section .chat-messages::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Status Page - Dark Mode */
+body.dark-mode .status-header h2 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .status-header p {
+    color: #a0aec0;
+}
+
+body.dark-mode .refresh-status-btn {
+    background: rgba(26, 26, 46, 0.6);
+    border-color: rgba(159, 122, 234, 0.2);
+    color: #e2e8f0;
+}
+
+body.dark-mode .status-card {
+    background: #2d3748;
+}
+
+body.dark-mode .status-card-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .status-content .text-muted {
+    color: #a0aec0 !important;
+}
+
+body.dark-mode .status-message {
+    background: #1a1a2e;
+}
+
+body.dark-mode .status-message.success {
+    background: rgba(16, 185, 129, 0.2);
+    color: #68d391;
+}
+
+body.dark-mode .status-message.error {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fc8181;
+}
+
+/* Modal - Dark Mode */
+body.dark-mode .modal-overlay {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+body.dark-mode .modal-content {
+    background: #2d3748;
+}
+
+body.dark-mode .modal-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .modal-header h5 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .close-modal {
+    color: #a0aec0;
+}
+
+body.dark-mode .modal-footer {
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .modal-body {
+    color: #e2e8f0;
+}
+
+/* Success Overlay - Dark Mode */
+body.dark-mode .success-card {
+    background: #2d3748;
+}
+
+body.dark-mode .success-card h3 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .success-card p {
+    color: #a0aec0;
+}
+
+/* Loading Container - Dark Mode */
+body.dark-mode .loading-container p {
+    color: #a0aec0;
+}
+
+body.dark-mode .loading-spinner {
+    border-color: #2d3748;
+    border-top-color: #9f7aea;
+}
+
+/* Code Block - Dark Mode */
+body.dark-mode .code-block-wrapper {
+    background: #0d1117;
+}
+
+body.dark-mode .code-block-header {
+    background: #161b22;
+}
+
+body.dark-mode .code-language {
+    color: #9cdcfe;
+}
+
+body.dark-mode .copy-code-btn {
+    color: #858585;
+}
+
+body.dark-mode .copy-code-btn:hover {
+    color: #e2e8f0;
+}
+
+body.dark-mode .inline-code {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+/* ==================== PRINT STYLES - Dark Mode Override ==================== */
+@media print {
+    body.dark-mode .mentorship-page {
+        background: white !important;
+    }
+
+    body.dark-mode .mentorship-card-compact {
+        background: white !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .role-card-horizontal {
+        background: white !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .role-card-horizontal h3 {
+        color: black !important;
+    }
+
+    body.dark-mode .role-card-horizontal p {
+        color: #666 !important;
+    }
+
+    body.dark-mode .section-title-compact {
+        color: black !important;
+    }
+
+    body.dark-mode .section-title-compact::after {
+        background: #667eea !important;
+    }
+
+    body.dark-mode .ai-chat-section {
+        background: white !important;
+    }
+
+    body.dark-mode .ai-chat-section .chat-container {
+        background: white !important;
+    }
+
+    body.dark-mode .ai-chat-section .chat-messages {
+        background: white !important;
+    }
+
+    body.dark-mode .ai-chat-section .message.ai .message-content {
+        background: #f8f9fa !important;
+        border-color: #ddd !important;
+        color: black !important;
+    }
+
+    body.dark-mode .ai-chat-section .message.user .message-content {
+        background: #667eea !important;
+        color: white !important;
+    }
+
+    body.dark-mode .ai-chat-section .welcome-message {
+        background: #f8f9fa !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .ai-chat-section .welcome-message h4 {
+        color: black !important;
+    }
+
+    body.dark-mode .ai-chat-section .welcome-message p {
+        color: #666 !important;
+    }
+
+    body.dark-mode .status-card {
+        background: white !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .status-card-header {
+        background: #667eea !important;
+    }
+
+    body.dark-mode .status-message {
+        background: #f8f9fa !important;
+    }
+
+    body.dark-mode .status-message.success {
+        background: #d1fae5 !important;
+        color: #065f46 !important;
+    }
+
+    body.dark-mode .status-message.error {
+        background: #fee2e2 !important;
+        color: #991b1b !important;
+    }
+
+    body.dark-mode .modal-content {
+        background: white !important;
+    }
+
+    body.dark-mode .modal-body {
+        color: black !important;
+    }
+
+    body.dark-mode .modal-header h5 {
+        color: black !important;
+    }
+
+    body.dark-mode .success-card {
+        background: white !important;
+    }
+
+    body.dark-mode .success-card h3 {
+        color: black !important;
+    }
+
+    body.dark-mode .success-card p {
+        color: #666 !important;
+    }
+
+    body.dark-mode .form-group label {
+        color: black !important;
+    }
+
+    body.dark-mode .form-group input,
+    body.dark-mode .form-group select,
+    body.dark-mode .form-group textarea {
+        background: white !important;
+        border-color: #ddd !important;
+        color: black !important;
+    }
+
+    body.dark-mode .btn-secondary {
+        background: white !important;
+        border-color: #ddd !important;
+        color: #333 !important;
+    }
+
+    body.dark-mode .btn-primary.mentor-btn,
+    body.dark-mode .btn-primary.mentee-btn {
+        background: #667eea !important;
+        color: white !important;
+    }
+}

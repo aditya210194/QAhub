@@ -572,3 +572,249 @@ a:focus-visible {
         transform: scale(1);
     }
 }
+/* ==================== BODY.DARK-MODE SUPPORT ==================== */
+
+body.dark-mode .terms-page {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .terms-page::before {
+    background: radial-gradient(circle, rgba(159, 122, 234, 0.1) 0%, transparent 50%);
+}
+
+body.dark-mode .terms-page::after {
+    background: radial-gradient(circle, rgba(159, 122, 234, 0.05) 0%, transparent 60%);
+}
+
+/* Header - Dark Mode */
+body.dark-mode .terms-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .terms-header h1 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .terms-header .effective-date {
+    background: rgba(26, 26, 46, 0.5);
+    border-color: rgba(159, 122, 234, 0.3);
+    color: #a0aec0;
+}
+
+/* Terms Card - Dark Mode */
+body.dark-mode .terms-card {
+    background: rgba(45, 55, 72, 0.95);
+    border-color: rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .terms-card:hover {
+    box-shadow: 0 40px 80px rgba(159, 122, 234, 0.15);
+}
+
+/* Terms Intro - Dark Mode */
+body.dark-mode .terms-intro {
+    color: #cbd5e0;
+    background: linear-gradient(135deg, rgba(159, 122, 234, 0.1) 0%, rgba(183, 148, 244, 0.1) 100%);
+    border-left-color: #9f7aea;
+}
+
+/* Terms Sections - Dark Mode */
+body.dark-mode .terms-section {
+    background: #1a1a2e;
+}
+
+body.dark-mode .terms-section:hover {
+    background: #2d3748;
+    box-shadow: 0 10px 30px rgba(159, 122, 234, 0.1);
+}
+
+body.dark-mode .terms-section h2 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .terms-section h2::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .terms-section p {
+    color: #a0aec0;
+}
+
+/* Section Icon - Dark Mode */
+body.dark-mode .section-icon {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Terms Lists - Dark Mode */
+body.dark-mode .terms-list li {
+    background: #1a1a2e;
+    border-color: transparent;
+}
+
+body.dark-mode .terms-list li:hover {
+    border-color: #9f7aea;
+    box-shadow: 0 5px 15px rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .terms-list li span {
+    color: #cbd5e0;
+}
+
+body.dark-mode .list-bullet {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Contact Section - Dark Mode */
+body.dark-mode .contact-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .contact-section h2 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .contact-section p {
+    color: #a0aec0;
+}
+
+body.dark-mode .contact-btn {
+    background: #9f7aea;
+    color: #1a1a2e;
+}
+
+body.dark-mode .contact-btn:hover {
+    background: #b794f4;
+    box-shadow: 0 10px 20px rgba(159, 122, 234, 0.3);
+}
+
+/* Back to Top - Dark Mode */
+body.dark-mode .back-to-top {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    box-shadow: 0 10px 30px rgba(159, 122, 234, 0.3);
+}
+
+body.dark-mode .back-to-top:hover {
+    box-shadow: 0 15px 40px rgba(159, 122, 234, 0.5);
+}
+
+/* Scrollbar - Dark Mode */
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #b794f4 0%, #9f7aea 100%);
+}
+
+/* Focus States - Dark Mode */
+body.dark-mode button:focus-visible,
+body.dark-mode a:focus-visible {
+    outline-color: #9f7aea;
+}
+
+/* ==================== PRINT STYLES - Dark Mode Override ==================== */
+@media print {
+    body.dark-mode .terms-page {
+        background: white !important;
+    }
+
+    body.dark-mode .terms-header {
+        background: white !important;
+    }
+
+    body.dark-mode .terms-header h1 {
+        color: black !important;
+    }
+
+    body.dark-mode .terms-header .effective-date {
+        background: #f8f9fa !important;
+        border-color: #ddd !important;
+        color: #666 !important;
+    }
+
+    body.dark-mode .terms-card {
+        background: white !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .terms-intro {
+        background: #f8f9fa !important;
+        border-left-color: #667eea !important;
+        color: #333 !important;
+    }
+
+    body.dark-mode .terms-section {
+        background: white !important;
+    }
+
+    body.dark-mode .terms-section:hover {
+        background: white !important;
+        box-shadow: none !important;
+    }
+
+    body.dark-mode .terms-section h2 {
+        color: black !important;
+    }
+
+    body.dark-mode .terms-section h2::after {
+        background: #667eea !important;
+    }
+
+    body.dark-mode .terms-section p {
+        color: #333 !important;
+    }
+
+    body.dark-mode .section-icon {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+
+    body.dark-mode .terms-list li {
+        background: #f8f9fa !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .terms-list li:hover {
+        transform: none !important;
+        box-shadow: none !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .terms-list li span {
+        color: #333 !important;
+    }
+
+    body.dark-mode .list-bullet {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+
+    body.dark-mode .contact-section {
+        background: #f8f9fa !important;
+        color: black !important;
+    }
+
+    body.dark-mode .contact-section h2 {
+        color: black !important;
+    }
+
+    body.dark-mode .contact-section p {
+        color: #666 !important;
+    }
+
+    body.dark-mode .contact-btn {
+        background: #667eea !important;
+        color: white !important;
+    }
+
+    body.dark-mode .contact-btn:hover {
+        background: #667eea !important;
+        box-shadow: none !important;
+    }
+
+    body.dark-mode .back-to-top {
+        display: none !important;
+    }
+}

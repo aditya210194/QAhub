@@ -1553,3 +1553,487 @@ a:focus-visible {
 *, *::before, *::after {
     box-sizing: border-box;
 }
+/* ==================== BODY.DARK-MODE SUPPORT ==================== */
+
+/* Override for body.dark-mode to work with existing CSS */
+body.dark-mode .interview-questions-page {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #fff;
+}
+
+body.dark-mode .interview-questions-page .question-card {
+    background: rgba(26, 26, 46, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+body.dark-mode .interview-questions-page .card-header {
+    background: rgba(26, 26, 46, 0.95);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .interview-questions-page .btn-link {
+    color: #fff;
+}
+
+body.dark-mode .interview-questions-page .text-muted {
+    color: #a0aec0 !important;
+}
+
+body.dark-mode .interview-questions-page .form-control,
+body.dark-mode .interview-questions-page .form-select {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+body.dark-mode .interview-questions-page .form-control:focus,
+body.dark-mode .interview-questions-page .form-select:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.2);
+}
+
+/* Stats Bar - Dark Mode */
+body.dark-mode .interview-questions-page .stats-bar {
+    background: rgba(26, 26, 46, 0.95);
+}
+
+body.dark-mode .interview-questions-page .stat-label {
+    color: #a0aec0;
+}
+
+body.dark-mode .interview-questions-page .stat-value {
+    color: #9f7aea;
+}
+
+/* Search Filters - Dark Mode */
+body.dark-mode .interview-questions-page .search-filters-container {
+    background: rgba(26, 26, 46, 0.95);
+}
+
+body.dark-mode .interview-questions-page .filter-label {
+    color: #a0aec0;
+}
+
+body.dark-mode .interview-questions-page .search-bar {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+body.dark-mode .interview-questions-page .search-bar:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .interview-questions-page .search-bar::placeholder {
+    color: #718096;
+}
+
+body.dark-mode .interview-questions-page .search-icon {
+    color: #9f7aea;
+}
+
+body.dark-mode .interview-questions-page .search-clear {
+    color: #718096;
+}
+
+body.dark-mode .interview-questions-page .search-clear:hover {
+    color: #fc8181;
+}
+
+body.dark-mode .interview-questions-page .filter-select {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+body.dark-mode .interview-questions-page .filter-select:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .interview-questions-page .filter-select option {
+    background: #1a1a2e;
+    color: #fff;
+}
+
+/* Recently Viewed - Dark Mode */
+body.dark-mode .interview-questions-page .recently-viewed .btn {
+    background: rgba(26, 26, 46, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+body.dark-mode .interview-questions-page .recently-viewed .btn:hover {
+    border-color: #9f7aea;
+}
+
+/* Question Text - Dark Mode */
+body.dark-mode .interview-questions-page .question-text {
+    color: #fff;
+}
+
+/* Action Buttons - Dark Mode */
+body.dark-mode .interview-questions-page .action-buttons .btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+body.dark-mode .interview-questions-page .action-buttons .btn:hover:not(.disabled) {
+    background: #9f7aea;
+    color: #1a1a2e;
+}
+
+body.dark-mode .interview-questions-page .bookmark-btn.bookmarked {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .interview-questions-page .answered-btn.answered {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .interview-questions-page .copy-link-btn.copied {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: #1a1a2e;
+}
+
+/* Tags - Dark Mode */
+body.dark-mode .interview-questions-page .tag-badge {
+    background: rgba(255, 255, 255, 0.1);
+    color: #a0aec0;
+}
+
+body.dark-mode .interview-questions-page .tag-badge:hover {
+    background: #9f7aea;
+    color: #1a1a2e;
+}
+
+/* Answer Toolbar - Dark Mode */
+body.dark-mode .interview-questions-page .answer-toolbar {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .interview-questions-page .toolbar-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #a0aec0;
+}
+
+body.dark-mode .interview-questions-page .toolbar-btn:hover {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+    border-color: transparent;
+}
+
+body.dark-mode .interview-questions-page .toolbar-btn.active {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+    border-color: transparent;
+}
+
+body.dark-mode .interview-questions-page .font-size-select {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* Code Blocks - Dark Mode */
+body.dark-mode .interview-questions-page .code-block-container {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .interview-questions-page .code-toolbar {
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .interview-questions-page .code-action-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #a0aec0;
+}
+
+body.dark-mode .interview-questions-page .code-action-btn:hover {
+    background: #9f7aea;
+    color: #1a1a2e;
+    border-color: transparent;
+}
+
+body.dark-mode .interview-questions-page .code-action-btn.copied {
+    background: #48bb78;
+    color: #1a1a2e;
+    border-color: transparent;
+}
+
+/* Diagrams - Dark Mode */
+body.dark-mode .interview-questions-page .diagram-container {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .interview-questions-page .step-box {
+    background: rgba(26, 26, 46, 0.95);
+    color: #fff;
+    border-color: #9f7aea;
+}
+
+body.dark-mode .interview-questions-page .mindmap-node {
+    background: rgba(26, 26, 46, 0.95);
+    color: #fff;
+    border-color: #9f7aea;
+}
+
+/* Tables - Dark Mode */
+body.dark-mode .interview-questions-page .advanced-data-table {
+    background: rgba(26, 26, 46, 0.95);
+    color: #fff;
+}
+
+body.dark-mode .interview-questions-page .advanced-data-table th {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+    color: #fff;
+}
+
+body.dark-mode .interview-questions-page .advanced-data-table td {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .interview-questions-page .table-caption {
+    color: #a0aec0;
+}
+
+/* Markdown - Dark Mode */
+body.dark-mode .interview-questions-page .markdown-table th,
+body.dark-mode .interview-questions-page .markdown-table td {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .interview-questions-page .image-caption {
+    color: #a0aec0;
+}
+
+/* Content Sections - Dark Mode */
+body.dark-mode .interview-questions-page .content-section {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .interview-questions-page .section-header {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .interview-questions-page .section-header:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Additional Resources - Dark Mode */
+body.dark-mode .interview-questions-page .additional-resources {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .interview-questions-page .resource-list a {
+    color: #9f7aea;
+}
+
+body.dark-mode .interview-questions-page .resource-list a:hover {
+    color: #b794f4;
+}
+
+/* Pagination - Dark Mode */
+body.dark-mode .interview-questions-page .page-link {
+    background: rgba(26, 26, 46, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+body.dark-mode .interview-questions-page .page-item.active .page-link {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    border-color: transparent;
+    color: #1a1a2e;
+}
+
+body.dark-mode .interview-questions-page .page-item.disabled .page-link {
+    background: rgba(255, 255, 255, 0.05);
+    color: #4a5568;
+}
+
+body.dark-mode .interview-questions-page .page-link:hover:not(.disabled .page-link):not(.active .page-link) {
+    background: #9f7aea;
+    color: #1a1a2e;
+    border-color: transparent;
+}
+
+/* Rating Section - Dark Mode */
+body.dark-mode .interview-questions-page .rating-section {
+    background: rgba(26, 26, 46, 0.95);
+}
+
+/* No Results - Dark Mode */
+body.dark-mode .interview-questions-page .no-results {
+    background: rgba(26, 26, 46, 0.95);
+}
+
+body.dark-mode .interview-questions-page .no-results .btn {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+/* Toast - Dark Mode */
+body.dark-mode .interview-questions-page .toast {
+    background: rgba(26, 26, 46, 0.95);
+    color: #fff;
+}
+
+body.dark-mode .interview-questions-page .toast-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+    color: #fff;
+}
+
+/* Keyboard Shortcuts - Dark Mode */
+body.dark-mode .interview-questions-page kbd {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+/* Scrollbar - Dark Mode */
+body.dark-mode .interview-questions-page::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .interview-questions-page::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Utility Classes - Dark Mode */
+body.dark-mode .text-gradient {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ==================== PRINT STYLES - Dark Mode Override ==================== */
+@media print {
+    body.dark-mode .interview-questions-page {
+        background: white !important;
+        color: black !important;
+    }
+
+    body.dark-mode .interview-questions-page .question-card {
+        background: white !important;
+        border-color: #ddd !important;
+        color: black !important;
+    }
+
+    body.dark-mode .interview-questions-page .card-header {
+        background: white !important;
+        border-bottom-color: #ddd !important;
+    }
+
+    body.dark-mode .interview-questions-page .question-text {
+        color: black !important;
+    }
+
+    body.dark-mode .interview-questions-page .stats-bar {
+        background: white !important;
+    }
+
+    body.dark-mode .interview-questions-page .stat-label {
+        color: #666 !important;
+    }
+
+    body.dark-mode .interview-questions-page .stat-value {
+        color: #667eea !important;
+    }
+
+    body.dark-mode .interview-questions-page .advanced-data-table {
+        background: white !important;
+        color: black !important;
+    }
+
+    body.dark-mode .interview-questions-page .advanced-data-table th {
+        background: #667eea !important;
+        color: white !important;
+    }
+
+    body.dark-mode .interview-questions-page .advanced-data-table td {
+        border-bottom-color: #ddd !important;
+    }
+
+    body.dark-mode .interview-questions-page .code-block-container {
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .interview-questions-page .step-box {
+        background: white !important;
+        color: black !important;
+        border-color: #667eea !important;
+    }
+
+    body.dark-mode .interview-questions-page .mindmap-node {
+        background: #f8f9fa !important;
+        color: black !important;
+        border-color: #667eea !important;
+    }
+
+    body.dark-mode .interview-questions-page .tag-badge {
+        background: #f8f9fa !important;
+        color: #667eea !important;
+    }
+
+    body.dark-mode .interview-questions-page .no-results {
+        background: white !important;
+    }
+
+    body.dark-mode .interview-questions-page .no-results .btn {
+        background: #667eea !important;
+        color: white !important;
+    }
+
+    body.dark-mode .interview-questions-page .rating-section {
+        background: white !important;
+    }
+
+    body.dark-mode .interview-questions-page .additional-resources {
+        background: #f8f9fa !important;
+    }
+
+    body.dark-mode .interview-questions-page .resource-list a {
+        color: #667eea !important;
+    }
+
+    body.dark-mode .interview-questions-page .page-link {
+        background: white !important;
+        border-color: #ddd !important;
+        color: #333 !important;
+    }
+
+    body.dark-mode .interview-questions-page .page-item.active .page-link {
+        background: #667eea !important;
+        color: white !important;
+        border-color: transparent !important;
+    }
+
+    body.dark-mode .interview-questions-page .page-item.disabled .page-link {
+        background: #f8f9fa !important;
+        color: #999 !important;
+    }
+
+    body.dark-mode .interview-questions-page .search-filters-container,
+    body.dark-mode .interview-questions-page .action-buttons,
+    body.dark-mode .interview-questions-page .floating-actions,
+    body.dark-mode .interview-questions-page .print-btn,
+    body.dark-mode .interview-questions-page .answer-toolbar,
+    body.dark-mode .interview-questions-page .code-actions,
+    body.dark-mode .interview-questions-page .toolbar-btn,
+    body.dark-mode .interview-questions-page .font-size-select,
+    body.dark-mode .interview-questions-page .pagination,
+    body.dark-mode .interview-questions-page .recently-viewed,
+    body.dark-mode .interview-questions-page .progress-container,
+    body.dark-mode .interview-questions-page .toast {
+        display: none !important;
+    }
+}

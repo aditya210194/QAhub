@@ -747,4 +747,357 @@ input:-webkit-autofill:active {
 .login-graphics .graphic-text p {
     text-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
+/* ==================== DARK MODE SUPPORT ==================== */
+body.dark-mode .login-page {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .container {
+    color: #e2e8f0;
+}
+
+/* Hero Section - Dark Mode */
+body.dark-mode .login-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .login-hero::after {
+    background: linear-gradient(to bottom right, transparent 49%, #1a1a2e 50%);
+}
+
+body.dark-mode .hero-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .hero-subtitle {
+    color: #a0aec0;
+}
+
+body.dark-mode .highlight {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.dark-mode .highlight::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Login Container - Dark Mode */
+body.dark-mode .login-container {
+    background: #2d3748;
+    border-color: rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .login-container:hover {
+    box-shadow: 0 30px 60px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .login-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .login-title::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .login-icon {
+    color: #9f7aea;
+}
+
+/* Welcome Text - Dark Mode */
+body.dark-mode .welcome-text {
+    color: #a0aec0;
+}
+
+/* Form Labels - Dark Mode */
+body.dark-mode .form-label {
+    color: #a0aec0;
+}
+
+/* Form Controls - Dark Mode */
+body.dark-mode .form-control {
+    background: #1a1a2e;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .form-control:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .form-control::placeholder {
+    color: #718096;
+}
+
+body.dark-mode .form-control.is-invalid {
+    border-color: #fc8181;
+}
+
+body.dark-mode .form-control.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.2);
+}
+
+body.dark-mode .invalid-feedback {
+    color: #fc8181;
+}
+
+/* Form Check (Remember Me) - Dark Mode */
+body.dark-mode .form-check-label {
+    color: #a0aec0;
+}
+
+body.dark-mode .form-check-input {
+    background-color: #1a1a2e;
+    border-color: #4a5568;
+}
+
+body.dark-mode .form-check-input:checked {
+    background-color: #9f7aea;
+    border-color: #9f7aea;
+}
+
+body.dark-mode .form-check-input:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.2);
+}
+
+/* Links - Dark Mode */
+body.dark-mode .forgot-password {
+    color: #9f7aea;
+}
+
+body.dark-mode .forgot-password:hover {
+    color: #b794f4;
+}
+
+body.dark-mode .register-link {
+    color: #9f7aea;
+}
+
+body.dark-mode .register-link:hover {
+    color: #b794f4;
+}
+
+body.dark-mode .text-muted {
+    color: #a0aec0 !important;
+}
+
+/* Alert - Dark Mode */
+body.dark-mode .alert-success {
+    background: linear-gradient(135deg, #2f855a 0%, #276749 100%);
+    color: #e2e8f0;
+}
+
+body.dark-mode .alert-danger {
+    background: linear-gradient(135deg, #9b2c2c 0%, #742a2a 100%);
+    color: #e2e8f0;
+}
+
+body.dark-mode .alert-warning {
+    background: linear-gradient(135deg, #975a16 0%, #744210 100%);
+    color: #e2e8f0;
+}
+
+body.dark-mode .alert-info {
+    background: linear-gradient(135deg, #2a4365 0%, #1a365d 100%);
+    color: #e2e8f0;
+}
+
+/* Submit Button - Dark Mode */
+body.dark-mode .login-btn {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .login-btn:hover:not(:disabled) {
+    box-shadow: 0 10px 20px rgba(159, 122, 234, 0.4);
+}
+
+body.dark-mode .login-btn:disabled {
+    opacity: 0.7;
+}
+
+/* Social Login Buttons - Dark Mode */
+body.dark-mode .social-login-btn {
+    background: #1a1a2e;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .social-login-btn:hover {
+    background: #2d3748;
+    border-color: #9f7aea;
+    color: #e2e8f0;
+}
+
+body.dark-mode .social-login-btn.google:hover {
+    border-color: #ea4335;
+}
+
+body.dark-mode .social-login-btn.github:hover {
+    border-color: #9f7aea;
+}
+
+body.dark-mode .social-login-btn.linkedin:hover {
+    border-color: #0a66c2;
+}
+
+/* Divider - Dark Mode */
+body.dark-mode .divider-text {
+    color: #a0aec0;
+}
+
+body.dark-mode .divider-line {
+    background: #4a5568;
+}
+
+/* Card/Container Borders - Dark Mode */
+body.dark-mode .login-card {
+    background: #2d3748;
+    border-color: rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .login-card:hover {
+    border-color: rgba(159, 122, 234, 0.3);
+}
+
+/* Loading Spinner - Dark Mode */
+body.dark-mode .spinner-border {
+    border-color: #9f7aea;
+    border-right-color: transparent;
+}
+
+/* Scrollbar - Dark Mode */
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #b794f4 0%, #9f7aea 100%);
+}
+
+/* Focus States - Dark Mode */
+body.dark-mode .form-control:focus-visible,
+body.dark-mode .login-btn:focus-visible,
+body.dark-mode .social-login-btn:focus-visible {
+    outline-color: #9f7aea;
+}
+
+/* Password Toggle Button - Dark Mode */
+body.dark-mode .password-toggle {
+    background: #1a1a2e;
+    color: #a0aec0;
+}
+
+body.dark-mode .password-toggle:hover {
+    color: #e2e8f0;
+}
+
+/* Input Group Text - Dark Mode */
+body.dark-mode .input-group-text {
+    background: #1a1a2e;
+    border-color: #4a5568;
+    color: #a0aec0;
+}
+
+/* Checkbox - Dark Mode */
+body.dark-mode .custom-checkbox .custom-control-label::before {
+    background: #1a1a2e;
+    border-color: #4a5568;
+}
+
+body.dark-mode .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+    background: #9f7aea;
+    border-color: #9f7aea;
+}
+
+/* ==================== PRINT STYLES - Dark Mode Override ==================== */
+@media print {
+    body.dark-mode .login-page {
+        background: white !important;
+    }
+
+    body.dark-mode .login-hero {
+        background: white !important;
+    }
+
+    body.dark-mode .hero-title {
+        color: black !important;
+    }
+
+    body.dark-mode .hero-subtitle {
+        color: #666 !important;
+    }
+
+    body.dark-mode .highlight {
+        background: none !important;
+        -webkit-text-fill-color: black !important;
+        color: black !important;
+    }
+
+    body.dark-mode .login-container,
+    body.dark-mode .login-card {
+        background: white !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .login-title {
+        color: black !important;
+    }
+
+    body.dark-mode .login-title::after {
+        background: #667eea !important;
+    }
+
+    body.dark-mode .welcome-text,
+    body.dark-mode .form-label,
+    body.dark-mode .text-muted {
+        color: #333 !important;
+    }
+
+    body.dark-mode .form-control {
+        background: white !important;
+        color: black !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .form-control::placeholder {
+        color: #999 !important;
+    }
+
+    body.dark-mode .login-btn {
+        background: #667eea !important;
+        color: white !important;
+    }
+
+    body.dark-mode .social-login-btn {
+        background: white !important;
+        border-color: #ddd !important;
+        color: black !important;
+    }
+
+    body.dark-mode .forgot-password,
+    body.dark-mode .register-link {
+        color: #667eea !important;
+    }
+
+    body.dark-mode .form-check-label {
+        color: #333 !important;
+    }
+
+    body.dark-mode .divider-text {
+        color: #666 !important;
+    }
+
+    body.dark-mode .divider-line {
+        background: #ddd !important;
+    }
+}
 

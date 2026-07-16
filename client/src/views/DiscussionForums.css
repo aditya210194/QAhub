@@ -1418,3 +1418,504 @@ a:focus-visible {
         scroll-behavior: auto !important;
     }
 }
+/* ==================== DARK MODE SUPPORT (body.dark-mode) ==================== */
+
+/* Override for body.dark-mode to work with existing CSS */
+body.dark-mode {
+    --bg-primary: #1f2937;
+    --bg-secondary: #111827;
+    --bg-tertiary: #374151;
+    --bg-quaternary: #4b5563;
+    --border-color: #374151;
+    --border-light: #2d3748;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-tertiary: #9ca3af;
+    --text-light: #cbd5e1;
+    --scrollbar-track: rgba(255, 255, 255, 0.05);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+}
+
+body.dark-mode .discussion-forum-container {
+    background: var(--bg-secondary);
+}
+
+/* Login Prompt - Dark Mode */
+body.dark-mode .login-prompt-content {
+    background: var(--bg-primary);
+}
+
+body.dark-mode .login-prompt-content h2 {
+    color: var(--text-primary);
+}
+
+body.dark-mode .login-prompt-content p {
+    color: var(--text-secondary);
+}
+
+/* Forum Header - Dark Mode */
+body.dark-mode .forum-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .forum-title {
+    background: linear-gradient(135deg, #e2e8f0, rgba(255,255,255,0.7));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.dark-mode .stat-badge {
+    background: rgba(26, 26, 46, 0.6);
+}
+
+body.dark-mode .stat-badge:hover {
+    background: rgba(26, 26, 46, 0.8);
+}
+
+body.dark-mode .create-discussion-btn {
+    background: rgba(26, 26, 46, 0.5);
+    border-color: rgba(159, 122, 234, 0.3);
+}
+
+body.dark-mode .create-discussion-btn:hover {
+    background: #9f7aea;
+    color: #1a1a2e;
+    border-color: #9f7aea;
+}
+
+/* Info Box - Dark Mode */
+body.dark-mode .info-box {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, var(--bg-primary) 100%);
+    border-left-color: #9f7aea;
+}
+
+body.dark-mode .info-box-title {
+    color: var(--text-primary);
+}
+
+body.dark-mode .info-box-text {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .info-box-list li {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .info-box-list li i {
+    color: #9f7aea;
+}
+
+/* Discussions Sidebar - Dark Mode */
+body.dark-mode .discussions-sidebar {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .sidebar-header {
+    background: var(--bg-secondary);
+    border-bottom-color: var(--border-color);
+}
+
+body.dark-mode .discussion-count {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+body.dark-mode .sort-dropdown select {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+body.dark-mode .sort-dropdown select:hover {
+    border-color: #9f7aea;
+}
+
+/* Search Box - Dark Mode */
+body.dark-mode .search-icon {
+    color: var(--text-tertiary);
+}
+
+body.dark-mode .search-box input {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+body.dark-mode .search-box input:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 4px rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .search-box input::placeholder {
+    color: var(--text-tertiary);
+}
+
+/* Discussion Items - Dark Mode */
+body.dark-mode .discussion-item {
+    background: var(--bg-secondary);
+    border-color: transparent;
+}
+
+body.dark-mode .discussion-item:hover {
+    border-color: var(--border-color);
+}
+
+body.dark-mode .discussion-item.active {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 2px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .discussion-title {
+    color: var(--text-primary);
+}
+
+body.dark-mode .discussion-preview {
+    color: var(--text-tertiary);
+}
+
+body.dark-mode .discussion-author {
+    color: #9f7aea;
+}
+
+body.dark-mode .discussion-date {
+    color: var(--text-tertiary);
+}
+
+body.dark-mode .discussion-likes,
+body.dark-mode .discussion-messages {
+    color: var(--text-tertiary);
+}
+
+body.dark-mode .like-btn {
+    color: var(--text-tertiary);
+}
+
+body.dark-mode .like-btn.liked {
+    color: #fc8181;
+}
+
+body.dark-mode .like-btn:hover {
+    color: #fc8181;
+}
+
+body.dark-mode .discussion-arrow {
+    color: var(--text-tertiary);
+}
+
+/* Chat Container - Dark Mode */
+body.dark-mode .chat-container {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .chat-header {
+    background: var(--bg-secondary);
+    border-bottom-color: var(--border-color);
+}
+
+body.dark-mode .chat-meta small {
+    color: var(--text-tertiary);
+}
+
+body.dark-mode .messages-container {
+    background: var(--bg-secondary);
+}
+
+body.dark-mode .message-wrapper.received .message-bubble {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+body.dark-mode .message-wrapper.sent .message-bubble {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .message-wrapper.sent .message-header {
+    color: rgba(26, 26, 46, 0.8);
+}
+
+body.dark-mode .message-wrapper.received .message-header {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .message-sender:hover {
+    color: #9f7aea;
+}
+
+/* Typing Indicator - Dark Mode */
+body.dark-mode .typing-indicator {
+    color: #9f7aea;
+}
+
+body.dark-mode .typing-user {
+    background: var(--bg-tertiary);
+}
+
+/* Chat Input Area - Dark Mode */
+body.dark-mode .chat-input-area {
+    background: var(--bg-primary);
+    border-top-color: var(--border-color);
+}
+
+body.dark-mode .chat-input-area .input-group {
+    background: var(--bg-secondary);
+}
+
+body.dark-mode .chat-input-area .input-group:focus-within {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 4px rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .emoji-btn {
+    background: var(--bg-secondary);
+}
+
+body.dark-mode .emoji-btn:hover {
+    background: var(--bg-tertiary);
+}
+
+body.dark-mode .emoji-btn i,
+body.dark-mode .emoji-btn svg {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .chat-input-area input {
+    color: var(--text-primary);
+}
+
+body.dark-mode .chat-input-area input::placeholder {
+    color: var(--text-tertiary);
+}
+
+body.dark-mode .chat-input-area .btn-primary {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .chat-input-area .btn-primary:hover:not(:disabled) {
+    box-shadow: 0 10px 20px rgba(159, 122, 234, 0.3);
+}
+
+/* Emoji Picker - Dark Mode */
+body.dark-mode .emoji-picker {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .emoji-option {
+    background: var(--bg-secondary);
+}
+
+body.dark-mode .emoji-option:hover {
+    background: #9f7aea;
+}
+
+/* No Chat Selected - Dark Mode */
+body.dark-mode .no-chat-selected {
+    background: var(--bg-secondary);
+}
+
+body.dark-mode .no-chat-selected i {
+    color: var(--text-tertiary);
+}
+
+body.dark-mode .no-chat-selected h4 {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .no-chat-selected p {
+    color: var(--text-tertiary);
+}
+
+/* Modal - Dark Mode */
+body.dark-mode .modal-overlay {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+body.dark-mode .modal-content {
+    background: var(--bg-primary);
+}
+
+body.dark-mode .modal-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .modal-body .form-label {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .modal-body .form-control,
+body.dark-mode .modal-body .form-control-lg {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+body.dark-mode .modal-body .form-control:focus,
+body.dark-mode .modal-body .form-control-lg:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 4px rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .modal-footer {
+    border-top-color: var(--border-color);
+    background: var(--bg-secondary);
+}
+
+body.dark-mode .modal-footer .btn-secondary {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+body.dark-mode .modal-footer .btn-secondary:hover {
+    background: var(--bg-quaternary);
+}
+
+body.dark-mode .modal-footer .btn-primary {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+/* User Profile Modal - Dark Mode */
+body.dark-mode .stat-item {
+    background: var(--bg-secondary);
+}
+
+body.dark-mode .stat-item:hover {
+    background: var(--bg-tertiary);
+}
+
+body.dark-mode .stat-item i {
+    color: #9f7aea;
+}
+
+/* Scrollbar - Dark Mode */
+body.dark-mode ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Dark Mode Toggle Button - Dark Mode */
+body.dark-mode .dark-mode-toggle {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Empty States - Dark Mode */
+body.dark-mode .text-center.py-5 i {
+    color: var(--text-tertiary);
+}
+
+body.dark-mode .text-center.py-5 p {
+    color: var(--text-tertiary);
+}
+
+/* Focus States - Dark Mode */
+body.dark-mode button:focus-visible,
+body.dark-mode input:focus-visible,
+body.dark-mode select:focus-visible,
+body.dark-mode textarea:focus-visible,
+body.dark-mode a:focus-visible {
+    outline-color: #9f7aea;
+}
+
+/* ==================== PRINT STYLES - Dark Mode Override ==================== */
+@media print {
+    body.dark-mode .discussion-forum-container {
+        background: white !important;
+    }
+
+    body.dark-mode .forum-header {
+        background: white !important;
+    }
+
+    body.dark-mode .forum-title {
+        background: none !important;
+        -webkit-text-fill-color: black !important;
+        color: black !important;
+    }
+
+    body.dark-mode .login-prompt-content {
+        background: white !important;
+    }
+
+    body.dark-mode .discussions-sidebar,
+    body.dark-mode .chat-container {
+        background: white !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .discussion-item {
+        background: #f8f9fa !important;
+    }
+
+    body.dark-mode .discussion-title {
+        color: black !important;
+    }
+
+    body.dark-mode .discussion-preview {
+        color: #666 !important;
+    }
+
+    body.dark-mode .message-wrapper.received .message-bubble {
+        background: #f8f9fa !important;
+        color: black !important;
+    }
+
+    body.dark-mode .message-wrapper.sent .message-bubble {
+        background: #667eea !important;
+        color: white !important;
+    }
+
+    body.dark-mode .modal-content {
+        background: white !important;
+    }
+
+    body.dark-mode .modal-header {
+        background: #667eea !important;
+    }
+
+    body.dark-mode .stat-item {
+        background: #f8f9fa !important;
+    }
+
+    body.dark-mode .info-box {
+        background: #f8f9fa !important;
+        border-left-color: #667eea !important;
+    }
+
+    body.dark-mode .info-box-title {
+        color: black !important;
+    }
+
+    body.dark-mode .info-box-text {
+        color: #666 !important;
+    }
+
+    body.dark-mode .info-box-list li {
+        color: #666 !important;
+    }
+
+    body.dark-mode .no-chat-selected {
+        background: #f8f9fa !important;
+    }
+
+    body.dark-mode .no-chat-selected h4 {
+        color: #333 !important;
+    }
+
+    body.dark-mode .no-chat-selected p {
+        color: #666 !important;
+    }
+}

@@ -755,3 +755,316 @@ input[title]:hover::after {
 .success-icon {
     animation: checkmark 0.5s ease;
 }
+/* ==================== DARK MODE SUPPORT ==================== */
+body.dark-mode .register-container {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .register-container::before {
+    background: radial-gradient(circle, rgba(159, 122, 234, 0.1) 0%, transparent 50%);
+}
+
+body.dark-mode .register-container::after {
+    background: radial-gradient(circle, rgba(159, 122, 234, 0.05) 0%, transparent 60%);
+}
+
+/* Register Card - Dark Mode */
+body.dark-mode .register-card {
+    background: rgba(45, 55, 72, 0.95);
+    border-color: rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .register-card::before {
+    background: linear-gradient(90deg, #9f7aea, #b794f4, #9f7aea);
+}
+
+/* Header - Dark Mode */
+body.dark-mode .register-header h2 {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.dark-mode .register-header p {
+    color: #a0aec0;
+}
+
+/* Error Message - Dark Mode */
+body.dark-mode .register-error {
+    background: rgba(252, 129, 129, 0.15);
+    border-left-color: #fc8181;
+}
+
+body.dark-mode .error-icon {
+    background: #fc8181;
+}
+
+body.dark-mode .error-message {
+    color: #fc8181;
+}
+
+/* Form Labels - Dark Mode */
+body.dark-mode .form-group label {
+    color: #a0aec0;
+}
+
+body.dark-mode .label-icon {
+    color: #9f7aea;
+}
+
+body.dark-mode .form-group:focus-within .label-icon {
+    color: #b794f4;
+}
+
+/* Form Inputs - Dark Mode */
+body.dark-mode .form-group input {
+    background: #1a1a2e;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .form-group input:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .form-group input::placeholder {
+    color: #718096;
+}
+
+/* Password Toggle - Dark Mode */
+body.dark-mode .password-toggle {
+    color: #718096;
+}
+
+body.dark-mode .password-toggle:hover {
+    color: #9f7aea;
+}
+
+/* Password Strength - Dark Mode */
+body.dark-mode .strength-bar {
+    background: #4a5568;
+}
+
+body.dark-mode .strength-bar[data-strength="very-weak"]::before {
+    background: #fc8181;
+}
+
+body.dark-mode .strength-bar[data-strength="weak"]::before {
+    background: #f6ad55;
+}
+
+body.dark-mode .strength-bar[data-strength="medium"]::before {
+    background: #f6e05e;
+}
+
+body.dark-mode .strength-bar[data-strength="strong"]::before {
+    background: #68d391;
+}
+
+body.dark-mode .strength-bar[data-strength="very-strong"]::before {
+    background: #48bb78;
+}
+
+body.dark-mode .strength-label {
+    color: #a0aec0;
+}
+
+/* Register Button - Dark Mode */
+body.dark-mode .register-button {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .register-button:hover:not(:disabled) {
+    box-shadow: 0 15px 30px rgba(159, 122, 234, 0.4);
+}
+
+body.dark-mode .register-button:disabled {
+    opacity: 0.7;
+}
+
+/* Spinner - Dark Mode */
+body.dark-mode .spinner {
+    border-color: rgba(26, 26, 46, 0.3);
+    border-top-color: #1a1a2e;
+}
+
+/* Terms Agreement - Dark Mode */
+body.dark-mode .terms-agreement {
+    color: #a0aec0;
+}
+
+body.dark-mode .terms-agreement a {
+    color: #9f7aea;
+}
+
+body.dark-mode .terms-agreement a::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .terms-agreement a:hover {
+    color: #b794f4;
+}
+
+/* Login Redirect - Dark Mode */
+body.dark-mode .login-redirect {
+    border-top-color: rgba(255, 255, 255, 0.1);
+    color: #a0aec0;
+}
+
+body.dark-mode .login-redirect a {
+    color: #9f7aea;
+}
+
+body.dark-mode .login-redirect a::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .login-redirect a:hover {
+    color: #b794f4;
+}
+
+/* Input Validation - Dark Mode */
+body.dark-mode input:invalid:not(:placeholder-shown) {
+    border-color: #fc8181;
+}
+
+body.dark-mode input:invalid:not(:placeholder-shown):focus {
+    border-color: #fc8181;
+    box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.2);
+}
+
+body.dark-mode input:valid:not(:placeholder-shown) {
+    border-color: #68d391;
+}
+
+body.dark-mode input:valid:not(:placeholder-shown):focus {
+    border-color: #68d391;
+    box-shadow: 0 0 0 3px rgba(104, 211, 145, 0.2);
+}
+
+/* Scrollbar - Dark Mode */
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #b794f4 0%, #9f7aea 100%);
+}
+
+/* Focus States - Dark Mode */
+body.dark-mode input:focus-visible,
+body.dark-mode .register-button:focus-visible,
+body.dark-mode .password-toggle:focus-visible {
+    outline-color: #9f7aea;
+}
+
+/* Auto-fill Styles - Dark Mode */
+body.dark-mode input:-webkit-autofill,
+body.dark-mode input:-webkit-autofill:hover,
+body.dark-mode input:-webkit-autofill:focus,
+body.dark-mode input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #1a1a2e inset !important;
+    -webkit-text-fill-color: #e2e8f0 !important;
+}
+
+/* Tooltip - Dark Mode */
+body.dark-mode input[title]:hover::after {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+/* Print Styles - Dark Mode Override */
+@media print {
+    body.dark-mode .register-container {
+        background: white !important;
+    }
+
+    body.dark-mode .register-container::before,
+    body.dark-mode .register-container::after {
+        display: none !important;
+    }
+
+    body.dark-mode .register-card {
+        background: white !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .register-card::before {
+        display: none !important;
+    }
+
+    body.dark-mode .register-header h2 {
+        background: none !important;
+        -webkit-text-fill-color: #2d3748 !important;
+        color: #2d3748 !important;
+    }
+
+    body.dark-mode .register-header p {
+        color: #666 !important;
+    }
+
+    body.dark-mode .form-group label {
+        color: #333 !important;
+    }
+
+    body.dark-mode .form-group input {
+        background: white !important;
+        color: black !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .form-group input::placeholder {
+        color: #999 !important;
+    }
+
+    body.dark-mode .register-button {
+        background: #667eea !important;
+        color: white !important;
+    }
+
+    body.dark-mode .terms-agreement {
+        color: #666 !important;
+    }
+
+    body.dark-mode .terms-agreement a {
+        color: #667eea !important;
+    }
+
+    body.dark-mode .login-redirect {
+        border-top-color: #ddd !important;
+        color: #666 !important;
+    }
+
+    body.dark-mode .login-redirect a {
+        color: #667eea !important;
+    }
+
+    body.dark-mode .strength-label {
+        color: #666 !important;
+    }
+
+    body.dark-mode .strength-bar {
+        background: #e0e0e0 !important;
+    }
+
+    body.dark-mode .register-error {
+        background: #fff5f5 !important;
+        border-left-color: #f56565 !important;
+    }
+
+    body.dark-mode .error-message {
+        color: #c53030 !important;
+    }
+
+    body.dark-mode .error-icon {
+        background: #f56565 !important;
+        color: white !important;
+    }
+}

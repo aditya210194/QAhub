@@ -1066,3 +1066,474 @@ select:focus-visible {
 .stars svg:hover {
     transform: scale(1.1);
 }
+/* ==================== DARK MODE SUPPORT ==================== */
+body.dark-mode .course-detail-page {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+/* Hero Section - Dark Mode */
+body.dark-mode .course-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .course-hero::after {
+    background: linear-gradient(to bottom right, transparent 49%, #1a1a2e 50%);
+}
+
+body.dark-mode .hero-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .hero-subtitle {
+    color: #a0aec0;
+}
+
+body.dark-mode .back-btn {
+    background: rgba(26, 26, 46, 0.5) !important;
+    border-color: rgba(159, 122, 234, 0.3) !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .back-btn:hover {
+    background: #9f7aea !important;
+    color: #1a1a2e !important;
+}
+
+body.dark-mode .meta-badge {
+    background: rgba(26, 26, 46, 0.5) !important;
+    border-color: rgba(159, 122, 234, 0.3) !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .meta-badge:hover {
+    background: #9f7aea !important;
+    color: #1a1a2e !important;
+}
+
+/* Tabs - Dark Mode */
+body.dark-mode .course-tabs {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .course-tabs .nav-link {
+    color: #a0aec0;
+}
+
+body.dark-mode .course-tabs .nav-link:hover {
+    color: #9f7aea;
+}
+
+body.dark-mode .course-tabs .nav-link.active {
+    color: #9f7aea;
+}
+
+body.dark-mode .course-tabs .nav-link.active::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Cards - Dark Mode */
+body.dark-mode .overview-card,
+body.dark-mode .instructor-card,
+body.dark-mode .reviews-card {
+    background: #2d3748;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .overview-card:hover,
+body.dark-mode .instructor-card:hover,
+body.dark-mode .reviews-card:hover {
+    box-shadow: 0 30px 60px rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .overview-card h3 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .overview-card h3::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .overview-card p {
+    color: #a0aec0;
+}
+
+/* Learning List - Dark Mode */
+body.dark-mode .learning-list li {
+    color: #cbd5e0;
+}
+
+body.dark-mode .learning-list li::before {
+    color: #9f7aea;
+}
+
+/* Course Content - Dark Mode */
+body.dark-mode .module {
+    background: #1a1a2e;
+}
+
+body.dark-mode .module h4 {
+    background: #2d3748;
+    color: #e2e8f0;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .lesson-item {
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .lesson-item:hover {
+    background: #2d3748;
+}
+
+body.dark-mode .lesson-icon {
+    color: #9f7aea;
+}
+
+body.dark-mode .lesson-title {
+    color: #cbd5e0;
+}
+
+body.dark-mode .lesson-duration {
+    color: #718096;
+}
+
+/* Instructor Card - Dark Mode */
+body.dark-mode .instructor-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .instructor-info h3 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .instructor-info .title {
+    color: #9f7aea;
+}
+
+body.dark-mode .instructor-meta span {
+    color: #a0aec0;
+}
+
+body.dark-mode .instructor-meta svg {
+    color: #9f7aea;
+}
+
+body.dark-mode .instructor-bio {
+    color: #a0aec0;
+}
+
+body.dark-mode .instructor-avatar {
+    border-color: #2d3748;
+    box-shadow: 0 10px 30px rgba(159, 122, 234, 0.2);
+}
+
+/* Reviews - Dark Mode */
+body.dark-mode .rating-summary {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .average-rating {
+    background: rgba(26, 26, 46, 0.5);
+}
+
+body.dark-mode .average-rating h1 {
+    color: #9f7aea;
+}
+
+body.dark-mode .average-rating p {
+    color: #a0aec0;
+}
+
+body.dark-mode .rating-bar .stars {
+    color: #a0aec0;
+}
+
+body.dark-mode .bar-container {
+    background: #4a5568;
+}
+
+body.dark-mode .bar {
+    background: linear-gradient(90deg, #9f7aea, #b794f4);
+}
+
+body.dark-mode .percentage {
+    color: #a0aec0;
+}
+
+body.dark-mode .review-item {
+    background: #1a1a2e;
+}
+
+body.dark-mode .review-item:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .reviewer h5 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .review-date {
+    color: #718096;
+}
+
+body.dark-mode .review-content {
+    color: #a0aec0;
+}
+
+/* Sidebar - Dark Mode */
+body.dark-mode .enroll-card {
+    background: #2d3748;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .price-container {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .current-price {
+    color: #9f7aea;
+}
+
+body.dark-mode .original-price {
+    color: #718096;
+}
+
+body.dark-mode .discount-badge {
+    background: linear-gradient(135deg, #2f855a 0%, #276749 100%);
+}
+
+body.dark-mode .enroll-btn {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .enroll-btn:hover {
+    box-shadow: 0 10px 30px rgba(159, 122, 234, 0.4);
+}
+
+body.dark-mode .includes-list h5 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .includes-list li {
+    color: #a0aec0;
+}
+
+body.dark-mode .includes-list li svg {
+    color: #9f7aea;
+}
+
+body.dark-mode .favorite-btn.btn-outline-danger {
+    color: #fc8181;
+    border-color: #fc8181;
+}
+
+body.dark-mode .favorite-btn.btn-outline-danger:hover {
+    background: #fc8181;
+    color: #1a1a2e;
+}
+
+body.dark-mode .favorite-btn.btn-danger {
+    background: linear-gradient(135deg, #fc8181 0%, #c53030 100%);
+    border: none;
+}
+
+body.dark-mode .favorite-btn.btn-danger:hover {
+    box-shadow: 0 10px 30px rgba(252, 129, 129, 0.3);
+}
+
+/* Related Courses - Dark Mode */
+body.dark-mode .related-courses {
+    background: #2d3748;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .related-courses h4 {
+    color: #e2e8f0;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .related-course {
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .related-course:hover {
+    background: #1a1a2e;
+}
+
+body.dark-mode .related-info h6 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .related-meta {
+    color: #a0aec0;
+}
+
+body.dark-mode .related-meta svg {
+    color: #ffc107;
+}
+
+/* Course Not Found - Dark Mode */
+body.dark-mode .course-not-found {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .course-not-found h2 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .course-not-found .btn {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+/* Scrollbar - Dark Mode */
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #b794f4 0%, #9f7aea 100%);
+}
+
+/* Focus States - Dark Mode */
+body.dark-mode button:focus-visible,
+body.dark-mode a:focus-visible,
+body.dark-mode input:focus-visible,
+body.dark-mode select:focus-visible {
+    outline-color: #9f7aea;
+}
+
+/* Stars - Dark Mode */
+body.dark-mode .stars svg {
+    color: #4a5568;
+}
+
+body.dark-mode .stars svg.filled {
+    color: #ffc107;
+}
+
+/* ==================== PRINT STYLES - Dark Mode Override ==================== */
+@media print {
+    body.dark-mode .course-detail-page {
+        background: white !important;
+    }
+
+    body.dark-mode .course-hero {
+        background: white !important;
+    }
+
+    body.dark-mode .course-hero::after {
+        display: none !important;
+    }
+
+    body.dark-mode .hero-title {
+        color: black !important;
+    }
+
+    body.dark-mode .hero-subtitle {
+        color: #666 !important;
+    }
+
+    body.dark-mode .meta-badge {
+        background: #f0f0f0 !important;
+        border-color: #ddd !important;
+        color: #333 !important;
+    }
+
+    body.dark-mode .overview-card,
+    body.dark-mode .instructor-card,
+    body.dark-mode .reviews-card,
+    body.dark-mode .enroll-card,
+    body.dark-mode .related-courses {
+        background: white !important;
+        border-color: #ddd !important;
+        box-shadow: none !important;
+    }
+
+    body.dark-mode .overview-card h3 {
+        color: black !important;
+    }
+
+    body.dark-mode .overview-card h3::after {
+        background: #667eea !important;
+    }
+
+    body.dark-mode .overview-card p,
+    body.dark-mode .learning-list li,
+    body.dark-mode .lesson-title,
+    body.dark-mode .instructor-bio,
+    body.dark-mode .review-content {
+        color: #666 !important;
+    }
+
+    body.dark-mode .module {
+        background: #f8f9fa !important;
+    }
+
+    body.dark-mode .module h4 {
+        background: #f0f0f0 !important;
+        color: black !important;
+    }
+
+    body.dark-mode .lesson-item:hover {
+        background: transparent !important;
+    }
+
+    body.dark-mode .instructor-info h3 {
+        color: black !important;
+    }
+
+    body.dark-mode .instructor-meta span {
+        color: #666 !important;
+    }
+
+    body.dark-mode .current-price {
+        color: #667eea !important;
+    }
+
+    body.dark-mode .original-price {
+        color: #999 !important;
+    }
+
+    body.dark-mode .average-rating {
+        background: #f8f9fa !important;
+    }
+
+    body.dark-mode .average-rating h1 {
+        color: #667eea !important;
+    }
+
+    body.dark-mode .review-item {
+        background: #f8f9fa !important;
+    }
+
+    body.dark-mode .reviewer h5 {
+        color: black !important;
+    }
+
+    body.dark-mode .related-courses h4 {
+        color: black !important;
+        border-bottom-color: #ddd !important;
+    }
+
+    body.dark-mode .related-info h6 {
+        color: black !important;
+    }
+
+    body.dark-mode .related-meta {
+        color: #666 !important;
+    }
+
+    body.dark-mode .includes-list h5 {
+        color: black !important;
+    }
+
+    body.dark-mode .includes-list li {
+        color: #666 !important;
+    }
+}

@@ -733,3 +733,278 @@ textarea.form-control {
 .alert-success svg {
     animation: checkmark 0.5s ease;
 }
+/* ==================== DARK MODE SUPPORT ==================== */
+body.dark-mode .contact-us {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .container {
+    color: #e2e8f0;
+}
+
+/* Hero Section - Dark Mode */
+body.dark-mode .contact-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .contact-hero::after {
+    background: linear-gradient(to bottom right, transparent 49%, #1a1a2e 50%);
+}
+
+body.dark-mode .hero-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .hero-subtitle {
+    color: #a0aec0;
+}
+
+body.dark-mode .highlight {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.dark-mode .highlight::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Contact Form Container - Dark Mode */
+body.dark-mode .contact-form-container {
+    background: #2d3748;
+    border-color: rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .contact-form-container:hover {
+    box-shadow: 0 30px 60px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .form-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .form-title::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .form-icon {
+    color: #9f7aea;
+}
+
+/* Form Labels - Dark Mode */
+body.dark-mode .form-label {
+    color: #a0aec0;
+}
+
+/* Form Controls - Dark Mode */
+body.dark-mode .form-control {
+    background: #1a1a2e;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .form-control:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .form-control::placeholder {
+    color: #718096;
+}
+
+body.dark-mode .form-control.is-invalid {
+    border-color: #fc8181;
+}
+
+body.dark-mode .form-control.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.2);
+}
+
+body.dark-mode .invalid-feedback {
+    color: #fc8181;
+}
+
+/* Alert - Dark Mode */
+body.dark-mode .alert-success {
+    background: linear-gradient(135deg, #2f855a 0%, #276749 100%);
+    color: #e2e8f0;
+}
+
+/* Submit Button - Dark Mode */
+body.dark-mode .submit-btn {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .submit-btn:hover:not(:disabled) {
+    box-shadow: 0 10px 20px rgba(159, 122, 234, 0.4);
+}
+
+/* Contact Info Container - Dark Mode */
+body.dark-mode .contact-info-container {
+    background: #2d3748;
+    border-color: rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .contact-info-container:hover {
+    box-shadow: 0 30px 60px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .info-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .info-title::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .info-icon {
+    color: #9f7aea;
+}
+
+/* Info Items - Dark Mode */
+body.dark-mode .info-item {
+    background: #1a1a2e;
+}
+
+body.dark-mode .info-item:hover {
+    background: linear-gradient(135deg, rgba(159, 122, 234, 0.15) 0%, rgba(183, 148, 244, 0.15) 100%);
+}
+
+body.dark-mode .info-icon-wrapper {
+    background: linear-gradient(135deg, rgba(159, 122, 234, 0.2) 0%, rgba(183, 148, 244, 0.2) 100%);
+}
+
+body.dark-mode .info-item:hover .info-icon-wrapper {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .info-icon-wrapper svg {
+    color: #9f7aea;
+}
+
+body.dark-mode .info-item:hover .info-icon-wrapper svg {
+    color: white;
+}
+
+body.dark-mode .info-content h5 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .info-content p {
+    color: #a0aec0;
+}
+
+/* Map Container - Dark Mode */
+body.dark-mode .map-container {
+    border-color: rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .map-container:hover {
+    border-color: #9f7aea;
+    box-shadow: 0 20px 40px rgba(159, 122, 234, 0.2);
+}
+
+/* Scrollbar - Dark Mode */
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #b794f4 0%, #9f7aea 100%);
+}
+
+/* Focus States - Dark Mode */
+body.dark-mode .form-control:focus-visible,
+body.dark-mode .submit-btn:focus-visible {
+    outline-color: #9f7aea;
+}
+
+/* Loading Skeleton - Dark Mode */
+body.dark-mode .loading-skeleton {
+    background: linear-gradient(90deg, #2d3748 25%, #4a5568 50%, #2d3748 75%);
+    background-size: 1000px 100%;
+}
+
+/* Print Styles - Dark Mode Override */
+@media print {
+    body.dark-mode .contact-us {
+        background: white !important;
+    }
+
+    body.dark-mode .contact-hero {
+        background: white !important;
+    }
+
+    body.dark-mode .hero-title {
+        color: black !important;
+    }
+
+    body.dark-mode .hero-subtitle {
+        color: #666 !important;
+    }
+
+    body.dark-mode .highlight {
+        background: none !important;
+        -webkit-text-fill-color: black !important;
+        color: black !important;
+    }
+
+    body.dark-mode .contact-form-container,
+    body.dark-mode .contact-info-container {
+        background: white !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .form-title {
+        color: black !important;
+    }
+
+    body.dark-mode .form-title::after {
+        background: #667eea !important;
+    }
+
+    body.dark-mode .info-title {
+        color: black !important;
+    }
+
+    body.dark-mode .info-title::after {
+        background: #667eea !important;
+    }
+
+    body.dark-mode .form-label {
+        color: #333 !important;
+    }
+
+    body.dark-mode .form-control {
+        background: white !important;
+        color: black !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .info-item {
+        background: #f8f9fa !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .info-content h5 {
+        color: black !important;
+    }
+
+    body.dark-mode .info-content p {
+        color: #666 !important;
+    }
+
+    body.dark-mode .info-icon-wrapper {
+        background: #667eea20 !important;
+    }
+
+    body.dark-mode .info-icon-wrapper svg {
+        color: #667eea !important;
+    }
+}

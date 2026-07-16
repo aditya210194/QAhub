@@ -1325,5 +1325,592 @@
 
 
 /* ===== Custom Scrollbar ===== */
+/* ==================== BODY.DARK-MODE SUPPORT ==================== */
 
+body.dark-mode .container {
+    background: #1a1a2e;
+}
+
+body.dark-mode .container::before {
+    background: radial-gradient(circle, rgba(159, 122, 234, 0.05) 0%, transparent 70%);
+}
+
+/* Back Button - Dark Mode */
+body.dark-mode .backButton {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .backButton:hover {
+    box-shadow: 0 15px 40px rgba(159, 122, 234, 0.3);
+}
+
+/* Question Title - Dark Mode */
+body.dark-mode .questionTitle {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.dark-mode .questionTitle::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Question Meta - Dark Mode */
+body.dark-mode .questionMeta {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .questionMeta span {
+    color: #a0aec0;
+}
+
+/* Tags - Dark Mode */
+body.dark-mode .tag {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+/* Question Description - Dark Mode */
+body.dark-mode .questionDescription {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.05);
+    color: #a0aec0;
+}
+
+body.dark-mode .questionDescription::before {
+    color: rgba(159, 122, 234, 0.1);
+}
+
+body.dark-mode .questionDescription h1,
+body.dark-mode .questionDescription h2,
+body.dark-mode .questionDescription h3 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .questionDescription code {
+    background: #1a1a2e;
+    color: #9f7aea;
+}
+
+body.dark-mode .questionDescription pre {
+    background: #0d1117;
+}
+
+body.dark-mode .questionDescription blockquote {
+    border-left-color: #9f7aea;
+    color: #cbd5e0;
+}
+
+/* Answer Form - Dark Mode */
+body.dark-mode .answerForm {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .formTitle {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.dark-mode .formTitle::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .formLabel {
+    color: #e2e8f0;
+}
+
+body.dark-mode .formInput {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+}
+
+body.dark-mode .formInput:hover {
+    border-color: #9f7aea;
+}
+
+body.dark-mode .formInput:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 4px rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .formInput::placeholder {
+    color: #718096;
+}
+
+/* Editor - Dark Mode */
+body.dark-mode .editorWrapper {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .editorWrapper:focus-within {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 4px rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .toolbar {
+    background: #2d3748;
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .toolbar button {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #a0aec0;
+}
+
+body.dark-mode .toolbar button:hover {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .toolbar button.isActive {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .textEditor {
+    background: #1a1a2e;
+}
+
+body.dark-mode .textEditor :global(.ProseMirror h1),
+body.dark-mode .textEditor :global(.ProseMirror h2),
+body.dark-mode .textEditor :global(.ProseMirror h3) {
+    color: #e2e8f0;
+}
+
+body.dark-mode .textEditor :global(.ProseMirror p) {
+    color: #a0aec0;
+}
+
+body.dark-mode .textEditor :global(.ProseMirror blockquote) {
+    border-left-color: #9f7aea;
+    color: #a0aec0;
+}
+
+body.dark-mode .textEditor :global(.ProseMirror code) {
+    background: #2d3748;
+    color: #9f7aea;
+}
+
+body.dark-mode .textEditor :global(.ProseMirror pre) {
+    background: #0d1117;
+}
+
+body.dark-mode .textEditor :global(.ProseMirror pre code) {
+    color: #e5e7eb;
+}
+
+body.dark-mode .textEditor :global(.ProseMirror a) {
+    color: #9f7aea;
+}
+
+body.dark-mode .textEditor :global(.ProseMirror p.is-editor-empty:first-child::before) {
+    color: #718096;
+}
+
+/* File Upload - Dark Mode */
+body.dark-mode .fileLabel {
+    color: #e2e8f0;
+}
+
+body.dark-mode .fileInput {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #a0aec0;
+}
+
+body.dark-mode .fileInput:hover {
+    border-color: #9f7aea;
+    background: #2d3748;
+}
+
+body.dark-mode .fileInput::file-selector-button {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .fileItem {
+    background: #2d3748;
+}
+
+body.dark-mode .fileName {
+    color: #e2e8f0;
+}
+
+body.dark-mode .fileSize {
+    color: #718096;
+}
+
+body.dark-mode .fileRemove {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fc8181;
+}
+
+body.dark-mode .fileRemove:hover {
+    background: #fc8181;
+    color: #1a1a2e;
+}
+
+/* Submit Button - Dark Mode */
+body.dark-mode .submitButton {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .submitButton:hover:not(:disabled) {
+    box-shadow: 0 15px 40px rgba(159, 122, 234, 0.4);
+}
+
+/* Error - Dark Mode */
+body.dark-mode .error {
+    background: rgba(252, 129, 129, 0.15);
+    border-color: rgba(252, 129, 129, 0.3);
+    color: #fc8181;
+}
+
+/* Answers Header - Dark Mode */
+body.dark-mode .answersHeader {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .answersHeader h3 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .sortSelect {
+    background: rgba(26, 26, 46, 0.6);
+    border-color: rgba(159, 122, 234, 0.3);
+    color: #e2e8f0;
+}
+
+body.dark-mode .sortSelect:hover {
+    background: rgba(26, 26, 46, 0.8);
+}
+
+body.dark-mode .sortSelect option {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+/* Answer Card - Dark Mode */
+body.dark-mode .answerCard {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .answerCard::before {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Answer Header - Dark Mode */
+body.dark-mode .authorAvatar {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .authorName {
+    color: #e2e8f0;
+}
+
+body.dark-mode .answerDate {
+    color: #718096;
+}
+
+/* Answer Content - Dark Mode */
+body.dark-mode .answerContent {
+    color: #a0aec0;
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .answerContent code {
+    background: #1a1a2e;
+    color: #9f7aea;
+}
+
+body.dark-mode .answerContent pre {
+    background: #0d1117;
+}
+
+/* Attachments - Dark Mode */
+body.dark-mode .attachments {
+    background: #1a1a2e;
+}
+
+body.dark-mode .attachments h5 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .fileLink {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #a0aec0;
+}
+
+body.dark-mode .fileLink:hover {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+/* Vote Buttons - Dark Mode */
+body.dark-mode .voteButton {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #a0aec0;
+}
+
+body.dark-mode .upvoteButton:hover:not(.upvoted) {
+    border-color: #68d391;
+    background: rgba(16, 185, 129, 0.15);
+    color: #68d391;
+}
+
+body.dark-mode .downvoteButton:hover:not(.downvoted) {
+    border-color: #fc8181;
+    background: rgba(239, 68, 68, 0.15);
+    color: #fc8181;
+}
+
+body.dark-mode .upvoted {
+    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .downvoted {
+    background: linear-gradient(135deg, #fc8181 0%, #ef4444 100%);
+    color: #1a1a2e;
+}
+
+/* Comment Section - Dark Mode */
+body.dark-mode .commentInput {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+}
+
+body.dark-mode .commentInput:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 4px rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .commentButton {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+/* Comments List - Dark Mode */
+body.dark-mode .commentsList {
+    background: #1a1a2e;
+}
+
+body.dark-mode .comment {
+    background: #2d3748;
+}
+
+body.dark-mode .commentAvatar {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .commentHeader strong {
+    color: #9f7aea;
+}
+
+body.dark-mode .commentDate {
+    color: #718096;
+}
+
+body.dark-mode .commentText {
+    color: #a0aec0;
+}
+
+/* No Answers - Dark Mode */
+body.dark-mode .noAnswers {
+    background: #2d3748;
+}
+
+body.dark-mode .noAnswers h4 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .noAnswers p {
+    color: #a0aec0;
+}
+
+/* Loading - Dark Mode */
+body.dark-mode .loadingLine {
+    background: linear-gradient(90deg, #2d3748 25%, #4a5568 50%, #2d3748 75%);
+    background-size: 200% 100%;
+}
+
+/* Error Alerts - Dark Mode */
+body.dark-mode .errorAlert {
+    background: rgba(252, 129, 129, 0.15);
+    border-color: rgba(252, 129, 129, 0.3);
+    color: #fc8181;
+}
+
+body.dark-mode .warningAlert {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: #f59e0b;
+    color: #fbbf24;
+}
+
+body.dark-mode .retryButton {
+    background: #fc8181;
+    color: #1a1a2e;
+}
+
+body.dark-mode .retryButton:hover {
+    background: #ef4444;
+    color: #1a1a2e;
+}
+
+body.dark-mode .closeButton {
+    color: #fc8181;
+}
+
+/* Scrollbar - Dark Mode */
+body.dark-mode .textEditor::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+body.dark-mode .textEditor::-webkit-scrollbar-thumb {
+    background: #9f7aea;
+}
+
+body.dark-mode .textEditor::-webkit-scrollbar-thumb:hover {
+    background: #b794f4;
+}
+
+/* ==================== PRINT STYLES - Dark Mode Override ==================== */
+@media print {
+    body.dark-mode .container {
+        background: white !important;
+        box-shadow: none !important;
+    }
+
+    body.dark-mode .questionTitle {
+        background: none !important;
+        -webkit-text-fill-color: black !important;
+        color: black !important;
+    }
+
+    body.dark-mode .questionTitle::after {
+        background: #667eea !important;
+    }
+
+    body.dark-mode .questionMeta {
+        background: #f8f9fa !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .questionMeta span {
+        color: #333 !important;
+    }
+
+    body.dark-mode .questionDescription {
+        background: white !important;
+        border-color: #ddd !important;
+        color: #333 !important;
+    }
+
+    body.dark-mode .questionDescription h1,
+    body.dark-mode .questionDescription h2,
+    body.dark-mode .questionDescription h3 {
+        color: black !important;
+    }
+
+    body.dark-mode .tag {
+        background: #667eea !important;
+        color: white !important;
+    }
+
+    body.dark-mode .answerCard {
+        background: white !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .answerContent {
+        color: #333 !important;
+        border-bottom-color: #ddd !important;
+    }
+
+    body.dark-mode .authorName {
+        color: black !important;
+    }
+
+    body.dark-mode .answerDate {
+        color: #999 !important;
+    }
+
+    body.dark-mode .authorAvatar {
+        background: #667eea !important;
+    }
+
+    body.dark-mode .attachments {
+        background: #f8f9fa !important;
+    }
+
+    body.dark-mode .attachments h5 {
+        color: black !important;
+    }
+
+    body.dark-mode .fileLink {
+        background: white !important;
+        border-color: #ddd !important;
+        color: #667eea !important;
+    }
+
+    body.dark-mode .noAnswers {
+        background: white !important;
+    }
+
+    body.dark-mode .noAnswers h4 {
+        color: black !important;
+    }
+
+    body.dark-mode .noAnswers p {
+        color: #666 !important;
+    }
+
+    body.dark-mode .answersHeader {
+        background: #f8f9fa !important;
+    }
+
+    body.dark-mode .answersHeader h3 {
+        color: black !important;
+    }
+
+    body.dark-mode .commentsList {
+        background: #f8f9fa !important;
+    }
+
+    body.dark-mode .comment {
+        background: white !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .commentHeader strong {
+        color: #667eea !important;
+    }
+
+    body.dark-mode .commentText {
+        color: #333 !important;
+    }
+
+    body.dark-mode .sortSelect {
+        background: white !important;
+        color: black !important;
+    }
+
+    body.dark-mode .sortSelect option {
+        color: black !important;
+    }
+}
 

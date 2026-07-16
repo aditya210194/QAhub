@@ -1081,3 +1081,293 @@ img[loading="lazy"].loaded {
     border-top: 1px solid #e2e8f0;
     border-bottom: 1px solid #e2e8f0;
 }
+/* ==================== DARK MODE SUPPORT ==================== */
+body.dark-mode .home {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+/* Hero Section - Dark Mode */
+body.dark-mode .hero-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .hero-overlay {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* Stats Section - Dark Mode */
+body.dark-mode .stats-section {
+    background: #1a1a2e;
+}
+
+body.dark-mode .stat-card {
+    background: #2d3748;
+}
+
+body.dark-mode .stat-card:hover {
+    background: #3d4a5c;
+}
+
+body.dark-mode .stat-value {
+    color: #9f7aea;
+}
+
+body.dark-mode .stat-label {
+    color: #cbd5e0;
+}
+
+/* Value Section - Dark Mode */
+body.dark-mode .value-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .value-card {
+    background: #2d3748;
+}
+
+body.dark-mode .value-card .section-title {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.dark-mode .value-list h4 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .value-list p {
+    color: #a0aec0;
+}
+
+body.dark-mode .value-list li:hover {
+    background: rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .value-icon {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Topics Section - Dark Mode */
+body.dark-mode .topics-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .topic-card {
+    background: #2d3748;
+    border-color: rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .topic-card:hover {
+    border-color: rgba(159, 122, 234, 0.5);
+    box-shadow: 0 20px 40px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .topic-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .topic-short-desc {
+    color: #a0aec0;
+}
+
+body.dark-mode .read-more {
+    color: #9f7aea;
+}
+
+body.dark-mode .topic-icon-wrapper {
+    background: rgba(159, 122, 234, 0.15);
+}
+
+/* Courses Section - Dark Mode */
+body.dark-mode .courses-section {
+    background: #1a1a2e;
+}
+
+body.dark-mode .course-card {
+    background: #2d3748;
+}
+
+body.dark-mode .card-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .card-text {
+    color: #a0aec0;
+}
+
+body.dark-mode .course-meta {
+    color: #a0aec0;
+}
+
+body.dark-mode .card-footer {
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .section-subtitle {
+    color: #a0aec0;
+}
+
+/* Testimonials Section - Dark Mode */
+body.dark-mode .testimonials-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .testimonial-card {
+    background: #2d3748;
+}
+
+body.dark-mode .testimonial-text {
+    color: #cbd5e0;
+}
+
+body.dark-mode .author-name {
+    color: #e2e8f0;
+}
+
+body.dark-mode .author-position {
+    color: #a0aec0;
+}
+
+body.dark-mode .quote-icon {
+    color: #9f7aea;
+}
+
+/* CTA Section - Dark Mode */
+body.dark-mode .cta-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .cta-card {
+    background: rgba(45, 55, 72, 0.8);
+    border-color: rgba(159, 122, 234, 0.3);
+}
+
+body.dark-mode .cta-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .cta-subtitle {
+    color: #a0aec0;
+}
+
+body.dark-mode .cta-buttons .btn-light {
+    background: #9f7aea;
+    color: #1a1a2e;
+}
+
+body.dark-mode .cta-buttons .btn-light:hover {
+    background: #b794f4;
+}
+
+body.dark-mode .cta-buttons .btn-outline-light {
+    border-color: #9f7aea;
+    color: #e2e8f0;
+}
+
+body.dark-mode .cta-buttons .btn-outline-light:hover {
+    background: #9f7aea;
+    color: #1a1a2e;
+}
+
+/* Modal - Dark Mode */
+body.dark-mode .modal-content {
+    background: #2d3748;
+}
+
+body.dark-mode .modal-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .modal-header h2 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .modal-body p {
+    color: #cbd5e0;
+}
+
+body.dark-mode .modal-close {
+    background: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .modal-close:hover {
+    background: #9f7aea;
+    color: white;
+}
+
+/* SEO Content - Dark Mode */
+body.dark-mode .seo-content-section {
+    background: #1a1a2e;
+    border-top-color: rgba(159, 122, 234, 0.2);
+    border-bottom-color: rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .seo-text {
+    color: #a0aec0 !important;
+}
+
+/* Scrollbar - Dark Mode */
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #b794f4 0%, #9f7aea 100%);
+}
+
+/* Buttons - Dark Mode */
+body.dark-mode .btn-outline-primary {
+    border-color: #9f7aea;
+    color: #9f7aea;
+}
+
+body.dark-mode .btn-outline-primary:hover {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .card-footer .btn {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .card-footer .btn:hover {
+    box-shadow: 0 10px 20px rgba(159, 122, 234, 0.4);
+}
+
+/* Course Rating - Dark Mode */
+body.dark-mode .course-rating {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .card-badge {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Value Image Card - Dark Mode */
+body.dark-mode .value-image-card {
+    background: #2d3748;
+}
+
+body.dark-mode .image-placeholder {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .overlay-box {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .overlay-box:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* Stats hover - Dark Mode */
+body.dark-mode .stat-card:hover .stat-value {
+    color: #b794f4;
+}

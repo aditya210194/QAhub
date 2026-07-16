@@ -699,3 +699,302 @@
 .hoverLift:hover {
     transform: translateY(-4px);
 }
+/* ==================== BODY.DARK-MODE SUPPORT ==================== */
+
+/* Override for body.dark-mode to work with CSS Modules */
+body.dark-mode .qaHomepage {
+    background: #111827;
+}
+
+body.dark-mode .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .header h1 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .askButton {
+    background: rgba(26, 26, 46, 0.6);
+    border-color: rgba(159, 122, 234, 0.3);
+    color: #e2e8f0;
+}
+
+body.dark-mode .askButton:hover:not(:disabled) {
+    background: #9f7aea;
+    color: #1a1a2e;
+    border-color: #9f7aea;
+}
+
+/* Controls - Dark Mode */
+body.dark-mode .controls select {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239f7aea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+body.dark-mode .controls select:hover:not(:disabled) {
+    border-color: #9f7aea;
+}
+
+body.dark-mode .controls select:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 4px rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .controls select option {
+    background: #1a1a2e;
+    color: #e2e8f0;
+}
+
+body.dark-mode .controls select:disabled {
+    background: #2d3748;
+}
+
+/* Pagination Info - Dark Mode */
+body.dark-mode .paginationInfo {
+    color: #a0aec0;
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Info Box - Dark Mode */
+body.dark-mode .infoBox {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d3748 100%);
+    border-left-color: #9f7aea;
+}
+
+body.dark-mode .infoBoxTitle {
+    color: #e2e8f0;
+}
+
+body.dark-mode .infoBoxText {
+    color: #a0aec0;
+}
+
+body.dark-mode .infoBoxList li {
+    color: #a0aec0;
+    background: rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .infoBoxIcon {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Question Cards - Dark Mode */
+body.dark-mode .questionCard {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .questionCard::before {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode .questionCard:hover {
+    border-color: rgba(159, 122, 234, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .questionTitle {
+    color: #e2e8f0;
+}
+
+body.dark-mode .questionCard:hover .questionTitle {
+    color: #9f7aea;
+}
+
+body.dark-mode .questionDescription {
+    color: #a0aec0;
+}
+
+body.dark-mode .questionMeta {
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .metaItem {
+    color: #a0aec0;
+}
+
+body.dark-mode .metaItem:first-child {
+    color: #9f7aea;
+}
+
+/* Tags - Dark Mode */
+body.dark-mode .tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: #a0aec0;
+    border-color: transparent;
+}
+
+body.dark-mode .tag:hover {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+/* Skeleton Loading - Dark Mode */
+body.dark-mode .questionSkeleton {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .skeletonTitle {
+    background: linear-gradient(90deg, #2d3748 25%, #4a5568 50%, #2d3748 75%);
+    background-size: 200% 100%;
+}
+
+body.dark-mode .skeletonDescription {
+    background: linear-gradient(90deg, #2d3748 25%, #4a5568 50%, #2d3748 75%);
+    background-size: 200% 100%;
+}
+
+body.dark-mode .skeletonMeta {
+    background: linear-gradient(90deg, #2d3748 25%, #4a5568 50%, #2d3748 75%);
+    background-size: 200% 100%;
+}
+
+/* Error Alert - Dark Mode */
+body.dark-mode .errorAlert {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fc8181;
+}
+
+body.dark-mode .retryButton {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #fc8181;
+    color: #fc8181;
+}
+
+body.dark-mode .retryButton:hover {
+    background: #fc8181;
+    color: #1a1a2e;
+}
+
+/* No Questions - Dark Mode */
+body.dark-mode .noQuestions {
+    background: #1a1a2e;
+    color: #a0aec0;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Pagination - Dark Mode */
+body.dark-mode .paginationButton {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #a0aec0;
+}
+
+body.dark-mode .paginationButton:hover:not(:disabled) {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+    border-color: transparent;
+}
+
+body.dark-mode .paginationButton.active {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+    border-color: transparent;
+}
+
+body.dark-mode .paginationButton:disabled {
+    opacity: 0.3;
+}
+
+/* Scrollbar - Dark Mode */
+body.dark-mode .questionsList::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+body.dark-mode .questionsList::-webkit-scrollbar-thumb {
+    background: #9f7aea;
+}
+
+body.dark-mode .questionsList::-webkit-scrollbar-thumb:hover {
+    background: #b794f4;
+}
+
+/* Utility Classes - Dark Mode */
+body.dark-mode .glassEffect {
+    background: rgba(26, 26, 46, 0.6);
+    border-color: rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .textGradient {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ==================== PRINT STYLES - Dark Mode Override ==================== */
+@media print {
+    body.dark-mode .qaHomepage {
+        background: white !important;
+    }
+
+    body.dark-mode .questionCard {
+        background: white !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .questionTitle {
+        color: black !important;
+    }
+
+    body.dark-mode .questionDescription {
+        color: #666 !important;
+    }
+
+    body.dark-mode .metaItem {
+        color: #666 !important;
+    }
+
+    body.dark-mode .metaItem:first-child {
+        color: #667eea !important;
+    }
+
+    body.dark-mode .tag {
+        background: #f8f9fa !important;
+        color: #667eea !important;
+    }
+
+    body.dark-mode .noQuestions {
+        background: white !important;
+        color: #666 !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .infoBox {
+        background: #f8f9fa !important;
+        border-left-color: #667eea !important;
+    }
+
+    body.dark-mode .infoBoxTitle {
+        color: black !important;
+    }
+
+    body.dark-mode .infoBoxText {
+        color: #666 !important;
+    }
+
+    body.dark-mode .infoBoxList li {
+        background: #f0f0f0 !important;
+        color: #333 !important;
+    }
+
+    body.dark-mode .paginationButton {
+        background: white !important;
+        border-color: #ddd !important;
+        color: #333 !important;
+    }
+
+    body.dark-mode .paginationButton.active {
+        background: #667eea !important;
+        color: white !important;
+    }
+}
