@@ -80,11 +80,11 @@ body.dark-mode {
     width: 100%;
     height: 2px;
     background: linear-gradient(90deg,
-        transparent,
-        var(--highlight-color),
-        var(--highlight-hover),
-        var(--highlight-color),
-        transparent
+    transparent,
+    var(--highlight-color),
+    var(--highlight-hover),
+    var(--highlight-color),
+    transparent
     );
     animation: shimmer 3s infinite;
     opacity: 0;
@@ -115,12 +115,6 @@ body.dark-mode {
     width: auto;
     display: block;
     transition: all var(--transition-speed);
-    filter: none;
-}
-
-/* Dark mode logo adjustments */
-.fixed-navbar.dark-mode .navbar-brand img {
-    filter: brightness(0) invert(1);
 }
 
 /* Scrolled state */
@@ -132,6 +126,7 @@ body.dark-mode {
 @media (max-width: 768px) {
     .navbar-brand img {
         height: 40px;
+        max-width: 55vw; /* prevents logo+tagline from overlapping the toggler on narrow screens */
     }
 
     .fixed-navbar.scrolled .navbar-brand img {
@@ -152,7 +147,7 @@ body.dark-mode {
     height: 42px;
 }
 
-/* Dark mode SVG color override */
+/* Dark mode SVG color override (only applies if the SVG is inlined, not loaded via <img>) */
 .fixed-navbar.dark-mode .navbar-brand svg .text-qa {
     fill: #ffffff !important;
 }
@@ -176,9 +171,8 @@ body.dark-mode {
     filter: drop-shadow(0 4px 8px rgba(124, 58, 237, 0.3));
 }
 
-/* Dark mode hover */
 .fixed-navbar.dark-mode .navbar-brand:hover img {
-    filter: brightness(0) invert(1) drop-shadow(0 4px 8px rgba(159, 122, 234, 0.4));
+    filter: drop-shadow(0 4px 8px rgba(159, 122, 234, 0.4));
 }
 
 /* ==================== NAVIGATION LINKS ==================== */
@@ -400,6 +394,11 @@ body.dark-mode {
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: none !important;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none !important;
 }
 
 .navbar-toggler:hover {
@@ -410,7 +409,8 @@ body.dark-mode {
 .navbar-toggler-icon {
     width: 24px;
     height: 2px;
-    background-color: var(--highlight-color);
+    background-color: var(--highlight-color) !important;
+    background-image: none !important;
     display: block;
     position: relative;
     transition: all var(--transition-speed);
@@ -564,13 +564,13 @@ body.dark-mode {
     }
 
     .ms-3 {
-           margin-left: 1rem !important;
-           display: inline-flex !important;
-           flex-direction: row !important;
-           align-items: center !important;
-           gap: 0.5rem !important;
-           width: auto !important;
-       }
+        margin-left: 1rem !important;
+        display: inline-flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+        width: auto !important;
+    }
 
 
     .btn-primary,
@@ -604,7 +604,9 @@ body.dark-mode {
     }
 
     .navbar-brand img {
-        width: 150px;
+        width: auto;
+        max-width: 140px;
+        height: 36px;
     }
 
     .navbar-toggler {

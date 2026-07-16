@@ -7,6 +7,7 @@ import './Header.css';
 import { getProfileImageUrl } from '../utils/imageUtils';
 
 const logo = '/Qahub_logo.svg';
+const logoDark = '/Qahub_logo_dark.svg';
 
 const Header = () => {
     const router = useRouter();
@@ -108,9 +109,8 @@ const Header = () => {
             <div className="container">
                 {/* Logo */}
                 <Link className="navbar-brand" href="/">
-                    <img src={logo} alt="QA Hub Logo" />
+                    <img src={isDarkMode ? logoDark : logo} alt="QA Hub Logo" />
                 </Link>
-
                 {/* Mobile Menu Toggle */}
                 <button className="navbar-toggler" type="button" onClick={toggleMobileMenu}>
                     <span className="navbar-toggler-icon"></span>
