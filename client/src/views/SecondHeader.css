@@ -280,7 +280,7 @@ body.dark-mode .page-with-second-header .second-header.sticky {
 /* ==================== RESPONSIVE STYLES ==================== */
 @media (max-width: 767px) {
     .page-with-second-header .second-header {
-        top: 130px !important;
+
         padding: 8px 0;
     }
 
