@@ -672,3 +672,351 @@ select:focus-visible {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+/* ==================== BODY.DARK-MODE SUPPORT ==================== */
+
+body.dark-mode .profile-container {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+}
+
+body.dark-mode .profile-container::before {
+    background: radial-gradient(circle, rgba(159, 122, 234, 0.1) 0%, transparent 50%);
+}
+
+body.dark-mode .profile-container::after {
+    background: radial-gradient(circle, rgba(159, 122, 234, 0.05) 0%, transparent 60%);
+}
+
+/* Title - Dark Mode */
+body.dark-mode .profile-title {
+    color: #e2e8f0;
+}
+
+/* Alert - Dark Mode */
+body.dark-mode .profile-alert-success {
+    background: linear-gradient(135deg, #2f855a 0%, #276749 100%);
+    color: #e2e8f0;
+}
+
+body.dark-mode .profile-alert-error {
+    background: linear-gradient(135deg, #9b2c2c 0%, #742a2a 100%);
+    color: #e2e8f0;
+}
+
+/* Profile Card - Dark Mode */
+body.dark-mode .profile-card {
+    background: rgba(45, 55, 72, 0.95);
+    border-color: rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .profile-card::before {
+    background: linear-gradient(90deg, #9f7aea, #b794f4, #9f7aea);
+}
+
+body.dark-mode .profile-card-header {
+    background: #2d3748;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .profile-card-header h5 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .profile-card-header h5 svg {
+    color: #9f7aea;
+}
+
+body.dark-mode .profile-card-body {
+    background: #2d3748;
+}
+
+/* Profile Username - Dark Mode */
+body.dark-mode .profile-username {
+    color: #e2e8f0;
+}
+
+body.dark-mode .profile-username::after {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+/* Profile Info Items - Dark Mode */
+body.dark-mode .profile-info-item {
+    background: #1a1a2e;
+    border-color: transparent;
+}
+
+body.dark-mode .profile-info-item:hover {
+    background: #2d3748;
+    border-color: #9f7aea;
+    box-shadow: 0 5px 15px rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .profile-info-label {
+    color: #a0aec0;
+}
+
+body.dark-mode .profile-info-label svg {
+    color: #9f7aea;
+}
+
+body.dark-mode .profile-info-value {
+    color: #e2e8f0;
+}
+
+body.dark-mode .profile-info-value.empty {
+    color: #718096;
+}
+
+/* Skills - Dark Mode */
+body.dark-mode .skill-badge {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+    box-shadow: 0 5px 15px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .skill-badge:hover {
+    box-shadow: 0 10px 25px rgba(159, 122, 234, 0.4);
+}
+
+/* Buttons - Dark Mode */
+body.dark-mode .profile-btn-primary {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .profile-btn-secondary {
+    background: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .profile-btn-secondary:hover {
+    background: #5a6a7e;
+}
+
+body.dark-mode .profile-btn-warning {
+    background: linear-gradient(135deg, #d69e2e 0%, #b7791f 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .profile-btn-danger {
+    background: linear-gradient(135deg, #fc8181 0%, #c53030 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .profile-actions {
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Form - Dark Mode */
+body.dark-mode .form-label {
+    color: #a0aec0;
+}
+
+body.dark-mode .form-control {
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+}
+
+body.dark-mode .form-control:focus {
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.15);
+}
+
+body.dark-mode .form-control::placeholder {
+    color: #718096;
+}
+
+body.dark-mode select.form-control {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239f7aea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+body.dark-mode select.form-control option {
+    background: #1a1a2e;
+    color: #e2e8f0;
+}
+
+/* File Input - Dark Mode */
+body.dark-mode .file-input-label {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+    color: #1a1a2e;
+}
+
+body.dark-mode .file-input-label:hover {
+    box-shadow: 0 10px 20px rgba(159, 122, 234, 0.4);
+}
+
+body.dark-mode .profile-pic-preview img {
+    border-color: #2d3748;
+}
+
+/* Text Muted - Dark Mode */
+body.dark-mode .text-muted {
+    color: #718096 !important;
+}
+
+/* Loading State - Dark Mode */
+body.dark-mode .profile-loading {
+    color: #e2e8f0;
+}
+
+body.dark-mode .loading-spinner {
+    border-color: rgba(255, 255, 255, 0.1);
+    border-top-color: #9f7aea;
+}
+
+/* Avatar Loading - Dark Mode */
+body.dark-mode .avatar-loading {
+    background: rgba(26, 26, 46, 0.9);
+}
+
+body.dark-mode .spinner-small {
+    border-color: rgba(255, 255, 255, 0.1);
+    border-top-color: #9f7aea;
+}
+
+/* Profile Avatar - Dark Mode */
+body.dark-mode .profile-avatar {
+    border-color: #2d3748;
+    box-shadow: 0 10px 30px rgba(159, 122, 234, 0.2);
+}
+
+body.dark-mode .profile-avatar:hover {
+    box-shadow: 0 15px 35px rgba(159, 122, 234, 0.3);
+}
+
+/* Scrollbar - Dark Mode */
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #9f7aea 0%, #b794f4 100%);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #b794f4 0%, #9f7aea 100%);
+}
+
+/* Focus States - Dark Mode */
+body.dark-mode button:focus-visible,
+body.dark-mode input:focus-visible,
+body.dark-mode textarea:focus-visible,
+body.dark-mode select:focus-visible {
+    outline-color: #9f7aea;
+}
+
+/* ==================== PRINT STYLES - Dark Mode Override ==================== */
+@media print {
+    body.dark-mode .profile-container {
+        background: white !important;
+    }
+
+    body.dark-mode .profile-container::before,
+    body.dark-mode .profile-container::after {
+        display: none !important;
+    }
+
+    body.dark-mode .profile-card {
+        background: white !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .profile-card::before {
+        display: none !important;
+    }
+
+    body.dark-mode .profile-card-header {
+        background: #f8f9fa !important;
+        border-bottom-color: #ddd !important;
+    }
+
+    body.dark-mode .profile-card-header h5 {
+        color: black !important;
+    }
+
+    body.dark-mode .profile-card-body {
+        background: white !important;
+    }
+
+    body.dark-mode .profile-title {
+        color: black !important;
+    }
+
+    body.dark-mode .profile-username {
+        color: black !important;
+    }
+
+    body.dark-mode .profile-username::after {
+        background: #667eea !important;
+    }
+
+    body.dark-mode .profile-info-item {
+        background: #f8f9fa !important;
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .profile-info-item:hover {
+        background: #f8f9fa !important;
+        border-color: #ddd !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    body.dark-mode .profile-info-label {
+        color: #666 !important;
+    }
+
+    body.dark-mode .profile-info-value {
+        color: #333 !important;
+    }
+
+    body.dark-mode .profile-info-value.empty {
+        color: #999 !important;
+    }
+
+    body.dark-mode .skill-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+    }
+
+    body.dark-mode .profile-btn-primary {
+        background: #667eea !important;
+        color: white !important;
+    }
+
+    body.dark-mode .profile-btn-secondary {
+        background: #e0e0e0 !important;
+        color: #333 !important;
+    }
+
+    body.dark-mode .profile-btn-danger {
+        background: #dc2626 !important;
+        color: white !important;
+    }
+
+    body.dark-mode .profile-actions {
+        border-top-color: #ddd !important;
+    }
+
+    body.dark-mode .form-control {
+        background: white !important;
+        border-color: #ddd !important;
+        color: black !important;
+    }
+
+    body.dark-mode .form-label {
+        color: #333 !important;
+    }
+
+    body.dark-mode .text-muted {
+        color: #999 !important;
+    }
+
+    body.dark-mode .profile-avatar {
+        border-color: #ddd !important;
+    }
+
+    body.dark-mode .profile-pic-preview img {
+        border-color: #ddd !important;
+    }
+}
