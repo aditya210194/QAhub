@@ -14,7 +14,9 @@ import {
     FaCode, FaMobile, FaCloud, FaDatabase,
     FaServer, FaWrench, FaTools, FaGraduationCap,
     FaClock, FaAward, FaCertificate, FaBriefcase,
-    FaRegFilePdf
+    FaRegFilePdf, FaSearchPlus, FaFlask, FaChartBar,
+    FaUserCheck, FaCogs, FaTachometerAlt, FaCrown,
+    FaBullseye, FaLaptopCode, FaClipboardList
 } from "react-icons/fa";
 import sampleResume1 from "../resumes/sampleResume1.pdf";
 import sampleResume2 from "../resumes/sampleResume2.pdf";
@@ -51,17 +53,18 @@ const Resumes = () => {
         localStorage.setItem('resumeFavorites', JSON.stringify(favorites));
     }, [favorites]);
 
+    // Icons instead of emoji for a more consistent, professional look
     const resumeProfiles = [
-        { id: 1, title: "Software QA Engineer", file: sampleResume1, icon: "🔍", level: "Senior", experience: "5+ years" },
-        { id: 2, title: "Software Test Engineer", file: sampleResume2, icon: "🧪", level: "Mid", experience: "3+ years" },
-        { id: 3, title: "Test Analyst", file: sampleResume3, icon: "📊", level: "Senior", experience: "4+ years" },
-        { id: 4, title: "QA Tester", file: sampleResume4, icon: "✅", level: "Entry", experience: "1+ years" },
-        { id: 5, title: "QA Automation Engineer", file: sampleResume5, icon: "⚙️", level: "Senior", experience: "5+ years" },
-        { id: 6, title: "Performance Testing Engineer", file: sampleResume6, icon: "🚀", level: "Mid", experience: "3+ years" },
-        { id: 7, title: "Senior QA Engineer", file: sampleResume7, icon: "👑", level: "Lead", experience: "7+ years" },
-        { id: 8, title: "QA Lead", file: sampleResume8, icon: "🎯", level: "Lead", experience: "8+ years" },
-        { id: 9, title: "SDET", file: sampleResume9, icon: "💻", level: "Senior", experience: "4+ years" },
-        { id: 10, title: "QA Manager", file: sampleResume10, icon: "📋", level: "Manager", experience: "10+ years" },
+        { id: 1, title: "Software QA Engineer", file: sampleResume1, icon: <FaSearchPlus />, level: "Senior", experience: "5+ years" },
+        { id: 2, title: "Software Test Engineer", file: sampleResume2, icon: <FaFlask />, level: "Mid", experience: "3+ years" },
+        { id: 3, title: "Test Analyst", file: sampleResume3, icon: <FaChartBar />, level: "Senior", experience: "4+ years" },
+        { id: 4, title: "QA Tester", file: sampleResume4, icon: <FaUserCheck />, level: "Entry", experience: "1+ years" },
+        { id: 5, title: "QA Automation Engineer", file: sampleResume5, icon: <FaCogs />, level: "Senior", experience: "5+ years" },
+        { id: 6, title: "Performance Testing Engineer", file: sampleResume6, icon: <FaTachometerAlt />, level: "Mid", experience: "3+ years" },
+        { id: 7, title: "Senior QA Engineer", file: sampleResume7, icon: <FaCrown />, level: "Lead", experience: "7+ years" },
+        { id: 8, title: "QA Lead", file: sampleResume8, icon: <FaBullseye />, level: "Lead", experience: "8+ years" },
+        { id: 9, title: "SDET", file: sampleResume9, icon: <FaLaptopCode />, level: "Senior", experience: "4+ years" },
+        { id: 10, title: "QA Manager", file: sampleResume10, icon: <FaClipboardList />, level: "Manager", experience: "10+ years" },
     ];
 
     const filteredProfiles = resumeProfiles.filter(profile =>
@@ -383,10 +386,21 @@ const Resumes = () => {
         setError("");
 
         try {
+            // Store the file for the generator page to pick up (see ResumeGenerator.js).
+            // Next.js's App Router has no React-Router-style location.state, so we
+            // hand off the raw file via sessionStorage instead.
+            const arrayBuffer = await file.arrayBuffer();
+            const base64 = btoa(
+                new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
+            );
+            sessionStorage.setItem('qahub_uploaded_resume', JSON.stringify({
+                name: file.name,
+                data: base64,
+            }));
             router.push("/resume-generator");
         } catch (err) {
             console.error("Navigation error:", err);
-            setError("Could not navigate. Please try again.");
+            setError("We couldn't process that file. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -403,10 +417,6 @@ const Resumes = () => {
                 : [...prev, id]
         );
     };
-
-    React.useEffect(() => {
-        return () => {};
-    }, []);
 
     const getDisplayTips = () => {
         if (selectedTipCategory === "all") {
@@ -434,7 +444,7 @@ const Resumes = () => {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
                     >
-                        Browse professional QA resumes and get ATS-friendly tips
+                        Browse professional QA resume examples and ATS-optimization guidance
                     </motion.p>
                 </div>
             </div>
@@ -451,20 +461,21 @@ const Resumes = () => {
                             <div className="tips-content">
                                 <FaLightbulb className="tips-icon pulse" />
                                 <div className="tips-text">
-                                    <strong>🚀 ATS-Friendly Resume Tips for QA Professionals:</strong>
+                                    <strong>ATS-Friendly Resume Tips for QA Professionals</strong>
                                     <ul>
-                                        <li>✓ Use standard formatting (no tables/columns)</li>
-                                        <li>✓ Include QA-specific keywords (Selenium, JIRA, Agile, etc.)</li>
-                                        <li>✓ Quantify achievements with numbers and percentages</li>
-                                        <li>✓ List relevant certifications (ISTQB, etc.)</li>
-                                        <li>✓ Save as PDF but ensure ATS compatibility</li>
+                                        <li>Use standard formatting (no tables or columns)</li>
+                                        <li>Include QA-specific keywords (Selenium, JIRA, Agile, etc.)</li>
+                                        <li>Quantify achievements with numbers and percentages</li>
+                                        <li>List relevant certifications (ISTQB and similar)</li>
+                                        <li>Save as PDF, and confirm ATS compatibility</li>
                                     </ul>
                                 </div>
                                 <button
                                     className="tips-close"
                                     onClick={() => setShowTips(false)}
+                                    aria-label="Dismiss tips"
                                 >
-                                    ×
+                                    <FaTimes />
                                 </button>
                             </div>
                         </motion.div>
@@ -533,6 +544,7 @@ const Resumes = () => {
                                                 e.stopPropagation();
                                                 toggleFavorite(profile.id);
                                             }}
+                                            aria-label={favorites.includes(profile.id) ? "Remove from favorites" : "Add to favorites"}
                                         >
                                             <FaBookmark />
                                         </button>
@@ -612,27 +624,27 @@ const Resumes = () => {
                                 </h5>
                                 <div className="tips-grid">
                                     <div className="tip-item">
-                                        <span className="tip-number">✓</span>
+                                        <FaCheckCircle className="tip-number" />
                                         <span>Use standard fonts (Arial, Calibri)</span>
                                     </div>
                                     <div className="tip-item">
-                                        <span className="tip-number">✓</span>
-                                        <span>Include QA keywords from job description</span>
+                                        <FaCheckCircle className="tip-number" />
+                                        <span>Include QA keywords from the job description</span>
                                     </div>
                                     <div className="tip-item">
-                                        <span className="tip-number">✓</span>
+                                        <FaCheckCircle className="tip-number" />
                                         <span>Quantify achievements (%, numbers)</span>
                                     </div>
                                     <div className="tip-item">
-                                        <span className="tip-number">✓</span>
+                                        <FaCheckCircle className="tip-number" />
                                         <span>Avoid tables and columns</span>
                                     </div>
                                     <div className="tip-item">
-                                        <span className="tip-number">✓</span>
+                                        <FaCheckCircle className="tip-number" />
                                         <span>List ISTQB and other certifications</span>
                                     </div>
                                     <div className="tip-item">
-                                        <span className="tip-number">✓</span>
+                                        <FaCheckCircle className="tip-number" />
                                         <span>Use reverse chronological order</span>
                                     </div>
                                 </div>
@@ -657,7 +669,7 @@ const Resumes = () => {
                                 <FaLightbulb className="header-icon" />
                                 ATS-Friendly Resume Guide for QA Professionals
                             </h2>
-                            <p>Comprehensive tips to help your resume pass Applicant Tracking Systems and land interviews</p>
+                            <p>Comprehensive guidance to help your resume pass Applicant Tracking Systems and land interviews</p>
                         </div>
 
                         <div className="tips-categories">
@@ -701,51 +713,51 @@ const Resumes = () => {
                                     <FaCheckCircle className="resource-icon" />
                                     <h4>ATS Checklist</h4>
                                     <ul>
-                                        <li>✓ Simple formatting (no tables)</li>
-                                        <li>✓ Keywords from job description</li>
-                                        <li>✓ Standard section headings</li>
-                                        <li>✓ Contact info in body (not header)</li>
-                                        <li>✓ PDF or DOCX format</li>
+                                        <li>Simple formatting (no tables)</li>
+                                        <li>Keywords from the job description</li>
+                                        <li>Standard section headings</li>
+                                        <li>Contact info in the body, not the header</li>
+                                        <li>PDF or DOCX format</li>
                                     </ul>
                                 </div>
                                 <div className="resource-card">
                                     <FaCode className="resource-icon" />
                                     <h4>Top QA Keywords</h4>
                                     <ul>
-                                        <li>✓ Selenium, Cypress, Playwright</li>
-                                        <li>✓ JIRA, TestRail, qTest</li>
-                                        <li>✓ Agile, Scrum, Kanban</li>
-                                        <li>✓ API Testing, Postman</li>
-                                        <li>✓ CI/CD, Jenkins, GitLab</li>
+                                        <li>Selenium, Cypress, Playwright</li>
+                                        <li>JIRA, TestRail, qTest</li>
+                                        <li>Agile, Scrum, Kanban</li>
+                                        <li>API Testing, Postman</li>
+                                        <li>CI/CD, Jenkins, GitLab</li>
                                     </ul>
                                 </div>
                                 <div className="resource-card">
                                     <FaRocket className="resource-icon" />
                                     <h4>Action Verbs for QA</h4>
                                     <ul>
-                                        <li>✓ Automated, Developed</li>
-                                        <li>✓ Executed, Validated</li>
-                                        <li>✓ Analyzed, Optimized</li>
-                                        <li>✓ Implemented, Designed</li>
-                                        <li>✓ Led, Coordinated</li>
+                                        <li>Automated, Developed</li>
+                                        <li>Executed, Validated</li>
+                                        <li>Analyzed, Optimized</li>
+                                        <li>Implemented, Designed</li>
+                                        <li>Led, Coordinated</li>
                                     </ul>
                                 </div>
                                 <div className="resource-card">
                                     <FaCertificate className="resource-icon" />
                                     <h4>Valuable Certifications</h4>
                                     <ul>
-                                        <li>✓ ISTQB Foundation Level</li>
-                                        <li>✓ Certified Scrum Master</li>
-                                        <li>✓ AWS/Azure DevOps</li>
-                                        <li>✓ Selenium WebDriver</li>
-                                        <li>✓ Security+ / CISSP</li>
+                                        <li>ISTQB Foundation Level</li>
+                                        <li>Certified Scrum Master</li>
+                                        <li>AWS/Azure DevOps</li>
+                                        <li>Selenium WebDriver</li>
+                                        <li>Security+ / CISSP</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
                         <div className="tips-cta">
-                            <h3>Ready to create your ATS-friendly QA resume?</h3>
+                            <h3>Ready to build your ATS-friendly QA resume?</h3>
                             <p>Use our resume builder with built-in ATS optimization</p>
                             <motion.button
                                 className="create-resume-cta"

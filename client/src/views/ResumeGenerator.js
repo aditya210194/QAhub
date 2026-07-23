@@ -8,7 +8,6 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
-import { processUploadedResume } from '../utils/pdfExtractor';
 import {
     FaPlus, FaChartBar, FaUser, FaEnvelope, FaPhone,
     FaMagic, FaEdit, FaBriefcase, FaGraduationCap, FaCode,
@@ -30,6 +29,11 @@ import ResumeTemplates, { TemplateSelector } from "../components/ResumeTemplates
 
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+
+// Key used to hand an uploaded resume off from the Resumes page to this one.
+// Next.js's App Router has no React-Router-style location.state, so the raw
+// file is base64-encoded into sessionStorage instead (see Resumes.js).
+const UPLOAD_STORAGE_KEY = 'qahub_uploaded_resume';
 
 // ==================== CONSTANTS & CONFIG ====================
 const KEYWORD_CATEGORIES = {
@@ -84,7 +88,6 @@ const INITIAL_SECTIONS = [
 ];
 
 // ==================== UTILITY FUNCTIONS ====================
-// Enhanced extractTextFromPDF function
 const extractTextFromPDF = async (arrayBuffer) => {
     try {
         const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
@@ -96,14 +99,12 @@ const extractTextFromPDF = async (arrayBuffer) => {
             const page = await pdf.getPage(i);
             const textContent = await page.getTextContent();
 
-            // Get text items with their positions
             const pageItems = textContent.items.map(item => ({
                 text: item.str,
                 x: item.transform[4],
                 y: item.transform[5]
             }));
 
-            // Sort by y position (top to bottom) then x (left to right)
             pageItems.sort((a, b) => {
                 if (Math.abs(a.y - b.y) < 10) return a.x - b.x;
                 return b.y - a.y;
@@ -114,7 +115,6 @@ const extractTextFromPDF = async (arrayBuffer) => {
             fullText += pageText + '\n';
         }
 
-        // Try to preserve line structure by grouping nearby items
         const lines = [];
         let currentLine = [];
         let currentY = null;
@@ -134,18 +134,17 @@ const extractTextFromPDF = async (arrayBuffer) => {
             lines.push(currentLine.map(i => i.text).join(' '));
         }
 
-        const structuredText = lines.join('\n');
-        console.log("Extracted structured text:", structuredText.substring(0, 1000));
-
-        return structuredText;
+        return lines.join('\n');
     } catch (error) {
         console.error('Error extracting text from PDF:', error);
         return '';
     }
 };
 
-// Enhanced parseResumeText function - Extracts ALL data from resume
-// Enhanced parseResumeText function - Focus on Work Experience
+// Extracts structured resume fields from raw PDF text. This is a best-effort,
+// regex-based parser intended for the sample resume format bundled with the
+// app — real-world resumes vary widely, so treat extracted fields as a
+// starting point the user should review, not a guarantee.
 const parseResumeText = (text) => {
     const extractedData = {
         name: "",
@@ -164,51 +163,44 @@ const parseResumeText = (text) => {
         achievements: ""
     };
 
-    // 1. Extract Name
-   const nameMatch = text.match(
-     /^([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})/m
-   );
-    if (nameMatch) extractedData.name = `${nameMatch[1]} ${nameMatch[2]}`;
+    // 1. Name
+    const nameMatch = text.match(/^([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})/m);
+    if (nameMatch) extractedData.name = nameMatch[1];
 
-    // 2. Extract Title
+    // 2. Title
     const titleMatch = text.match(/(?:Software|Senior|Lead)?\s*(QA|Quality Assurance|Software Test|Automation)\s*(Engineer|Analyst|Lead|Manager)/i);
     if (titleMatch) extractedData.title = titleMatch[0].trim();
 
-    // 3. Extract Email
+    // 3. Email
     const emailMatch = text.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/);
     if (emailMatch) extractedData.email = emailMatch[0];
 
-    // 4. Extract Phone
-    const phoneMatch = text.match(
-      /(\+?\d{1,3}[\s-]?)?\d{10}/
-    );
-    if (phoneMatch) extractedData.phone = `${phoneMatch[1]}-${phoneMatch[2]}-${phoneMatch[3]}`;
+    // 4. Phone
+    const phoneMatch = text.match(/(\+?\d{1,3}[\s-]?)?\d{10}/);
+    if (phoneMatch) extractedData.phone = phoneMatch[0].trim();
 
-    // 5. Extract Location
+    // 5. Location
     const locationMatch = text.match(/(?:Columbia|Boston|San Francisco|New York)[^,\n]*(?:SC|CA|NY|MA)/i);
     if (locationMatch) extractedData.location = locationMatch[0];
 
-    // 6. Extract LinkedIn & GitHub
+    // 6. LinkedIn & GitHub
     const linkedinMatch = text.match(/linkedin\.com\/in\/[\w-]+/i);
     if (linkedinMatch) extractedData.linkedin = `https://${linkedinMatch[0]}`;
 
     const githubMatch = text.match(/github\.com\/[\w-]+/i);
     if (githubMatch) extractedData.github = `https://${githubMatch[0]}`;
 
-    // 7. Extract Summary
+    // 7. Summary
     const summaryMatch = text.match(/(?:Software QA engineer|QA engineer)[^.]*\.[^.]*\.[^.]*\./i);
     if (summaryMatch) extractedData.summary = summaryMatch[0].trim();
 
-    // ==================== 8. EXTRACT WORK EXPERIENCE (IMPROVED) ====================
+    // 8. Work experience
     const experienceSection = text.match(/WORK EXPERIENCE[\s\S]*?(?=EDUCATION|OTHER|CERTIFICATIONS|$)/i);
 
     if (experienceSection) {
         const expText = experienceSection[0];
-
-        // Split by job positions (look for patterns like "Job Title at Company")
         const jobBlocks = [];
 
-        // Method 1: Split by common job title patterns
         const jobPattern = /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+(?:at|@)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+Inc\.|LLC|Corp)?)/gi;
         let match;
         let lastIndex = 0;
@@ -225,7 +217,6 @@ const parseResumeText = (text) => {
             lastIndex = match.index;
         }
 
-        // Add the last job block
         if (lastIndex > 0) {
             const jobText = expText.substring(lastIndex);
             jobBlocks.push({
@@ -235,23 +226,20 @@ const parseResumeText = (text) => {
             });
         }
 
-        // If pattern didn't work, try alternative method
         if (jobBlocks.length === 0) {
-            // Look for capitalized job titles followed by at and company
             const lines = expText.split('\n');
             let currentJob = null;
 
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
-                // Check if line looks like a job title
                 if (line.match(/^[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:at|@)/i)) {
                     if (currentJob) {
                         jobBlocks.push(currentJob);
                     }
-                    const titleMatch = line.match(/^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+(?:at|@)\s+(.+)/i);
+                    const titleMatch2 = line.match(/^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+(?:at|@)\s+(.+)/i);
                     currentJob = {
-                        position: titleMatch ? titleMatch[1] : "",
-                        company: titleMatch ? titleMatch[2] : "",
+                        position: titleMatch2 ? titleMatch2[1] : "",
+                        company: titleMatch2 ? titleMatch2[2] : "",
                         text: ""
                     };
                 } else if (currentJob) {
@@ -263,32 +251,26 @@ const parseResumeText = (text) => {
             }
         }
 
-        // Parse each job block
         for (const job of jobBlocks) {
             if (!job.position && !job.company) continue;
 
-            // Extract duration
             const durationMatch = job.text.match(/(\d{4})\s*[-–]\s*(?:\d{4}|Present|current)/i);
             const duration = durationMatch ? durationMatch[0] : "";
 
-            // Extract responsibilities (bullet points)
             const responsibilities = [];
 
-            // Look for bullet points with •, -, *, or numbers
             const bulletPattern = /[•\-*]\s*([^\n]+)/g;
             let bulletMatch;
             while ((bulletMatch = bulletPattern.exec(job.text)) !== null) {
                 responsibilities.push(bulletMatch[1].trim());
             }
 
-            // Also look for numbered points
             const numberedPattern = /\d+\.\s*([^\n]+)/g;
             let numberedMatch;
             while ((numberedMatch = numberedPattern.exec(job.text)) !== null) {
                 responsibilities.push(numberedMatch[1].trim());
             }
 
-            // Look for sentences with percentages or achievements
             const achievementPattern = /(?:achieved|increased|reduced|saved|improved|implemented|developed|led|created|designed)[^.!?]*[.!?]/gi;
             let achievementMatch;
             while ((achievementMatch = achievementPattern.exec(job.text)) !== null) {
@@ -298,12 +280,10 @@ const parseResumeText = (text) => {
                 }
             }
 
-            // Clean up responsibilities
             const cleanResponsibilities = responsibilities
                 .filter(r => r.length > 10 && r.length < 300)
-                .slice(0, 5); // Limit to 5 responsibilities per job
+                .slice(0, 5);
 
-            // Add to experience array
             extractedData.experience.push({
                 company: job.company.trim(),
                 position: job.position.trim(),
@@ -313,8 +293,7 @@ const parseResumeText = (text) => {
         }
     }
 
-    // Manual parsing for the specific sample resume format
-    // Look for "Software QA Engineer at Resume Worded" pattern
+    // Fallback parsing tuned for the sample resumes bundled with the app
     const specificJobs = [
         {
             pattern: /Software QA Engineer.*?Resume Worded[^\n]*\n([\s\S]*?)(?=\n\n[A-Z][a-z]|\nSoftware Business Analyst|\nDeveloper|\n$)/i,
@@ -347,7 +326,6 @@ const parseResumeText = (text) => {
                 }
             }
 
-            // Extract duration
             const durationMatch = match[1].match(/(\d{4})\s*[-–]\s*(?:\d{4}|Present)/i);
 
             extractedData.experience.push({
@@ -359,12 +337,10 @@ const parseResumeText = (text) => {
         }
     }
 
-    // 9. Extract Skills
+    // 9. Skills
     const skillsSection = text.match(/SKILLS[\s\S]*?(?=EDUCATION|WORK EXPERIENCE|$)/i);
     if (skillsSection) {
         const skillsText = skillsSection[0];
-
-        // Extract all skill lines
         const skillLines = skillsText.match(/(?:Technical Skills|Industry Knowledge|Tools and Software)[:][^\n]+/gi);
         if (skillLines) {
             skillLines.forEach(line => {
@@ -381,7 +357,7 @@ const parseResumeText = (text) => {
     }
     extractedData.skills = [...new Set(extractedData.skills)];
 
-    // 10. Extract Certifications
+    // 10. Certifications
     const certSection = text.match(/OTHER[:\s]*([\s\S]*?)(?=$|\n\n)/i);
     if (certSection) {
         const certs = certSection[1].match(/[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:Certification|Certificate|Engineer|Tester)/g);
@@ -390,7 +366,7 @@ const parseResumeText = (text) => {
         }
     }
 
-    // 11. Extract Education
+    // 11. Education
     const educationSection = text.match(/EDUCATION[\s\S]*?(?=OTHER|CERTIFICATIONS|$)/i);
     if (educationSection) {
         const eduText = educationSection[0];
@@ -408,7 +384,7 @@ const parseResumeText = (text) => {
         }
     }
 
-    // 12. Extract Achievements
+    // 12. Achievements
     const achievementPatterns = [
         /received an award for[^.]*\./i,
         /achieved a[^.]*%[^.]*\./i,
@@ -429,9 +405,6 @@ const parseResumeText = (text) => {
     if (achievements.length > 0) {
         extractedData.achievements = achievements.join('\n');
     }
-
-    console.log("Extracted Experience:", extractedData.experience);
-    console.log("Total Experience Count:", extractedData.experience.length);
 
     return extractedData;
 };
@@ -546,20 +519,33 @@ const calculateCompletion = (resumeData) => {
 
 const useAutoSave = (data, delay = 1000) => {
     const [status, setStatus] = useState('idle');
+    const isFirstRun = useRef(true);
 
     useEffect(() => {
-        if (data !== INITIAL_RESUME_DATA) {
-            setStatus('saving');
-            const timer = setTimeout(() => {
-                localStorage.setItem('resumeData', JSON.stringify(data));
-                setStatus('saved');
-                setTimeout(() => setStatus('idle'), 1000);
-            }, delay);
-            return () => clearTimeout(timer);
+        if (isFirstRun.current) {
+            isFirstRun.current = false;
+            return;
         }
+        setStatus('saving');
+        const timer = setTimeout(() => {
+            localStorage.setItem('resumeData', JSON.stringify(data));
+            setStatus('saved');
+            setTimeout(() => setStatus('idle'), 1000);
+        }, delay);
+        return () => clearTimeout(timer);
     }, [data, delay]);
 
     return status;
+};
+
+// Decodes the base64 payload written by Resumes.js back into an ArrayBuffer.
+const base64ToArrayBuffer = (base64) => {
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
 };
 
 // ==================== COMPONENTS ====================
@@ -616,7 +602,6 @@ const FloatingControls = memo(({ template, styledPdf, dynamicAtsFriendly, onTogg
 const StepNavigation = memo(({ currentStep, onStepChange }) => {
     const handleStepClick = (index) => {
         onStepChange(index);
-        // Force scroll to top
         setTimeout(() => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }, 50);
@@ -690,7 +675,7 @@ const PersonalInfoStep = memo(({ data, errors, onChange }) => (
             </Col>
             <Col md={12}>
                 <FloatingLabel label="Professional Summary">
-                    <Form.Control as="textarea" rows={4} value={data.summary} onChange={(e) => onChange('summary', e.target.value)} placeholder="Write a compelling summary of your experience and career goals..." />
+                    <Form.Control as="textarea" rows={4} value={data.summary} onChange={(e) => onChange('summary', e.target.value)} placeholder="Summarize your experience, strengths, and career goals in 2-3 sentences..." />
                 </FloatingLabel>
             </Col>
         </Row>
@@ -706,7 +691,7 @@ const ExperienceStep = memo(({ data, errors, onArrayChange, onAdd, onRemove }) =
                     <Col md={6}><FloatingLabel label="Company"><Form.Control value={exp.company} onChange={(e) => onArrayChange('experience', index, 'company', e.target.value)} isInvalid={!!errors[`experience-${index}-company`]} /></FloatingLabel></Col>
                     <Col md={6}><FloatingLabel label="Position"><Form.Control value={exp.position} onChange={(e) => onArrayChange('experience', index, 'position', e.target.value)} isInvalid={!!errors[`experience-${index}-position`]} /></FloatingLabel></Col>
                     <Col md={6}><FloatingLabel label="Duration"><Form.Control value={exp.duration} onChange={(e) => onArrayChange('experience', index, 'duration', e.target.value)} placeholder="e.g., Jan 2020 - Present" /></FloatingLabel></Col>
-                    <Col md={12}><FloatingLabel label="Responsibilities"><Form.Control as="textarea" rows={3} value={exp.responsibilities} onChange={(e) => onArrayChange('experience', index, 'responsibilities', e.target.value)} placeholder="• Describe your key responsibilities and achievements&#10;• Use bullet points for better readability" /></FloatingLabel></Col>
+                    <Col md={12}><FloatingLabel label="Responsibilities"><Form.Control as="textarea" rows={3} value={exp.responsibilities} onChange={(e) => onArrayChange('experience', index, 'responsibilities', e.target.value)} placeholder="List key responsibilities and achievements, one per line" /></FloatingLabel></Col>
                     <Col className="text-end"><Button variant="danger" size="sm" onClick={() => onRemove('experience', index)}><FaTrash /> Remove</Button></Col>
                 </Row>
             </div>
@@ -772,20 +757,19 @@ const AchievementsStep = memo(({ data, onChange }) => (
     <Card className="p-4 hover-shadow">
         <h4 className="mb-4"><FaAward className="me-2" />Achievements</h4>
         <FloatingLabel label="Achievements & Awards">
-            <Form.Control as="textarea" rows={5} value={data.achievements} onChange={(e) => onChange('achievements', e.target.value)} placeholder="• Employee of the Month - March 2023&#10;• Successfully delivered project ahead of schedule&#10;• Published article on industry best practices" />
+            <Form.Control as="textarea" rows={5} value={data.achievements} onChange={(e) => onChange('achievements', e.target.value)} placeholder="e.g.,&#10;Employee of the Month, March 2023&#10;Delivered a key project ahead of schedule&#10;Published an article on QA best practices" />
         </FloatingLabel>
     </Card>
 ));
 
-// ResumePreview Component with Template Selector
 const ResumePreview = memo(({
-    data,
-    template,
-    theme,
-    layout,
-    scale,
-    onOpenTemplateSelector
-}) => (
+                                data,
+                                template,
+                                theme,
+                                layout,
+                                scale,
+                                onOpenTemplateSelector
+                            }) => (
     <div className="preview-container">
         <div className="preview-controls mb-3 d-flex justify-content-between align-items-center">
             <ButtonGroup size="sm">
@@ -848,7 +832,10 @@ const UploadSuccessAlert = memo(({ fileName, onDismiss }) => (
         <Alert variant="success" className="shadow-lg">
             <div className="d-flex align-items-center">
                 <FaCheck className="me-2" size={20} />
-                <div><strong>Resume Uploaded Successfully!</strong><div className="small">"{fileName}" has been loaded. You can now edit your resume.</div></div>
+                <div>
+                    <strong>Resume uploaded</strong>
+                    <div className="small">We pulled what we could from &ldquo;{fileName}&rdquo; into the form below &mdash; please review each field before continuing.</div>
+                </div>
                 <Button variant="link" className="ms-3 p-0" onClick={onDismiss}><FaTimes /></Button>
             </div>
         </Alert>
@@ -881,97 +868,74 @@ const ResumeGenerator = () => {
     const [isProcessingUpload, setIsProcessingUpload] = useState(false);
     const [showUploadSuccess, setShowUploadSuccess] = useState(false);
     const [uploadedFileName, setUploadedFileName] = useState("");
+    const [uploadError, setUploadError] = useState("");
 
     const resumeContentRef = useRef(null);
     const autoSaveStatus = useAutoSave(resumeData);
     const completionPercentage = calculateCompletion(resumeData);
 
-  // ==================== PROCESS UPLOADED RESUME ====================
-  useEffect(() => {
-      const processUploadedFile = async () => {
-          // Check for parsed data from the upload
-          if (location.state && location.state.parsedResume) {
-              const { parsedResume, uploadedFile } = location.state;
+    // ==================== PROCESS UPLOADED RESUME ====================
+    // Reads the file handed off by Resumes.js via sessionStorage, extracts
+    // text with pdf.js, and best-effort-parses it into the form fields.
+    useEffect(() => {
+        const processUploadedFile = async () => {
+            const stored = sessionStorage.getItem(UPLOAD_STORAGE_KEY);
+            if (!stored) return;
 
-              console.log("📄 Received parsed resume data:", parsedResume);
-              console.log("📄 Experience data:", parsedResume.experience);
+            setIsProcessingUpload(true);
+            setUploadError("");
 
-              setIsProcessingUpload(true);
-              if (uploadedFile) {
-                  setUploadedFileName(uploadedFile.name);
-              }
+            try {
+                const { name, data } = JSON.parse(stored);
+                setUploadedFileName(name);
 
-              try {
-                  // Update all form fields with the parsed data
-                  setResumeData(prev => ({
-                      ...prev,
-                      name: parsedResume.name || prev.name,
-                      email: parsedResume.email || prev.email,
-                      phone: parsedResume.phone || prev.phone,
-                      location: parsedResume.location || prev.location,
-                      linkedin: parsedResume.linkedin || prev.linkedin,
-                      github: parsedResume.github || prev.github,
-                      title: parsedResume.title || prev.title,
-                      summary: parsedResume.summary || prev.summary,
-                      skills: parsedResume.skills && parsedResume.skills.length > 0
-                          ? [...new Set([...prev.skills, ...parsedResume.skills])]
-                          : prev.skills,
-                      certifications: parsedResume.certifications && parsedResume.certifications.length > 0
-                          ? [...new Set([...prev.certifications, ...parsedResume.certifications])]
-                          : prev.certifications,
-                      experience: parsedResume.experience && parsedResume.experience.length > 0
-                          ? parsedResume.experience
-                          : prev.experience,
-                      education: parsedResume.education && parsedResume.education.length > 0
-                          ? parsedResume.education
-                          : prev.education,
-                      projects: parsedResume.projects && parsedResume.projects.length > 0
-                          ? parsedResume.projects
-                          : prev.projects,
-                      achievements: parsedResume.achievements || prev.achievements
-                  }));
+                const arrayBuffer = base64ToArrayBuffer(data);
+                const text = await extractTextFromPDF(arrayBuffer);
 
-                  setShowUploadSuccess(true);
-                  setTimeout(() => setShowUploadSuccess(false), 5000);
+                if (!text) {
+                    throw new Error("Could not read text from this PDF.");
+                }
 
-                  // Clear the location state
-                  window.history.replaceState({}, document.title);
-              } catch (error) {
-                  console.error("Error processing uploaded file:", error);
-              } finally {
-                  setIsProcessingUpload(false);
-              }
-          }
-          // Fallback: extract directly from arrayBuffer
-          else if (location.state && location.state.uploadedFile && location.state.uploadedFile.arrayBuffer) {
-              const { uploadedFile } = location.state;
-              setIsProcessingUpload(true);
-              setUploadedFileName(uploadedFile.name);
+                const parsedResume = parseResumeText(text);
 
-              try {
-                  const result = await processUploadedResume(uploadedFile);
-                  if (result.success && result.data) {
-                      const parsedData = result.data;
-                      setResumeData(prev => ({
-                          ...prev,
-                          ...parsedData,
-                          skills: parsedData.skills.length > 0 ? parsedData.skills : prev.skills,
-                          experience: parsedData.experience.length > 0 ? parsedData.experience : prev.experience,
-                      }));
-                  }
-                  setShowUploadSuccess(true);
-                  setTimeout(() => setShowUploadSuccess(false), 5000);
-                  window.history.replaceState({}, document.title);
-              } catch (error) {
-                  console.error("Error processing uploaded file:", error);
-              } finally {
-                  setIsProcessingUpload(false);
-              }
-          }
-      };
+                setResumeData(prev => ({
+                    ...prev,
+                    name: parsedResume.name || prev.name,
+                    email: parsedResume.email || prev.email,
+                    phone: parsedResume.phone || prev.phone,
+                    location: parsedResume.location || prev.location,
+                    linkedin: parsedResume.linkedin || prev.linkedin,
+                    github: parsedResume.github || prev.github,
+                    title: parsedResume.title || prev.title,
+                    summary: parsedResume.summary || prev.summary,
+                    skills: parsedResume.skills.length > 0
+                        ? [...new Set([...prev.skills, ...parsedResume.skills])]
+                        : prev.skills,
+                    certifications: parsedResume.certifications.length > 0
+                        ? [...new Set([...prev.certifications, ...parsedResume.certifications])]
+                        : prev.certifications,
+                    experience: parsedResume.experience.length > 0
+                        ? parsedResume.experience
+                        : prev.experience,
+                    education: parsedResume.education.length > 0
+                        ? parsedResume.education
+                        : prev.education,
+                    achievements: parsedResume.achievements || prev.achievements,
+                }));
 
-      processUploadedFile();
-  }, []);
+                setShowUploadSuccess(true);
+                setTimeout(() => setShowUploadSuccess(false), 5000);
+            } catch (error) {
+                console.error("Error processing uploaded file:", error);
+                setUploadError("We couldn't read that resume automatically. You can still fill in the form manually below.");
+            } finally {
+                sessionStorage.removeItem(UPLOAD_STORAGE_KEY);
+                setIsProcessingUpload(false);
+            }
+        };
+
+        processUploadedFile();
+    }, []);
 
     const debouncedAnalysis = useCallback(debounce((data) => { setAtsResult(analyzeResume(data)); }, 500), []);
     useEffect(() => { debouncedAnalysis(resumeData); return () => debouncedAnalysis.cancel(); }, [resumeData, debouncedAnalysis]);
@@ -982,7 +946,6 @@ const ResumeGenerator = () => {
         }
     }, [currentUser]);
 
-    // Scroll to top when step changes
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, [currentStep]);
@@ -1023,7 +986,7 @@ const ResumeGenerator = () => {
             pdf.save(`${resumeData.name || 'Resume'}.pdf`);
         } catch (error) {
             console.error("PDF generation failed:", error);
-            alert("Failed to generate PDF. Please try again.");
+            alert("We couldn't generate the PDF. Please try again.");
         } finally {
             setIsGeneratingPDF(false);
         }
@@ -1036,10 +999,15 @@ const ResumeGenerator = () => {
 
             {isProcessingUpload && (
                 <div className="upload-processing-overlay position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style={{ backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 10000 }}>
-                    <Card className="text-center p-4"><FaSpinner className="spinner-animation mb-3" size={40} /><h5>Processing Your Resume...</h5><p className="text-muted mb-0">Extracting information from "{uploadedFileName}"</p></Card>
+                    <Card className="text-center p-4"><FaSpinner className="spinner-animation mb-3" size={40} /><h5>Reading your resume&hellip;</h5><p className="text-muted mb-0">Extracting information from &ldquo;{uploadedFileName}&rdquo;</p></Card>
                 </div>
             )}
             {showUploadSuccess && <UploadSuccessAlert fileName={uploadedFileName} onDismiss={() => setShowUploadSuccess(false)} />}
+            {uploadError && (
+                <Alert variant="warning" dismissible onClose={() => setUploadError("")} className="mb-3">
+                    {uploadError}
+                </Alert>
+            )}
 
             <StatusBar completion={completionPercentage} status={autoSaveStatus} />
             <FloatingControls template={activeTemplate} styledPdf={styledPdf} dynamicAtsFriendly={dynamicAtsFriendly} onToggleStyled={() => setStyledPdf(prev => !prev)} onToggleAts={() => setDynamicAtsFriendly(prev => !prev)} onOpenSettings={() => setShowSettings(true)} onOpenHelp={() => setShowHelp(true)} />
@@ -1080,7 +1048,7 @@ const ResumeGenerator = () => {
                     <Form>
                         <Form.Group className="mb-3"><Form.Label>Dark Mode</Form.Label><div><ReactSwitch checked={darkMode} onChange={() => setDarkMode(!darkMode)} onColor="#2c3e50" offColor="#adb5bd" /></div></Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Theme Color</Form.Label><Form.Select value={theme} onChange={(e) => setTheme(e.target.value)}>{Object.keys({ light: 'Light', dark: 'Dark', professional: 'Professional', colorful: 'Colorful' }).map(key => <option key={key} value={key}>{key}</option>)}</Form.Select></Form.Group>
-                        <Form.Group className="mb-3"><Form.Label className="d-flex align-items-center"><FaPalette className="me-2" /> Styled PDF Template</Form.Label><div className="d-flex align-items-center"><ReactSwitch checked={styledPdf} onChange={() => setStyledPdf(!styledPdf)} onColor="#2c3e50" offColor="#adb5bd" /><span className="ms-3 text-muted">Apply custom fonts, colors, and layouts for a polished look</span></div></Form.Group>
+                        <Form.Group className="mb-3"><Form.Label className="d-flex align-items-center"><FaPalette className="me-2" /> Styled PDF Template</Form.Label><div className="d-flex align-items-center"><ReactSwitch checked={styledPdf} onChange={() => setStyledPdf(!styledPdf)} onColor="#2c3e50" offColor="#adb5bd" /><span className="ms-3 text-muted">Apply custom fonts, colors, and layout for a polished look</span></div></Form.Group>
                         <Form.Group className="mb-3"><Form.Label className="d-flex align-items-center"><FaMagic className="me-2" /> ATS-Friendly Formatting</Form.Label><div className="d-flex align-items-center"><ReactSwitch checked={dynamicAtsFriendly} onChange={() => setDynamicAtsFriendly(!dynamicAtsFriendly)} onColor="#2c3e50" offColor="#adb5bd" /><span className="ms-3 text-muted">Ensure structured headers, bullet points, and proper keyword placement</span></div></Form.Group>
                     </Form>
                 </Modal.Body>
@@ -1091,10 +1059,14 @@ const ResumeGenerator = () => {
             <Modal show={showHelp} onHide={() => setShowHelp(false)} size="lg">
                 <Modal.Header closeButton><Modal.Title><FaQuestionCircle className="me-2" />Resume Builder Help</Modal.Title></Modal.Header>
                 <Modal.Body>
-                    <h5>Getting Started</h5><p>Follow the steps on the left to build your resume. Each section corresponds to a part of your resume.</p>
-                    <h5 className="mt-4">Upload Feature</h5><p>You can upload an existing resume from the Resume Library page. The system will automatically extract and populate your information.</p>
-                    <h5 className="mt-4">Templates</h5><p>Choose from 8 professional templates including Classic, Modern, Sidebar, Creative, Tech, Executive, Academic, and Startup styles.</p>
-                    <h5 className="mt-4">ATS Optimization</h5><p>The ATS dashboard shows how well your resume matches common job requirements. Aim for scores above 70% in all categories.</p>
+                    <h5>Getting Started</h5>
+                    <p>Work through the steps on the left to build your resume. Each step covers one section of the final document.</p>
+                    <h5 className="mt-4">Uploading an Existing Resume</h5>
+                    <p>From the Resume Library page, you can upload a PDF resume and we'll try to extract your information automatically. Always review the pre-filled fields, since automatic extraction isn't perfect.</p>
+                    <h5 className="mt-4">Templates</h5>
+                    <p>Choose from eight professional templates: Classic, Modern, Sidebar, Creative, Tech, Executive, Academic, and Startup.</p>
+                    <h5 className="mt-4">ATS Optimization</h5>
+                    <p>The ATS dashboard shows how well your resume matches common keyword categories. Aim for scores above 70% in each category.</p>
                 </Modal.Body>
                 <Modal.Footer><Button variant="secondary" onClick={() => setShowHelp(false)}>Close</Button></Modal.Footer>
             </Modal>

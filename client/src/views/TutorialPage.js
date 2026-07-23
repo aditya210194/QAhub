@@ -92,7 +92,7 @@ const TutorialPage = () => {
     const [darkMode, setDarkMode] = useState(false);
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
-    const [isOnline, setIsOnline] = useState(navigator.onLine);
+    const [isOnline, setIsOnline] = useState(true);
     const [componentKey, setComponentKey] = useState(tutorialType);
 
     // Hooks

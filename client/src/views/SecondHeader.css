@@ -277,6 +277,14 @@ body.dark-mode .page-with-second-header .second-header.sticky {
     transition: all var(--transition-speed);
 }
 
+/* ==================== HIDE WHILE MAIN MOBILE MENU IS OPEN ==================== */
+/* Header.js toggles a `.show` class on its .navbar-collapse when isMobileMenuOpen is true.
+   SecondHeader has no way to know Header's real (expanded) height, so instead of
+   guessing an offset, we simply hide it while the main menu is open. */
+body:has(.navbar-collapse.show) .page-with-second-header .second-header {
+    display: none;
+}
+
 /* ==================== RESPONSIVE STYLES ==================== */
 @media (max-width: 767px) {
     .page-with-second-header .second-header {

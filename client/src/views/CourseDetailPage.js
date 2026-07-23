@@ -13,7 +13,9 @@ import {
     FaFileAlt,
     FaCertificate,
     FaHeart,
-    FaRegHeart
+    FaRegHeart,
+    FaLock,
+    FaUserPlus
 } from "react-icons/fa";
 import "./CourseDetailPage.css";
 
@@ -23,18 +25,54 @@ const CourseDetailPage = () => {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState("overview");
     const [isFavorite, setIsFavorite] = useState(false);
+    const [isEnrolling, setIsEnrolling] = useState(false);
     const course = coursesData.find((c) => c.id === courseId);
+
+    // Check if user is logged in
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    React.useEffect(() => {
+        const token = sessionStorage.getItem('token');
+        setIsLoggedIn(!!token);
+    }, []);
 
     if (!course) {
         return (
             <div className="course-not-found">
                 <h2>Course Not Found</h2>
-                <Button variant="primary" onClick={() =>  router.push("/courses")}>
+                <Button variant="primary" onClick={() => router.push("/courses")}>
                     Go to Courses
                 </Button>
             </div>
         );
     }
+
+    // Handle Enroll Now click
+    const handleEnrollNow = () => {
+        setIsEnrolling(true);
+
+        // Check if user is logged in
+        const token = sessionStorage.getItem('token');
+
+        if (!token) {
+            // Redirect to login page with return URL
+            router.push(`/login?redirect=/course/${course.id}`);
+            return;
+        }
+
+        // For free courses, redirect to course content
+        if (course.price === 0) {
+            // You can redirect to the course content page
+            // Or show a success message and redirect
+            router.push(`/course/${course.id}/content`);
+            return;
+        }
+
+        // For paid courses (if you add payment later)
+        // router.push(`/checkout?course=${course.id}`);
+
+        setIsEnrolling(false);
+    };
 
     return (
         <div className="course-detail-page">
@@ -207,18 +245,45 @@ const CourseDetailPage = () => {
                             </div>
                             <Card.Body>
                                 <div className="price-container">
-                                    <span className="current-price">₹{course.price}</span>
-                                    {course.originalPrice && (
-                                        <span className="original-price">₹{course.originalPrice}</span>
+                                    {course.price === 0 ? (
+                                        <span className="current-price" style={{ color: '#10b981' }}>FREE</span>
+                                    ) : (
+                                        <>
+                                            <span className="current-price">₹{course.price}</span>
+                                            {course.originalPrice && (
+                                                <span className="original-price">₹{course.originalPrice}</span>
+                                            )}
+                                            <span className="discount-badge">
+                                                {course.discount}% off
+                                            </span>
+                                        </>
                                     )}
-                                    <span className="discount-badge">
-                                        {course.discount}% off
-                                    </span>
                                 </div>
 
-                                <Button variant="primary" className="enroll-btn">
-                                    <FaPlayCircle /> Enroll Now
+                                <Button
+                                    variant="primary"
+                                    className="enroll-btn"
+                                    onClick={handleEnrollNow}
+                                    disabled={isEnrolling}
+                                >
+                                    {isEnrolling ? (
+                                        <>
+                                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            {isLoggedIn ? <FaPlayCircle /> : <FaUserPlus />}
+                                            {isLoggedIn ? ' Start Learning' : ' Enroll Now'}
+                                        </>
+                                    )}
                                 </Button>
+
+                                {!isLoggedIn && (
+                                    <small className="text-muted d-block text-center mt-2">
+                                        <FaLock className="me-1" /> Login required to access course
+                                    </small>
+                                )}
 
                                 <div className="includes-list">
                                     <h5>This course includes:</h5>
