@@ -7,8 +7,9 @@ import ClientLayout from './client-layout';
 import ErrorBoundary from '../src/components/ErrorBoundary';
 
 export const metadata = {
-    title: 'QA Hub - Software Testing Education',
-    description: 'Learn software testing with QA Hub.',
+    metadataBase: new URL('https://www.qahub.co.in'),
+    title: { default: 'QA Hub - Software Testing Education', template: '%s' },
+    description: 'Free software testing tutorials, interview questions, resources and career guidance for manual, automation and API testing.',
     // ✅ Remove this if you don't have the code yet
     // verification: {
     //     google: 'your-adsense-verification-code',

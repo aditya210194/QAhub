@@ -697,10 +697,17 @@ const Resources = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredCategories, setFilteredCategories] = useState(categories);
     const [activeCategory, setActiveCategory] = useState(null);
-    const [favorites, setFavorites] = useState(() => {
-        const saved = localStorage.getItem('resourceFavorites');
-        return saved ? JSON.parse(saved) : {};
-    });
+    const [favorites, setFavorites] = useState({});
+    const [favoritesLoaded, setFavoritesLoaded] = useState(false);
+
+    // Read localStorage only in the browser (after mount) so server render doesn't crash
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem('resourceFavorites');
+            if (saved) setFavorites(JSON.parse(saved));
+        } catch (e) {}
+        setFavoritesLoaded(true);
+    }, []);
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
     const [sortOption, setSortOption] = useState('default');
 
@@ -709,8 +716,9 @@ const Resources = () => {
     }, []);
 
     useEffect(() => {
+        if (!favoritesLoaded) return;
         localStorage.setItem('resourceFavorites', JSON.stringify(favorites));
-    }, [favorites]);
+    }, [favorites, favoritesLoaded]);
 
     useEffect(() => {
         let result = {...categories};

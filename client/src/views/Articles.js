@@ -18,10 +18,17 @@ const Articles = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredArticles, setFilteredArticles] = useState([]);
     const [activeCategory, setActiveCategory] = useState(null);
-    const [favorites, setFavorites] = useState(() => {
-        const saved = localStorage.getItem('articleFavorites');
-        return saved ? JSON.parse(saved) : {};
-    });
+    const [favorites, setFavorites] = useState({});
+    const [favoritesLoaded, setFavoritesLoaded] = useState(false);
+
+    // Read localStorage only in the browser (after mount) so server render doesn't crash
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem('articleFavorites');
+            if (saved) setFavorites(JSON.parse(saved));
+        } catch (e) {}
+        setFavoritesLoaded(true);
+    }, []);
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
     const [sortOption, setSortOption] = useState('default');
 
@@ -30,8 +37,9 @@ const Articles = () => {
     }, []);
 
     useEffect(() => {
+        if (!favoritesLoaded) return;
         localStorage.setItem('articleFavorites', JSON.stringify(favorites));
-    }, [favorites]);
+    }, [favorites, favoritesLoaded]);
 
     useEffect(() => {
         let result = [...articles];

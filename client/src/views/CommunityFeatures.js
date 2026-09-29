@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import "./CommunityFeatures.css";
@@ -10,7 +10,10 @@ import { FaComments, FaQuestionCircle, FaUsers, FaTrophy, FaArrowRight, FaLock }
 const CommunityFeatures = () => {
     const router = useRouter();
 
-    const isLoggedIn = sessionStorage.getItem("token");
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    useEffect(() => {
+        setIsLoggedIn(!!sessionStorage.getItem("token"));
+    }, []);
 
     const containerVariants = {
         hidden: { opacity: 0 },

@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, usePathname } from 'next/navigation';
 import { Toast, Offcanvas, Alert, Button, Spinner } from 'react-bootstrap';
