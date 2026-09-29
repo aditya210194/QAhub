@@ -366,6 +366,11 @@ const TutorialPage = () => {
                         ) : (
                             <TutorialsEmptyState
                                 onShowMobileSidebar={() => setShowMobileSidebar(true)}
+                                title={pageTitle}
+                                categoryCount={contentData ? Object.keys(contentData).length : 0}
+                                lessonCount={contentData
+                                    ? Object.values(contentData).reduce((n, c) => n + Object.keys(c.tutorials || {}).length, 0)
+                                    : 0}
                             />
                         )}
                     </main>
